@@ -1,0 +1,26 @@
+*.pyc
+# Project settings and static files
+.idea/*
+.sublime*
+.idea
+
+dynamic_preferences/settings.py
+dynamic_preferences/wsgi.py
+dynamic_preferences/settings.py
+manage.py
+
+fab_settings.py
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+*.sql
+*.py[cod]
+*~
+
