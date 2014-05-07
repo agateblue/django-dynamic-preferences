@@ -13,6 +13,7 @@ from django.template import defaultfilters
 
 site_preferences.test, user_preferences.test, global_preferences.test = True, True, True
 
+
 class TestDynamicPreferences(LiveServerTestCase):
 
     def setUp(self):
@@ -159,8 +160,6 @@ class TestRegistry(LiveServerTestCase):
         user_preferences.autodiscover(force_reload=True)
 
         self.assertEqual(len(user_preferences.app('test')), 2)
-
-
 
 
 class TestSerializers(LiveServerTestCase):
