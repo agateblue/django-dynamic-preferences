@@ -1,15 +1,18 @@
 """
-    Preference registries store collections of UserPreference and SitePreference instances
-    They do the actual job
+    Preference registries store collections of Global, User and SitePreference instances
+    They do the actual job of registering preferences that are declared via :
+    ' preference_instance.register() '
 """
+
 from django.conf import settings
 from django.utils.importlib import import_module
-import sys
 
 class PreferenceRegistry(dict):
 
     # Set to True to enable autodiscover in .test module
     test = False
+
+    # The package where registry will try to find preferences to register
     package = "preferences"
 
     def register(self, app, name, preference):
