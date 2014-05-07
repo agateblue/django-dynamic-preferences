@@ -58,15 +58,23 @@ class BasePreferenceModel(models.Model):
         """
             Save serialized self.value to self.raw_value
         """
-        self.raw_value = value
+        self.raw_value = self.preference.serializer.serialize(value)
 
     def get_value(self):
         """
             Return deserialized self.raw_value
         """
-        return self.raw_value
+        return self.preference.serializer.deserialize(self.raw_value)
 
     value = property(get_value, set_value)
+
+
+class GlobalPreferenceModel(BasePreferenceModel):
+
+    registry = user_preferences
+
+    class Meta:
+        unique_together = ('app', 'name')
 
 
 class UserPreferenceModel(BasePreferenceModel):
