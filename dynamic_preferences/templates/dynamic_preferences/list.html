@@ -1,0 +1,7 @@
+{% extends "dynamic_preferences/base.html" %}
+
+{% block content %}
+    {% for pref in preferences %}
+         {{ pref.name }}
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,6 @@
+
+<ul class="apps">
+    {% for app in preferences_registry.apps %}
+        <li><a href="{% url 'dynamic_preferences.global.list.app' app=app %}">{{ app }}</a></li>
+    {% endfor %}
+</ul>

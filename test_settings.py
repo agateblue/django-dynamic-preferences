@@ -17,10 +17,15 @@ settings.configure(
                   'django.contrib.contenttypes',
                   'django.contrib.sessions',
                   'django.contrib.admin',
+                  "debug_toolbar",
                   'django.contrib.staticfiles',
                   'dynamic_preferences',),
     SITE_ID=1,
     ROOT_URLCONF='dynamic_preferences.urls',
     STATIC_ROOT=join(PROJECT_PATH, "static"),
-    STATIC_URL="/static/"
+    STATIC_URL="/static/",
+    TEMPLATE_LOADERS = (
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
+    )
 )

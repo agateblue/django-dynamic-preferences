@@ -29,11 +29,24 @@ class PreferenceRegistry(dict):
 
         return self[app][name]
 
-    def app(self, app):
+    def apps(self):
         """
-            Return all registered preferences for a given app
+            return a list of apps with registered preferences
         """
-        return self[app]
+        return self.keys()
+
+
+
+    def preferences(self, app=None):
+        """
+            Return a list of all registered preferences
+            or a list of preferences registered for a given app
+        """
+
+        if app is None:
+            return [self[app][name] for app in self for name in self[app]]
+        else:
+            return [self[app][name] for name in self[app]]
 
     def autodiscover(self, force_reload=False):
         """
