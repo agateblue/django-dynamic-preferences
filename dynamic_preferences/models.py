@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.db.models.query import QuerySet
 from utils import update
-from dynamic_preferences.registries import user_preferences, site_preferences
+from dynamic_preferences.registries import user_preferences, site_preferences, global_preferences
 
 
 
@@ -71,7 +71,7 @@ class BasePreferenceModel(models.Model):
 
 class GlobalPreferenceModel(BasePreferenceModel):
 
-    registry = user_preferences
+    registry = global_preferences
 
     class Meta:
         unique_together = ('app', 'name')

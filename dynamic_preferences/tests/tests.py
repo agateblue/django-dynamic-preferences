@@ -140,6 +140,32 @@ class TestDynamicPreferences(LiveServerTestCase):
         instance = SitePreferenceModel.objects.get(app="test", name="TestSitePref1", site=self.test_site)
         self.assertEqual(pref.default, instance.value)
 
+class TestPreferenceObjects(LiveServerTestCase):
+
+    def test_boolean_field_class_instantiation(self):
+
+        preference = TestBooleanPreference()
+
+        self.assertEqual(preference.field.initial, None)
+        self.assertEqual(preference.field.required, True)
+
+        preference = TestOverrideBooleanPreference()
+
+        self.assertEqual(preference.field.initial, True)
+        self.assertEqual(preference.field.required, False)
+
+    def test_char_field_class_instantiation(self):
+
+        preference = TestStringPreference()
+
+        self.assertEqual(preference.field.initial, "hello world!")
+
+    def test_choices_field_instantiation(self):
+        preference = TestChoicePreference()
+
+        self.assertEqual(len(preference.field.choices), 3)
+        self.assertEqual(preference.field.initial, "FR")
+
 
 class TestRegistry(LiveServerTestCase):
 

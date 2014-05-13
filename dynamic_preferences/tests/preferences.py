@@ -49,6 +49,37 @@ class SiteIntPref(IntPreference, BaseTestPref, SitePreference):
     default = 2
 
 
+# For testing field instantiation
+class TestBooleanPreference(BooleanPreference):
+    pass
+
+
+class TestOverrideBooleanPreference(BooleanPreference):
+    field_attributes = {
+        "required": False,
+        "initial": True
+    }
+
+
+class TestStringPreference(StringPreference):
+
+    field_attributes = {
+        "initial": "hello world!"
+    }
+
+
+class TestChoicePreference(ChoicePreference):
+
+    choices = (
+        ("FR", "French"),
+        ("EN", "English"),
+        ("DE", "Deutsch")
+    )
+
+    field_attributes = {
+        "initial": "FR",
+        "choices": choices
+    }
 
 
 SiteBooleanPref().register()

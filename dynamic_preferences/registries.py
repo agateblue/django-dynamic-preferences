@@ -7,6 +7,7 @@
 from django.conf import settings
 from django.utils.importlib import import_module
 
+
 class PreferenceRegistry(dict):
 
     # Set to True to enable autodiscover in .test module
@@ -58,6 +59,7 @@ class PreferenceRegistry(dict):
                 # Module does not exist
                 pass
 
+        print("autodiscovered:", self)
         return self
 
 user_preferences = PreferenceRegistry()
