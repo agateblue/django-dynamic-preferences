@@ -10,11 +10,10 @@ from django.utils.importlib import import_module
 
 class PreferenceRegistry(dict):
 
-    # Set to True to enable autodiscover in .test module
-    test = False
-
     # The package where registry will try to find preferences to register
     package = "preferences"
+
+    name = None
 
     def register(self, app, name, preference):
 
@@ -48,6 +47,10 @@ class PreferenceRegistry(dict):
         else:
             return [self[app][name] for name in self[app]]
 
+    def models(self, app=None, **kwargs):
+
+        return [preference.to_model(**kwargs) for preference in self.preferences(app)]
+
     def autodiscover(self, force_reload=False):
         """
             Populate the registry by iterating through every app
@@ -55,9 +58,13 @@ class PreferenceRegistry(dict):
         self.clear()
         prefix = ""
 
-        if self.test:
-            # Import test preferences instead of regular ones
-            prefix = ".tests"
+        try:
+            test = settings.DYNAMIC_PREFERENCES_USE_TEST_PREFERENCES
+            if test:
+                # Import test preferences instead of regular ones
+                prefix = ".tests"
+        except AttributeError, e:
+            pass
 
         for app in settings.INSTALLED_APPS:
             # try to import self.package inside current app

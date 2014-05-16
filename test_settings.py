@@ -27,5 +27,6 @@ settings.configure(
     TEMPLATE_LOADERS = (
         'django.template.loaders.filesystem.Loader',
         'django.template.loaders.app_directories.Loader',
-    )
+    ),
+    DYNAMIC_PREFERENCES_USE_TEST_PREFERENCES=True
 )

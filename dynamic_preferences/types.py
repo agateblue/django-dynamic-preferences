@@ -35,11 +35,15 @@ class BasePreferenceType:
             Create an actual instance of self.field
             Override this method if needed
         """
-        attributes = self._default_field_attributes.update(self.field_attributes)
-        self.field = self.field(**self.field_attributes)
+        self._default_field_attributes.update(self.field_attributes)
+        self.field = self.field(**self._default_field_attributes)
 
 
 class BooleanPreference(BasePreferenceType):
+
+    _default_field_attributes = {
+        "required": False,  # Hack because of django boolean field handling
+    }
 
     field = BooleanField
     serializer = BooleanSerializer

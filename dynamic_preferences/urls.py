@@ -13,8 +13,8 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'global', views.GlobalPreferenceList.as_view(), name="dynamic_preferences.global.list"),
-    url(r'^global/(?P<app>\w+)$', views.GlobalPreferenceList.as_view(), name="dynamic_preferences.global.list.app"),
+    url(r'^global$', views.GlobalPreferenceList.as_view(), name="dynamic_preferences.global.list"),
+    url(r'^global/(?P<app>\w+)$', views.GlobalAppPreferenceList.as_view(), name="dynamic_preferences.global.list.app"),
 
 
 ) + staticfiles_urlpatterns()

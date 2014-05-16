@@ -1,4 +1,4 @@
-from dynamic_preferences import UserPreference, SitePreference
+from dynamic_preferences import UserPreference, SitePreference, GlobalPreference
 from dynamic_preferences.types import *
 
 
@@ -48,6 +48,26 @@ class SiteIntPref(IntPreference, BaseTestPref, SitePreference):
     name = "SiteIntPref"
     default = 2
 
+# Global
+
+class TestGlobal1(StringPreference, BaseTestPref, GlobalPreference):
+    name = "TestGlobal1"
+    default = "default value"
+
+TestGlobal1().register()
+
+
+class TestGlobal2(BooleanPreference, BaseTestPref, GlobalPreference):
+    name = "TestGlobal2"
+    default = False
+
+TestGlobal2().register()
+
+class TestGlobal3(BooleanPreference, BaseTestPref, GlobalPreference):
+    name = "TestGlobal3"
+    default = False
+
+TestGlobal3().register()
 
 # For testing field instantiation
 class TestBooleanPreference(BooleanPreference):

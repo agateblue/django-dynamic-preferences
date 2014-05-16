@@ -172,20 +172,20 @@ class TestRegistry(LiveServerTestCase):
     def test_can_autodiscover_site_preferences(self):
         site_preferences.clear()
         with self.assertRaises(KeyError):
-            site_preferences.app('test')
+            site_preferences.preferences(app='test')
         site_preferences.autodiscover(force_reload=True)
 
-        self.assertEqual(len(site_preferences.app('test')), 2)
+        self.assertEqual(len(site_preferences.preferences(app='test')), 2)
 
     def test_can_autodiscover_user_preferences(self):
 
         user_preferences.clear()
         with self.assertRaises(KeyError):
-            user_preferences.app('test')
+            user_preferences.preferences(app='test')
 
         user_preferences.autodiscover(force_reload=True)
 
-        self.assertEqual(len(user_preferences.app('test')), 2)
+        self.assertEqual(len(user_preferences.preferences(app='test')), 2)
 
 
 class TestSerializers(LiveServerTestCase):
