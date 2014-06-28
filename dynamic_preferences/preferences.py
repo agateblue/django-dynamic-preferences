@@ -1,26 +1,34 @@
 """
-    Preferences are regular Python objects that can be declared within a django app
-    Once declared and registered, they can be edited by admins (for SitePreference and GlobalPreference)
-    and regular Users (for UserPreference)
+Preferences are regular Python objects that can be declared within any django app.
+Once declared and registered, they can be edited by admins (for :py:class:`SitePreference` and :py:class:`GlobalPreference`)
+and regular Users (for :py:class:`UserPreference`)
 
-    UserPreference, SitePreference and GlobalPreference are mapped to corresponding *PreferenceModel,
-    which store the actual values.
+UserPreference, SitePreference and GlobalPreference are mapped to corresponding PreferenceModel,
+which store the actual values.
 
 """
 from registries import user_preferences, site_preferences, global_preferences
 from dynamic_preferences.models import SitePreferenceModel, UserPreferenceModel, GlobalPreferenceModel
 
-class BasePreference:
 
-    # The registry in which settings are stored
+class BasePreference:
+    """
+    A base class that handle common logic  for preferences
+    """
+
+    #: The registry in which preference will be registered (:py:const:`registries.global_preferences`, :py:const:`registries.site_preferences` or :py:const:`registries.user_preferences`)
     registry = None
 
+    #: The app under which the preference will be registered
     app = None
+
+    #: The preference name
     name = ""
-    value = None
+
+    #: A default value for the preference
     default = None
 
-    # Django model corresponding to this Preference
+    #: The model corresponding to this preference type (:py:class:`SitePreference`, :py:class:`GlobalPreference` or :py:class:`UserPreference`)
     model = None
 
     def register(self):
@@ -28,7 +36,12 @@ class BasePreference:
 
     def to_model(self, **kwargs):
         """
-            Save a PreferenceModel instance corresponding to the given model in database
+        Retrieve a model instance corresponding to the Preference in database.
+        This method will create the model instance if needed.
+
+
+        :param kwargs: Keyword arguments that will be passed directly to queryset or new model
+        :return: a :py:class:`models.BasePreferenceModel` instance
         """
         value = kwargs.pop('value', None)
 
@@ -62,7 +75,7 @@ class GlobalPreference(BasePreference):
 
 class UserPreference(BasePreference):
     """
-        Preference for each user
+    Preference that is tied to a :py:class:`django.contrib.auth.models.User` instance
     """
 
     registry = user_preferences

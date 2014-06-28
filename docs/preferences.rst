@@ -1,0 +1,5 @@
+Preferences
+===========
+
+.. automodule:: preferences
+    :members:

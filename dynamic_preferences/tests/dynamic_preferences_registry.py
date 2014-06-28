@@ -1,4 +1,4 @@
-from dynamic_preferences import UserPreference, SitePreference, GlobalPreference
+from dynamic_preferences.preferences import UserPreference, SitePreference, GlobalPreference
 from dynamic_preferences.types import *
 
 
@@ -76,7 +76,7 @@ class TestBooleanPreference(BooleanPreference):
 
 class TestOverrideBooleanPreference(BooleanPreference):
     field_attributes = {
-        "required": False,
+        "required": True,
         "initial": True
     }
 
@@ -100,7 +100,6 @@ class TestChoicePreference(ChoicePreference):
         "initial": "FR",
         "choices": choices
     }
-
 
 SiteBooleanPref().register()
 SiteIntPref().register()

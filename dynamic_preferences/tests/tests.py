@@ -1,8 +1,7 @@
 from django.test import LiveServerTestCase
-from dynamic_preferences import UserPreference, SitePreference
-from dynamic_preferences import site_preferences, user_preferences, global_preferences, SitePreference, UserPreference
+from dynamic_preferences.preferences import site_preferences, user_preferences, global_preferences, SitePreference, UserPreference
 from dynamic_preferences.models import SitePreferenceModel, UserPreferenceModel
-from preferences import *
+from dynamic_preferences_registry import *
 from dynamic_preferences.models import PreferenceSite, PreferenceUser, UserPreferenceModel, SitePreferenceModel
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
@@ -140,6 +139,7 @@ class TestDynamicPreferences(LiveServerTestCase):
         instance = SitePreferenceModel.objects.get(app="test", name="TestSitePref1", site=self.test_site)
         self.assertEqual(pref.default, instance.value)
 
+
 class TestPreferenceObjects(LiveServerTestCase):
 
     def test_boolean_field_class_instantiation(self):
@@ -147,12 +147,12 @@ class TestPreferenceObjects(LiveServerTestCase):
         preference = TestBooleanPreference()
 
         self.assertEqual(preference.field.initial, None)
-        self.assertEqual(preference.field.required, True)
+        self.assertEqual(preference.field.required, False)
 
         preference = TestOverrideBooleanPreference()
 
         self.assertEqual(preference.field.initial, True)
-        self.assertEqual(preference.field.required, False)
+        self.assertEqual(preference.field.required, True)
 
     def test_char_field_class_instantiation(self):
 

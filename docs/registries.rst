@@ -1,0 +1,5 @@
+Registries
+==========
+
+.. automodule:: registries
+    :members:

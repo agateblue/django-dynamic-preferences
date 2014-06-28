@@ -36,6 +36,7 @@ class BasePreferenceType:
             Override this method if needed
         """
         self._default_field_attributes.update(self.field_attributes)
+        #print(self.__class__.__name__, self._default_field_attributes)
         self.field = self.field(**self._default_field_attributes)
 
 

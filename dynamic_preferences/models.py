@@ -1,3 +1,7 @@
+"""
+Preference models, queryset and managers that handle the logic for persisting preferences.
+"""
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
@@ -6,35 +10,36 @@ from utils import update
 from dynamic_preferences.registries import user_preferences, site_preferences, global_preferences
 
 
-
 class PreferenceSite(Site):
 
     class Meta:
         proxy = True
+        app_label = 'dynamic_preferences'
+
 
 class PreferenceUser(User):
     class Meta:
-            proxy = True
+        proxy = True
+        app_label = 'dynamic_preferences'
 
 
 class BasePreferenceModel(models.Model):
+    """
+    A base model with common logic for all preferences models.
+    """
 
-    # The app under which the app is declared
+    #: The app under which the app is declared
     app = models.TextField(max_length=255, db_index=True)
 
-    # a name for the preference
+    #: a name for the preference
     name = models.TextField(max_length=255, db_index=True)
 
-    # a value, serialized to a string
-    # this field should not be accessed directly, use value instead
+    #: a value, serialized to a string. This field should not be accessed directly, use :py:attr:`BasePreferenceModel.value` instead
     raw_value = models.TextField(null=True, blank=True)
 
-    # Keep a reference to the whole preference registry
-    # In order to map the Preference Model Instance to the Preference object
+    #: Keep a reference to the whole preference registry.
+    #: In order to map the Preference Model Instance to the Preference object.
     registry = None
-
-    # Will be set in __init__
-    preference = None
 
     def __init__(self, *args, **kwargs):
         # Check if the model is already saved in DB
@@ -53,6 +58,7 @@ class BasePreferenceModel(models.Model):
 
     class Meta:
         abstract = True
+        app_label = 'dynamic_preferences'
 
     def set_value(self, value):
         """
@@ -75,6 +81,7 @@ class GlobalPreferenceModel(BasePreferenceModel):
 
     class Meta:
         unique_together = ('app', 'name')
+        app_label = 'dynamic_preferences'
 
 
 class UserPreferenceModel(BasePreferenceModel):
@@ -84,6 +91,7 @@ class UserPreferenceModel(BasePreferenceModel):
 
     class Meta:
         unique_together = ('user', 'app', 'name')
+        app_label = 'dynamic_preferences'
 
 
 class SitePreferenceModel(BasePreferenceModel):
@@ -93,3 +101,4 @@ class SitePreferenceModel(BasePreferenceModel):
 
     class Meta:
         unique_together = ('site', 'app', 'name')
+        app_label = 'dynamic_preferences'
