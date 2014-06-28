@@ -1,12 +1,12 @@
 from django.views.generic import TemplateView, FormView
-from dynamic_preferences import global_preferences, site_preferences, user_preferences
+from dynamic_preferences import global_preferences_registry, site_preferences_registry, user_preferences_registry
 from django.http import Http404
 from dynamic_preferences.forms import PreferenceForm
 
 
 class PreferenceMixin(object):
     registry = None
-    app = None
+    section = None
     preferences = None
 
     def get_context_data(self, **kwargs):
@@ -19,7 +19,7 @@ class PreferenceMixin(object):
 
     def get_preferences(self):
         try:
-            return self.registry.preferences(app=self.app)
+            return self.registry.preferences(section=self.section)
         except KeyError:
             # App does not exist or does not have any registered preferences
             raise Http404
@@ -36,7 +36,7 @@ class AppPreferenceList(PreferenceMixin, FormView):
 
     def setup(self):
 
-        self.app = self.app or self.kwargs.get("app", None)
+        self.section = self.section or self.kwargs.get("section", None)
         self.preferences = self.get_preferences()
 
     def get(self, request, *args, **kwargs):
@@ -65,10 +65,10 @@ class AppPreferenceList(PreferenceMixin, FormView):
 
         return super(AppPreferenceList, self).form_valid(form)
 class GlobalPreferenceList(PreferenceList):
-    registry = global_preferences
+    registry = global_preferences_registry
     template_name = "dynamic_preferences/list.html"
 
 
 class GlobalAppPreferenceList(AppPreferenceList):
-    registry = global_preferences
-    template_name = "dynamic_preferences/app.list.html"
+    registry = global_preferences_registry
+    template_name = "dynamic_preferences/section.list.html"

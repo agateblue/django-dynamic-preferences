@@ -1,2 +1,2 @@
 #from prefs import UserPreference, SitePreference, GlobalPreference
-from registries import site_preferences, user_preferences, global_preferences
+from registries import site_preferences_registry, user_preferences_registry, global_preferences_registry

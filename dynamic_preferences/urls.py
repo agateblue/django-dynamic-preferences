@@ -3,8 +3,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 admin.autodiscover()
 
-from dynamic_preferences import site_preferences, user_preferences, global_preferences
-global_preferences.autodiscover()
 
 from dynamic_preferences import views
 urlpatterns = patterns('',
@@ -18,3 +16,6 @@ urlpatterns = patterns('',
 
 
 ) + staticfiles_urlpatterns()
+
+from dynamic_preferences.registries import autodiscover
+autodiscover()

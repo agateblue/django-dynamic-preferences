@@ -7,7 +7,7 @@ UserPreference, SitePreference and GlobalPreference are mapped to corresponding 
 which store the actual values.
 
 """
-from registries import user_preferences, site_preferences, global_preferences
+from registries import user_preferences_registry, site_preferences_registry, global_preferences_registry
 from dynamic_preferences.models import SitePreferenceModel, UserPreferenceModel, GlobalPreferenceModel
 
 
@@ -19,8 +19,8 @@ class BasePreference:
     #: The registry in which preference will be registered (:py:const:`registries.global_preferences`, :py:const:`registries.site_preferences` or :py:const:`registries.user_preferences`)
     registry = None
 
-    #: The app under which the preference will be registered
-    app = None
+    #: The section under which the preference will be registered
+    section = None
 
     #: The preference name
     name = ""
@@ -32,7 +32,7 @@ class BasePreference:
     model = None
 
     def register(self):
-        self.registry.register(self.app, self.name, self)
+        self.registry.register(self.section, self.name, self)
 
     def to_model(self, **kwargs):
         """
@@ -47,14 +47,14 @@ class BasePreference:
 
         try:
             preference = self.model.objects.get(
-                app=self.app,
+                section=self.section,
                 name=self.name,
                 **kwargs
             )
 
         except self.model.DoesNotExist:
             preference = self.model(
-                app=self.app,
+                section=self.section,
                 name=self.name,
                 value=value,
                 **kwargs
@@ -69,7 +69,7 @@ class GlobalPreference(BasePreference):
         A preference that apply to a whole django installation
     """
 
-    registry = global_preferences
+    registry = global_preferences_registry
     model = GlobalPreferenceModel
 
 
@@ -78,7 +78,7 @@ class UserPreference(BasePreference):
     Preference that is tied to a :py:class:`django.contrib.auth.models.User` instance
     """
 
-    registry = user_preferences
+    registry = user_preferences_registry
     model = UserPreferenceModel
 
 
@@ -86,5 +86,5 @@ class SitePreference(BasePreference):
     """
         Preference for each django.contrib.site
     """
-    registry = site_preferences
+    registry = site_preferences_registry
     model = SitePreferenceModel

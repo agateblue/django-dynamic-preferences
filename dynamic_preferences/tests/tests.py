@@ -1,8 +1,9 @@
 from django.test import LiveServerTestCase
-from dynamic_preferences.preferences import site_preferences, user_preferences, global_preferences, SitePreference, UserPreference
+from dynamic_preferences.preferences import site_preferences_registry, user_preferences_registry, global_preferences_registry, SitePreference, UserPreference
 from dynamic_preferences.models import SitePreferenceModel, UserPreferenceModel
 from dynamic_preferences_registry import *
 from dynamic_preferences.models import PreferenceSite, PreferenceUser, UserPreferenceModel, SitePreferenceModel
+from dynamic_preferences.models import global_preferences, user_preferences
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.db import IntegrityError
@@ -10,7 +11,41 @@ from dynamic_preferences.serializers import *
 from django.template import defaultfilters
 
 
-site_preferences.test, user_preferences.test, global_preferences.test = True, True, True
+site_preferences_registry.test, user_preferences_registry.test, global_preferences_registry.test = True, True, True
+
+
+class TestTutorial(LiveServerTestCase):
+    """
+    Test everything from the tutorial
+    """
+    def setUp(self):
+
+        self.henri = User(username="henri", password="test", email="henri@henri.com")
+        self.henri.save()
+
+    def test_quickstart(self):
+
+        registration_allowed_preference, created = global_preferences.get_or_create(section="user",
+                                                                            name="registration_allowed")
+        registration_is_allowed = registration_allowed_preference.value
+
+        self.assertEqual(registration_is_allowed, False)
+
+        registration_allowed_preference.value = True
+        registration_allowed_preference.save()
+
+        self.assertEqual(global_preferences.get(section="user", name="registration_allowed").value, True)
+
+        favorite_colour_preference, created = user_preferences.get_or_create(section="misc", name="favorite_colour",
+                                                                user=self.henri)
+        self.assertEqual(favorite_colour_preference.value, 'Green')
+
+        favorite_colour_preference.value = 'Blue'
+        favorite_colour_preference.save()
+
+        self.assertEqual(user_preferences.get(section="misc", name="favorite_colour", user=self.henri).value, 'Blue')
+
+        self.assertEqual(self.henri.preferences.get(section="misc", name="favorite_colour").value, 'Blue')
 
 
 class TestDynamicPreferences(LiveServerTestCase):
@@ -30,113 +65,113 @@ class TestDynamicPreferences(LiveServerTestCase):
 
     def register_user_preferences(self):
 
-        user_preferences.clear()
+        user_preferences_registry.clear()
 
-        self.assertEqual(len(user_preferences), 0)
+        self.assertEqual(len(user_preferences_registry), 0)
 
         user_pref1 = TestUserPref1()
         user_pref1.register()
 
-        self.assertEqual(user_pref1, user_preferences.get("test", user_pref1.name))
-        self.assertEqual(len(user_preferences['test']), 1)
+        self.assertEqual(user_pref1, user_preferences_registry.get("test", user_pref1.name))
+        self.assertEqual(len(user_preferences_registry['test']), 1)
 
         user_pref2 = TestUserPref2()
         user_pref2.register()
 
-        self.assertEqual(user_pref2, user_preferences.get("test", user_pref2.name))
-        self.assertEqual(len(user_preferences['test']), 2)
+        self.assertEqual(user_pref2, user_preferences_registry.get("test", user_pref2.name))
+        self.assertEqual(len(user_preferences_registry['test']), 2)
 
     def register_site_preferences(self):
 
-        site_preferences.clear()
+        site_preferences_registry.clear()
 
-        self.assertEqual(len(site_preferences), 0)
+        self.assertEqual(len(site_preferences_registry), 0)
 
         site_pref1 = TestSitePref1()
         site_pref1.register()
 
-        self.assertEqual(site_pref1, site_preferences.get("test", site_pref1.name))
-        self.assertEqual(len(site_preferences['test']), 1)
+        self.assertEqual(site_pref1, site_preferences_registry.get("test", site_pref1.name))
+        self.assertEqual(len(site_preferences_registry['test']), 1)
 
         site_pref2 = TestSitePref2()
         site_pref2.register()
-        self.assertEqual(site_pref2, site_preferences.get("test", site_pref2.name))
-        self.assertEqual(len(site_preferences['test']), 2)
+        self.assertEqual(site_pref2, site_preferences_registry.get("test", site_pref2.name))
+        self.assertEqual(len(site_preferences_registry['test']), 2)
 
     def test_can_get_preference_value_by_key(self):
 
-        site_pref1 = site_preferences.get("test", "TestSitePref1")
+        site_pref1 = site_preferences_registry.get("test", "TestSitePref1")
         self.assertEqual(site_pref1.default, TestSitePref1.default)
 
-        user_pref1 = user_preferences.get("test", "TestUserPref1")
+        user_pref1 = user_preferences_registry.get("test", "TestUserPref1")
         self.assertEqual(user_pref1.default, TestUserPref1.default)
 
     def test_can_change_site_preference_value(self):
 
-        site_pref1 = site_preferences.get("test", "TestSitePref1")
+        site_pref1 = site_preferences_registry.get("test", "TestSitePref1")
         site_pref1.value = "new value"
 
-        self.assertEqual(site_preferences.get("test", "TestSitePref1").value, "new value")
+        self.assertEqual(site_preferences_registry.get("test", "TestSitePref1").value, "new value")
 
-        user_pref1 = user_preferences.get("test", "TestUserPref1")
+        user_pref1 = user_preferences_registry.get("test", "TestUserPref1")
         user_pref1.value = "new value"
 
-        self.assertEqual(user_preferences.get("test", "TestUserPref1").value, "new value")
+        self.assertEqual(user_preferences_registry.get("test", "TestUserPref1").value, "new value")
 
     def test_site_preference_is_saved_to_database(self):
 
-        site_pref1 = site_preferences.get("test", "TestSitePref1")
+        site_pref1 = site_preferences_registry.get("test", "TestSitePref1")
         site_pref1.to_model(site=self.test_site, value="new site value")
 
-        test_site_pref1 = SitePreferenceModel.objects.get(app="test", name="TestSitePref1", site=self.test_site)
+        test_site_pref1 = SitePreferenceModel.objects.get(section="test", name="TestSitePref1", site=self.test_site)
         self.assertEqual(site_pref1, test_site_pref1.preference)
-        self.assertEqual(test_site_pref1.app, "test")
+        self.assertEqual(test_site_pref1.section, "test")
         self.assertEqual(test_site_pref1.name, "TestSitePref1")
         self.assertEqual(test_site_pref1.value, "new site value")
 
     def test_user_preference_is_saved_to_database(self):
 
-        user_pref1 = user_preferences.get("test", "TestUserPref1")
+        user_pref1 = user_preferences_registry.get("test", "TestUserPref1")
         instance = user_pref1.to_model(user=self.test_user, value="new user value")
 
-        test_user_pref1 = UserPreferenceModel.objects.get(app="test", name="TestUserPref1", user=self.test_user)
+        test_user_pref1 = UserPreferenceModel.objects.get(section="test", name="TestUserPref1", user=self.test_user)
         self.assertEqual(user_pref1, test_user_pref1.preference)
-        self.assertEqual(test_user_pref1.app, "test")
+        self.assertEqual(test_user_pref1.section, "test")
         self.assertEqual(test_user_pref1.name, "TestUserPref1")
         self.assertEqual(test_user_pref1.value, "new user value")
 
     def test_site_preference_stay_unique_in_db(self):
 
-        site_pref1 = site_preferences.get("test", "TestSitePref1")
+        site_pref1 = site_preferences_registry.get("test", "TestSitePref1")
         site_pref1.to_model(site=self.test_site, value="new value")
 
-        duplicate = SitePreferenceModel(app="test", name="TestSitePref1", site=self.test_site)
+        duplicate = SitePreferenceModel(section="test", name="TestSitePref1", site=self.test_site)
 
         with self.assertRaises(IntegrityError):
             duplicate.save()
 
     def test_user_preference_stay_unique_in_db(self):
 
-        user_pref1 = user_preferences.get("test", "TestUserPref1")
+        user_pref1 = user_preferences_registry.get("test", "TestUserPref1")
         user_pref1.to_model(user=self.test_user, value="new value")
 
-        duplicate = UserPreferenceModel(app="test", name="TestUserPref1", user=self.test_user)
+        duplicate = UserPreferenceModel(section="test", name="TestUserPref1", user=self.test_user)
 
         with self.assertRaises(IntegrityError):
             duplicate.save()
 
     def test_preference_value_set_to_default(self):
 
-        pref = user_preferences.get("test", "TestUserPref1")
+        pref = user_preferences_registry.get("test", "TestUserPref1")
         pref.to_model(user=self.test_user)
 
-        instance = UserPreferenceModel.objects.get(app="test", name="TestUserPref1", user=self.test_user)
+        instance = UserPreferenceModel.objects.get(section="test", name="TestUserPref1", user=self.test_user)
         self.assertEqual(pref.default, instance.value)
 
-        pref = site_preferences.get("test", "TestSitePref1")
+        pref = site_preferences_registry.get("test", "TestSitePref1")
         pref.to_model(site=self.test_site)
 
-        instance = SitePreferenceModel.objects.get(app="test", name="TestSitePref1", site=self.test_site)
+        instance = SitePreferenceModel.objects.get(section="test", name="TestSitePref1", site=self.test_site)
         self.assertEqual(pref.default, instance.value)
 
 
@@ -170,22 +205,22 @@ class TestPreferenceObjects(LiveServerTestCase):
 class TestRegistry(LiveServerTestCase):
 
     def test_can_autodiscover_site_preferences(self):
-        site_preferences.clear()
+        site_preferences_registry.clear()
         with self.assertRaises(KeyError):
-            site_preferences.preferences(app='test')
-        site_preferences.autodiscover(force_reload=True)
+            site_preferences_registry.preferences(section='test')
+        site_preferences_registry.autodiscover(force_reload=True)
 
-        self.assertEqual(len(site_preferences.preferences(app='test')), 2)
+        self.assertEqual(len(site_preferences_registry.preferences(section='test')), 2)
 
     def test_can_autodiscover_user_preferences(self):
 
-        user_preferences.clear()
+        user_preferences_registry.clear()
         with self.assertRaises(KeyError):
-            user_preferences.preferences(app='test')
+            user_preferences_registry.preferences(section='test')
 
-        user_preferences.autodiscover(force_reload=True)
+        user_preferences_registry.autodiscover(force_reload=True)
 
-        self.assertEqual(len(user_preferences.preferences(app='test')), 2)
+        self.assertEqual(len(user_preferences_registry.preferences(section='test')), 2)
 
 
 class TestSerializers(LiveServerTestCase):

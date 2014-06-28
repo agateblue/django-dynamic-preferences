@@ -10,8 +10,8 @@ class GlobalPreferenceForm(forms.ModelForm):
 
 class GlobalPreferenceAdmin(admin.ModelAdmin):
     form = GlobalPreferenceForm
-    fields = ('app', 'name', "raw_value")
-    list_display = ('name', 'app', 'value')
+    fields = ('section', 'name', "raw_value")
+    list_display = ('name', 'section', 'value')
 
     def queryset(self, request):
         qs = super(GlobalPreferenceAdmin, self).queryset(request)

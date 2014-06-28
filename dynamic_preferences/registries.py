@@ -22,39 +22,39 @@ class PreferenceRegistry(dict):
 
     name = None
 
-    def register(self, app, name, preference):
+    def register(self, section, name, preference):
         """
-        Store the given preference in the registry.
+        Store the given preference in the registry. Will also create the preference in database if it does not exist
 
         This method is called by :py:class:`prefs.BasePreference`.
         You should not have to call it manually.
 
-        :param app: The app name under which the preference should be registered
-        :type app: str.
+        :param section: The section name under which the preference should be registered
+        :type section: str.
         :param name: The name of the preference
         :type name: str.
         :param preference: a :py:class:`prefs.BasePreference` instance
         """
         try:
-            self[app][name] = preference
+            self[section][name] = preference
 
         except KeyError:
-            self[app] = {}
-            self[app][name] = preference
+            self[section] = {}
+            self[section][name] = preference
 
-    def get(self, app, name, d=None):
+    def get(self, section, name, d=None):
         """
         Returns a previously registered preference
 
-        :param app: The app name under which the preference is registered
-        :type app: str.
+        :param section: The section name under which the preference is registered
+        :type section: str.
         :param name: The name of the preference
         :type name: str.
         :param d: The default value that will be returned if parames match no preference
         :return: a :py:class:`prefs.BasePreference` instance
         """
         try:
-            return self[app][name]
+            return self[section][name]
 
         except KeyError:
             return d
@@ -67,38 +67,38 @@ class PreferenceRegistry(dict):
 
         return self.keys()
 
-    def preferences(self, app=None):
+    def preferences(self, section=None):
         """
         Return a list of all registered preferences
-        or a list of preferences registered for a given app
+        or a list of preferences registered for a given section
 
-        :param app: The app name under which the preference is registered
-        :type app: str.
+        :param section: The section name under which the preference is registered
+        :type section: str.
         :return: a list of :py:class:`prefs.BasePreference` instances
         """
 
-        if app is None:
-            return [self[app][name] for app in self for name in self[app]]
+        if section is None:
+            return [self[section][name] for section in self for name in self[section]]
         else:
-            return [self[app][name] for name in self[app]]
+            return [self[section][name] for name in self[section]]
 
-    def models(self, app=None, **kwargs):
+    def models(self, section=None, **kwargs):
         """
         Return a list of model instances corresponding to registered preferences
         This method calls :py:meth:`preferences.BasePreference.to_model`, see related documentation for more information
 
-        :param app: The app name under which the preference is registered
-        :type app: str.
+        :param section: The section name under which the preference is registered
+        :type section: str.
         :param kwargs: Keyword arguments that will be passed directly to `to_model()`
         :return: a list of :py:class:`models.BasePreferenceModel` instances
         """
 
-        return [preference.to_model(**kwargs) for preference in self.preferences(app)]
+        return [preference.to_model(**kwargs) for preference in self.preferences(section)]
 
     def autodiscover(self, force_reload=False):
 
         """
-        Populate the registry by iterating through every app declared in :py:const:`settings.INSTALLED_APPS`.
+        Populate the registry by iterating through every section declared in :py:const:`settings.INSTALLED_APPS`.
 
         :param force_reload: if set to `True`, the method will reimport previously imported modules, if any
         :type force_reload: bool.
@@ -130,6 +130,19 @@ class PreferenceRegistry(dict):
         return self
 
 
-user_preferences = PreferenceRegistry()
-site_preferences = PreferenceRegistry()
-global_preferences = PreferenceRegistry()
+user_preferences_registry = PreferenceRegistry()
+site_preferences_registry = PreferenceRegistry()
+global_preferences_registry = PreferenceRegistry()
+
+
+def autodiscover():
+
+    global_preferences_registry.autodiscover()
+    site_preferences_registry.autodiscover()
+    user_preferences_registry.autodiscover()
+
+
+def register(cls):
+    instance = cls()
+    cls.registry.register(cls.section, cls.name, instance)
+    return cls
