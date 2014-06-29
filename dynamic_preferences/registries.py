@@ -135,12 +135,14 @@ site_preferences_registry = PreferenceRegistry()
 global_preferences_registry = PreferenceRegistry()
 
 
-def autodiscover():
-
-    global_preferences_registry.autodiscover()
-    site_preferences_registry.autodiscover()
-    user_preferences_registry.autodiscover()
-
+def autodiscover(force_reload=False):
+    """
+    Trigger autodiscovering of preferences for all registries
+    """
+    global_preferences_registry.autodiscover(force_reload)
+    site_preferences_registry.autodiscover(force_reload)
+    user_preferences_registry.autodiscover(force_reload)
+    print(global_preferences_registry, user_preferences_registry)
 
 def register(cls):
     instance = cls()

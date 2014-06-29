@@ -1,7 +1,7 @@
 from django.test import LiveServerTestCase
 from dynamic_preferences.preferences import site_preferences_registry, user_preferences_registry, global_preferences_registry, SitePreference, UserPreference
 from dynamic_preferences.models import SitePreferenceModel, UserPreferenceModel
-from dynamic_preferences_registry import *
+
 from dynamic_preferences.models import PreferenceSite, PreferenceUser, UserPreferenceModel, SitePreferenceModel
 from dynamic_preferences.models import global_preferences, user_preferences
 from django.contrib.auth.models import User
@@ -9,9 +9,11 @@ from django.contrib.sites.models import Site
 from django.db import IntegrityError
 from dynamic_preferences.serializers import *
 from django.template import defaultfilters
-
-
+from dynamic_preferences.registries import autodiscover
+from types import *
 site_preferences_registry.test, user_preferences_registry.test, global_preferences_registry.test = True, True, True
+
+from dynamic_preferences_registry import *
 
 
 class TestTutorial(LiveServerTestCase):
@@ -19,9 +21,10 @@ class TestTutorial(LiveServerTestCase):
     Test everything from the tutorial
     """
     def setUp(self):
-
         self.henri = User(username="henri", password="test", email="henri@henri.com")
         self.henri.save()
+        print('Autodiscovering...')
+        autodiscover(force_reload=True)
 
     def test_quickstart(self):
 
@@ -36,6 +39,7 @@ class TestTutorial(LiveServerTestCase):
 
         self.assertEqual(global_preferences.get(section="user", name="registration_allowed").value, True)
 
+        print(user_preferences_registry.preferences("misc"))
         favorite_colour_preference, created = user_preferences.get_or_create(section="misc", name="favorite_colour",
                                                                 user=self.henri)
         self.assertEqual(favorite_colour_preference.value, 'Green')
@@ -51,52 +55,12 @@ class TestTutorial(LiveServerTestCase):
 class TestDynamicPreferences(LiveServerTestCase):
 
     def setUp(self):
-        self.register_default_preferences()
 
         self.test_user = PreferenceUser(username="test", password="test", email="test@test.com")
         self.test_user.save()
 
         self.test_site = PreferenceSite(domain="www.test.com", name="test")
         self.test_site.save()
-
-    def register_default_preferences(self):
-        self.register_site_preferences()
-        self.register_user_preferences()
-
-    def register_user_preferences(self):
-
-        user_preferences_registry.clear()
-
-        self.assertEqual(len(user_preferences_registry), 0)
-
-        user_pref1 = TestUserPref1()
-        user_pref1.register()
-
-        self.assertEqual(user_pref1, user_preferences_registry.get("test", user_pref1.name))
-        self.assertEqual(len(user_preferences_registry['test']), 1)
-
-        user_pref2 = TestUserPref2()
-        user_pref2.register()
-
-        self.assertEqual(user_pref2, user_preferences_registry.get("test", user_pref2.name))
-        self.assertEqual(len(user_preferences_registry['test']), 2)
-
-    def register_site_preferences(self):
-
-        site_preferences_registry.clear()
-
-        self.assertEqual(len(site_preferences_registry), 0)
-
-        site_pref1 = TestSitePref1()
-        site_pref1.register()
-
-        self.assertEqual(site_pref1, site_preferences_registry.get("test", site_pref1.name))
-        self.assertEqual(len(site_preferences_registry['test']), 1)
-
-        site_pref2 = TestSitePref2()
-        site_pref2.register()
-        self.assertEqual(site_pref2, site_preferences_registry.get("test", site_pref2.name))
-        self.assertEqual(len(site_preferences_registry['test']), 2)
 
     def test_can_get_preference_value_by_key(self):
 

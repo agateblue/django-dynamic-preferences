@@ -7,7 +7,7 @@ from django.forms import CharField, IntegerField, BooleanField, ChoiceField
 from dynamic_preferences.serializers import *
 
 
-class BasePreferenceType:
+class BasePreferenceType(object):
 
     # A form field that will be used to display and edit the preference
     # use a class, not an instance
@@ -27,7 +27,10 @@ class BasePreferenceType:
     serializer = None
 
     def __init__(self):
-
+        name = self.__class__.__name__
+        if name == "FavoriteColour":
+            pass
+            #print(name, self.__class__.__bases__, self._default_field_attributes)
         self.setup_field()
 
     def setup_field(self):
@@ -36,7 +39,7 @@ class BasePreferenceType:
             Override this method if needed
         """
         self._default_field_attributes.update(self.field_attributes)
-        #print(self.__class__.__name__, self._default_field_attributes)
+
         self.field = self.field(**self._default_field_attributes)
 
 

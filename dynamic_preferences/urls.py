@@ -18,4 +18,4 @@ urlpatterns = patterns('',
 ) + staticfiles_urlpatterns()
 
 from dynamic_preferences.registries import autodiscover
-autodiscover()
+#autodiscover()

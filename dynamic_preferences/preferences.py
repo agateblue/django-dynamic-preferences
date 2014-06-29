@@ -11,7 +11,7 @@ from registries import user_preferences_registry, site_preferences_registry, glo
 from dynamic_preferences.models import SitePreferenceModel, UserPreferenceModel, GlobalPreferenceModel
 
 
-class BasePreference:
+class BasePreference(object):
     """
     A base class that handle common logic  for preferences
     """

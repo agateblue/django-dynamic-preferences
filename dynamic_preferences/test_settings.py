@@ -32,5 +32,4 @@ try:
         DYNAMIC_PREFERENCES_USE_TEST_PREFERENCES=True,
     )
 except RuntimeError:
-    print('EROPRR')
     pass # Settings already configured

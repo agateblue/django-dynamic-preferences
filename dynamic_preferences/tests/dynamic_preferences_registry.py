@@ -15,7 +15,6 @@ class RegistrationAllowed(BooleanPreference, GlobalPreference):
     default = False
 
 
-@register
 class FavoriteColour(StringPreference, UserPreference):
     """
     What's your favorite colour ?
@@ -23,6 +22,8 @@ class FavoriteColour(StringPreference, UserPreference):
     section = "misc"
     name = "favorite_colour"
     default = "Green"
+print ('in registry', FavoriteColour._default_field_attributes)
+register(FavoriteColour)
 
 
 class BaseTestPref:
@@ -89,33 +90,5 @@ class TestGlobal3(BooleanPreference, BaseTestPref, GlobalPreference):
     default = False
 
 
-# For testing field instantiation
-class TestBooleanPreference(BooleanPreference):
-    pass
-
-class TestOverrideBooleanPreference(BooleanPreference):
-    field_attributes = {
-        "required": True,
-        "initial": True
-    }
-
-class TestStringPreference(StringPreference):
-
-    field_attributes = {
-        "initial": "hello world!"
-    }
-
-class TestChoicePreference(ChoicePreference):
-
-    choices = (
-        ("FR", "French"),
-        ("EN", "English"),
-        ("DE", "Deutsch")
-    )
-
-    field_attributes = {
-        "initial": "FR",
-        "choices": choices
-    }
 
 
