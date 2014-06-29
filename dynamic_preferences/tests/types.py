@@ -1,7 +1,10 @@
 from dynamic_preferences.types import *
 # For testing field instantiation
+
+
 class TestBooleanPreference(BooleanPreference):
     pass
+
 
 class TestOverrideBooleanPreference(BooleanPreference):
     field_attributes = {
@@ -9,15 +12,10 @@ class TestOverrideBooleanPreference(BooleanPreference):
         "initial": True
     }
 
-class TestStringPreference(StringPreference):
 
-    field_attributes = {
-        "initial": "hello world!"
-    }
+class TestChoicePreference(StringPreference):
 
-class TestChoicePreference(ChoicePreference):
-
-    choices = (
+    CHOICES = (
         ("FR", "French"),
         ("EN", "English"),
         ("DE", "Deutsch")
@@ -25,6 +23,16 @@ class TestChoicePreference(ChoicePreference):
 
     field_attributes = {
         "initial": "FR",
-        "choices": choices
+        "choices": CHOICES
     }
+
+
+class TestStringPreference(StringPreference):
+
+    field_attributes = {
+        "initial": "hello world!"
+    }
+
+
+
 

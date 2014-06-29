@@ -64,5 +64,5 @@ class StringPreference(BasePreferenceType):
 class ChoicePreference(BasePreferenceType):
 
     field = ChoiceField
-
+    serializer = StringSerializer
 

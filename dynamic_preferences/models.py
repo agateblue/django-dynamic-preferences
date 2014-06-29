@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.db.models.query import QuerySet
 from utils import update
+from django.conf import settings
+
 from dynamic_preferences.registries import user_preferences_registry, site_preferences_registry, global_preferences_registry
 
 class PreferenceSite(Site):
@@ -20,7 +22,6 @@ class PreferenceUser(User):
     class Meta:
         proxy = True
         app_label = 'dynamic_preferences'
-
 
 
 class BasePreferenceModel(models.Model):
@@ -88,7 +89,7 @@ class GlobalPreferenceModel(BasePreferenceModel):
 
 class UserPreferenceModel(BasePreferenceModel):
 
-    user = models.ForeignKey(User, related_name="preferences")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="preferences")
     registry = user_preferences_registry
 
     class Meta:
