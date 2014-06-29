@@ -27,10 +27,6 @@ class BasePreferenceType(object):
     serializer = None
 
     def __init__(self):
-        name = self.__class__.__name__
-        if name == "FavoriteColour":
-            pass
-            #print(name, self.__class__.__bases__, self._default_field_attributes)
         self.setup_field()
 
     def setup_field(self):

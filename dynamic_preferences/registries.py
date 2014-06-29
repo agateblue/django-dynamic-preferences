@@ -13,14 +13,9 @@ class PreferenceRegistry(dict):
     - :py:const:`site_preferences`
     - :py:const:`global_preferences`
 
-    In order to register preferences automatically, you must call :py:meth:`PreferenceRegistry.autodiscover` on each of these registries in your URLconf.
+    In order to register preferences automatically, you must call :py:func:`autodiscover` in your URLconf.
 
     """
-
-    #: The package where registry will try to find preferences to register
-    package = "dynamic_preferences_registry"
-
-    name = None
 
     def register(self, section, name, preference):
         """
@@ -95,56 +90,58 @@ class PreferenceRegistry(dict):
 
         return [preference.to_model(**kwargs) for preference in self.preferences(section)]
 
-    def autodiscover(self, force_reload=False):
 
-        """
-        Populate the registry by iterating through every section declared in :py:const:`settings.INSTALLED_APPS`.
-
-        :param force_reload: if set to `True`, the method will reimport previously imported modules, if any
-        :type force_reload: bool.
-        """
-        self.clear()
-        prefix = ""
-
-        try:
-            test = settings.DYNAMIC_PREFERENCES_USE_TEST_PREFERENCES
-            if test:
-                # Import test preferences instead of regular ones
-                prefix = ".tests"
-        except AttributeError, e:
-            pass
-
-        for app in settings.INSTALLED_APPS:
-            # try to import self.package inside current app
-            package = '{0}{1}.{2}'.format(app, prefix, self.package)
-            try:
-                mod = import_module(package)
-                if force_reload:
-                    # mainly used in tests
-                    reload(mod)
-
-            except ImportError:
-                # Module does not exist
-                pass
-
-        return self
-
+#: The package where autodiscover will try to find preferences to register
+preferences_package = "dynamic_preferences_registry"
 
 user_preferences_registry = PreferenceRegistry()
 site_preferences_registry = PreferenceRegistry()
 global_preferences_registry = PreferenceRegistry()
 
+def clear():
+    """
+    Remove all data from registries
+    """
+    global_preferences_registry.clear()
+    site_preferences_registry.clear()
+    user_preferences_registry.clear()
 
-def autodiscover(force_reload=False):
+def autodiscover(force_reload=True):
     """
-    Trigger autodiscovering of preferences for all registries
+    Populate the registry by iterating through every section declared in :py:const:`settings.INSTALLED_APPS`.
+
+    :param force_reload: if set to `True`, the method will reimport previously imported modules, if any
+    :type force_reload: bool.
     """
-    global_preferences_registry.autodiscover(force_reload)
-    site_preferences_registry.autodiscover(force_reload)
-    user_preferences_registry.autodiscover(force_reload)
-    print(global_preferences_registry, user_preferences_registry)
+    #print('Autodiscovering dynamic-preferences...')
+    clear()
+
+    prefix = ""
+
+    try:
+        test = settings.DYNAMIC_PREFERENCES_USE_TEST_PREFERENCES
+        if test:
+            # Import test preferences instead of regular ones
+            prefix = ".tests"
+    except AttributeError, e:
+        pass
+
+    for app in settings.INSTALLED_APPS:
+        # try to import self.package inside current app
+
+        package = '{0}{1}.{2}'.format(app, prefix, preferences_package)
+
+        try:
+            mod = import_module(package)
+            if force_reload:
+                # mainly used in tests
+                reload(mod)
+
+        except ImportError, e:
+            pass
 
 def register(cls):
+
     instance = cls()
     cls.registry.register(cls.section, cls.name, instance)
     return cls

@@ -9,11 +9,11 @@ from django.contrib.sites.models import Site
 from django.db import IntegrityError
 from dynamic_preferences.serializers import *
 from django.template import defaultfilters
-from dynamic_preferences.registries import autodiscover
+from dynamic_preferences.registries import autodiscover, clear
 from types import *
-site_preferences_registry.test, user_preferences_registry.test, global_preferences_registry.test = True, True, True
 
 from dynamic_preferences_registry import *
+
 
 
 class TestTutorial(LiveServerTestCase):
@@ -23,8 +23,6 @@ class TestTutorial(LiveServerTestCase):
     def setUp(self):
         self.henri = User(username="henri", password="test", email="henri@henri.com")
         self.henri.save()
-        print('Autodiscovering...')
-        autodiscover(force_reload=True)
 
     def test_quickstart(self):
 
@@ -39,7 +37,6 @@ class TestTutorial(LiveServerTestCase):
 
         self.assertEqual(global_preferences.get(section="user", name="registration_allowed").value, True)
 
-        print(user_preferences_registry.preferences("misc"))
         favorite_colour_preference, created = user_preferences.get_or_create(section="misc", name="favorite_colour",
                                                                 user=self.henri)
         self.assertEqual(favorite_colour_preference.value, 'Green')
@@ -159,32 +156,35 @@ class TestPreferenceObjects(LiveServerTestCase):
 
         self.assertEqual(preference.field.initial, "hello world!")
 
-    def test_choices_field_instantiation(self):
-        preference = TestChoicePreference()
-
-        self.assertEqual(len(preference.field.choices), 3)
-        self.assertEqual(preference.field.initial, "FR")
 
 
 class TestRegistry(LiveServerTestCase):
 
+    def test_can_autodiscover_multiple_times(self):
+        autodiscover()
+        self.assertEqual(len(global_preferences_registry.preferences()), 4)
+        self.assertEqual(len(user_preferences_registry.preferences()), 5)
+        autodiscover()
+        self.assertEqual(len(global_preferences_registry.preferences()), 4)
+        self.assertEqual(len(user_preferences_registry.preferences()), 5)
+
     def test_can_autodiscover_site_preferences(self):
-        site_preferences_registry.clear()
+        clear()
         with self.assertRaises(KeyError):
             site_preferences_registry.preferences(section='test')
-        site_preferences_registry.autodiscover(force_reload=True)
+        autodiscover(force_reload=True)
 
-        self.assertEqual(len(site_preferences_registry.preferences(section='test')), 2)
+        self.assertEqual(len(site_preferences_registry.preferences(section='test')), 4)
 
     def test_can_autodiscover_user_preferences(self):
 
-        user_preferences_registry.clear()
+        clear()
         with self.assertRaises(KeyError):
             user_preferences_registry.preferences(section='test')
 
-        user_preferences_registry.autodiscover(force_reload=True)
+        autodiscover(force_reload=True)
 
-        self.assertEqual(len(user_preferences_registry.preferences(section='test')), 2)
+        self.assertEqual(len(user_preferences_registry.preferences(section='test')), 4)
 
 
 class TestSerializers(LiveServerTestCase):

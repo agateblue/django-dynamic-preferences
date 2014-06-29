@@ -14,16 +14,14 @@ class RegistrationAllowed(BooleanPreference, GlobalPreference):
     name = "registration_allowed"
     default = False
 
-
-class FavoriteColour(StringPreference, UserPreference):
+@register
+class FavoriteColour(UserPreference, StringPreference):
     """
     What's your favorite colour ?
     """
     section = "misc"
     name = "favorite_colour"
     default = "Green"
-print ('in registry', FavoriteColour._default_field_attributes)
-register(FavoriteColour)
 
 
 class BaseTestPref:
