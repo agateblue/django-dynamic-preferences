@@ -26,6 +26,7 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
     fields = {preference.identifier(): preference.field for preference in preferences_obj}
     form_class = type('Custom'+form_base_class.__name__, (form_base_class,), {})
     form_class.base_fields = fields
+    form_class.preferences = preferences_obj
     return form_class
 
 def global_preference_form_builder(preferences=[], **kwargs):
@@ -34,11 +35,12 @@ def global_preference_form_builder(preferences=[], **kwargs):
     """
     return preference_form_builder(GlobalPreferenceForm, preferences, **kwargs)
 
-def user_preference_form_builder(preferences=[], **kwargs):
+def user_preference_form_builder(user, preferences=[], **kwargs):
     """
     A shortcut :py:func:`preference_form_builder(UserPreferenceForm, preferences, **kwargs)`
+    :param user: a :py:class:`django.contrib.auth.models.User` instance
     """
-    return preference_form_builder(UserPreferenceForm, preferences, **kwargs)
+    return preference_form_builder(UserPreferenceForm, preferences, model={'user': user}, **kwargs)
 
 def site_preference_form_builder(preferences=[], **kwargs):
     """
@@ -50,7 +52,12 @@ class PreferenceForm(forms.Form):
 
     registry = None
 
-    
+    def update_preferences(self, **kwargs):
+        for preference in self.preferences:
+            instance = preference.to_model(**kwargs.get('model', {}))
+            instance.value = self.cleaned_data[instance.preference.identifier()]
+            instance.save()
+
 class GlobalPreferenceForm(PreferenceForm):
 
     registry = global_preferences_registry

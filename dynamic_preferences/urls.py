@@ -5,6 +5,14 @@ from registries import user_preferences_registry, global_preferences_registry
 from forms import GlobalPreferenceForm
 urlpatterns = patterns('',
 
-    url(r'^global$', views.PreferenceFormView.as_view(registry=global_preferences_registry, form_class=GlobalPreferenceForm), name="dynamic_preferences.global"),
-    url(r'^global/(?P<section>\w+)$', views.PreferenceFormView.as_view(registry=global_preferences_registry, form_class=GlobalPreferenceForm), name="dynamic_preferences.global.section"),
+    url(r'^global$', 
+        staff_member_required(views.PreferenceFormView.as_view(
+            registry=global_preferences_registry, 
+            form_class=GlobalPreferenceForm)), 
+        name="dynamic_preferences.global"),
+    url(r'^global/(?P<section>\w+)$', 
+        staff_member_required(views.PreferenceFormView.as_view(
+            registry=global_preferences_registry, 
+            form_class=GlobalPreferenceForm)), 
+        name="dynamic_preferences.global.section"),
 )

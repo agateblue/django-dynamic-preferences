@@ -32,5 +32,5 @@ class PreferenceFormView(FormView):
 
     def form_valid(self, form):
         
-        form.update_preferences()
+        form.update_preferences(model={'user': self.request.user})
         return super(PreferenceFormView, self).form_valid(form)

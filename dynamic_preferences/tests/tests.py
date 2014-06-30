@@ -300,7 +300,17 @@ class TestSerializers(LiveServerTestCase):
         with self.assertRaises(s.exception):
             s.deserialize({"FOR": "THE", "H":0, "R":"DE!!"})
 
-class TestFormBuilder(TestCase):
+   
+class TestViews(LiveServerTestCase):
+
+    def setUp(self):
+        self.henri = User(username="henri", password="test", email="henri@henri.com")
+        self.henri.set_password('test')
+        self.henri.save()
+
+        self.admin = User(username="admin", email="admin@admin.com", is_superuser=True, is_staff=True)
+        self.admin.set_password('test')
+        self.admin.save()
 
     def test_can_build_global_preference_form(self):
         # We want to display a form with two global preferences
@@ -321,19 +331,22 @@ class TestFormBuilder(TestCase):
         self.assertEqual(len(form.fields), 3)
 
     def test_can_build_user_preference_form_from_sections(self):
-        form = user_preference_form_builder(section='test')()
+        form = user_preference_form_builder(user=self.admin, section='test')()
 
         self.assertEqual(len(form.fields), 4)
 
-class TestViews(LiveServerTestCase):
+    def test_global_preference_view_requires_staff_member(self):
+        url = reverse("dynamic_preferences.global")
+        response = self.client.get(url)
+        self.assertIn('body class="login"', response.content)
 
-    def setUp(self):
-        self.henri = User(username="henri", password="test", email="henri@henri.com")
-        self.henri.save()
-
-        self.admin = User(username="admin", email="admin@admin.com")
-        self.admin.set_password('admin')
-        self.admin.save()
+        self.client.login(username='henri', password="test")
+        response = self.client.get(url)
+        self.assertIn('body class="login"', response.content)
+        self.client.logout()
+        self.client.login(username='admin', password="test")
+        self.assertEqual(self.admin.is_authenticated(), True)
+        self.assertNotIn('body class="login"', response.content)
 
     def test_global_preference_view_display_form(self):
 
@@ -347,3 +360,9 @@ class TestViews(LiveServerTestCase):
         url = reverse("dynamic_preferences.global.section", kwargs={"section": 'user'})
         response = self.client.get(url)
         self.assertEqual(len(response.context['form'].fields), 2)
+
+    def test_preference_are_updated_on_form_submission(self):
+        url = reverse("dynamic_preferences.global.section", kwargs={"section": 'user'})
+        response = self.client.post(url, {'user.max_users': 95, 'user.registration_allowed': True})
+        self.assertEqual(global_preferences.get(section="user", name="max_users").value, 95)
+        self.assertEqual(global_preferences.get(section="user", name="registration_allowed").value, True)
