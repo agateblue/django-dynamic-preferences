@@ -18,4 +18,5 @@ class GlobalPreferenceAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
         return
+        
 admin.site.register(GlobalPreferenceModel, GlobalPreferenceAdmin)

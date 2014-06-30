@@ -32,7 +32,7 @@ class BasePreference(object):
     model = None
 
     def register(self):
-        self.registry.register(self.section, self.name, self)
+        self.registry.register(name=self.name, section=self.section, preference=self)
 
     def to_model(self, **kwargs):
         """
@@ -63,6 +63,11 @@ class BasePreference(object):
 
         return preference
 
+    def identifier(self, separator="."):
+        """
+        Return the name and the section of the Preference joined with a separator, with the form `section<separator>name`
+        """
+        return separator.join([self.section, self.name])
 
 class GlobalPreference(BasePreference):
     """

@@ -15,6 +15,15 @@ class RegistrationAllowed(BooleanPreference, GlobalPreference):
     default = False
 
 @register
+class MaxUsers(IntPreference, GlobalPreference):
+    """
+    Are new registrations allowed ?
+    """
+    section = "user"
+    name = "max_users"
+    default = 100
+
+@register
 class FavoriteColour(UserPreference, StringPreference):
     """
     What's your favorite colour ?
@@ -26,6 +35,14 @@ class FavoriteColour(UserPreference, StringPreference):
 
 class BaseTestPref:
     section = "test"
+
+
+# No section pref
+@register
+class RegistrationAllowed(BooleanPreference, GlobalPreference):
+    name = "no_section"
+    default = False
+
 
 
 # User preferences

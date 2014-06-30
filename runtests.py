@@ -38,6 +38,7 @@ settings.configure(
         'django.contrib.admin',
         'dynamic_preferences',
     ),
+    ROOT_URLCONF = 'dynamic_preferences.urls',
     SITE_ID = 1,    
     STATIC_URL = "/static/",
     TEMPLATE_LOADERS = (

@@ -12,7 +12,6 @@ class BasePreferenceType(object):
     # A form field that will be used to display and edit the preference
     # use a class, not an instance
     field = None
-
     # these default will merged with ones from field_attributes
     # then pass to class provided in field in order to instantiate the actual field
 
@@ -34,8 +33,12 @@ class BasePreferenceType(object):
             Create an actual instance of self.field
             Override this method if needed
         """
+        try:
+            self._default_field_attributes['initial'] = self.default
+        except AttributeError:
+            pass
         self._default_field_attributes.update(self.field_attributes)
-
+            
         self.field = self.field(**self._default_field_attributes)
 
 
@@ -43,6 +46,7 @@ class BooleanPreference(BasePreferenceType):
 
     _default_field_attributes = {
         "required": False,  # Hack because of django boolean field handling
+        "initial": False
     }
 
     field = BooleanField

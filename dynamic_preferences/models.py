@@ -30,7 +30,7 @@ class BasePreferenceModel(models.Model):
     """
 
     #: The section under which the preference is declared
-    section = models.TextField(max_length=255, db_index=True)
+    section = models.TextField(max_length=255, db_index=True, blank=True, null=True, default=None)
 
     #: a name for the preference
     name = models.TextField(max_length=255, db_index=True)

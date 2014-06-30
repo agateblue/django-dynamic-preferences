@@ -17,7 +17,7 @@ class PreferenceRegistry(dict):
 
     """
 
-    def register(self, section, name, preference):
+    def register(self, name, section, preference):
         """
         Store the given preference in the registry. Will also create the preference in database if it does not exist
 
@@ -37,24 +37,35 @@ class PreferenceRegistry(dict):
             self[section] = {}
             self[section][name] = preference
 
-    def get(self, section, name, d=None):
+    def get(self, name, section=None, d=None):
         """
         Returns a previously registered preference
 
         :param section: The section name under which the preference is registered
         :type section: str.
-        :param name: The name of the preference
+        :param name: The name of the preference. You can use dotted notation 'section.name' if you want to avoid providing section param
         :type name: str.
         :param d: The default value that will be returned if parames match no preference
         :return: a :py:class:`prefs.BasePreference` instance
         """
+        # try dotted notation
+        try:
+            section, name = name.split('.')
+            return self[section][name]
+            
+        except ValueError:
+            pass
+
+        # use standard params
         try:
             return self[section][name]
 
         except KeyError:
+            
+
             return d
 
-    def apps(self):
+    def sections(self):
         """
         :return: a list of apps with registered preferences
         :rtype: list
@@ -143,5 +154,5 @@ def autodiscover(force_reload=True):
 def register(cls):
 
     instance = cls()
-    cls.registry.register(cls.section, cls.name, instance)
+    cls.registry.register(name=cls.name, section=cls.section, preference=instance)
     return cls

@@ -1,17 +1,15 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
+from django.contrib.admin.views.decorators import staff_member_required
 admin.autodiscover()
 
 
 from dynamic_preferences import views
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'dynamic_preferences.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^global$', views.GlobalPreferenceList.as_view(), name="dynamic_preferences.global.list"),
+    url(r'^global$', staff_member_required(views.GlobalPreferenceList.as_view()), name="dynamic_preferences.global"),
     url(r'^global/(?P<app>\w+)$', views.GlobalAppPreferenceList.as_view(), name="dynamic_preferences.global.list.app"),
 
 
