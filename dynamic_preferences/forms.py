@@ -23,7 +23,13 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
         # Try to use section param
         preferences_obj = registry.preferences(section=kwargs.get('section', None))
 
-    fields = {preference.identifier(): preference.field for preference in preferences_obj}
+    fields = {}
+    for preference in preferences_obj:
+        f = preference.field 
+        model_kwargs = kwargs.get('model', {})
+        f.initial = preference.to_model(**model_kwargs).value
+        fields[preference.identifier()] = f
+
     form_class = type('Custom'+form_base_class.__name__, (form_base_class,), {})
     form_class.base_fields = fields
     form_class.preferences = preferences_obj

@@ -343,26 +343,31 @@ class TestViews(LiveServerTestCase):
         self.client.login(username='henri', password="test")
         response = self.client.get(url)
         self.assertIn('body class="login"', response.content)
-        self.client.logout()
+
         self.client.login(username='admin', password="test")
+        response = self.client.get(url)
+
         self.assertEqual(self.admin.is_authenticated(), True)
         self.assertNotIn('body class="login"', response.content)
 
     def test_global_preference_view_display_form(self):
 
         url = reverse("dynamic_preferences.global")
+        self.client.login(username='admin', password="test")
         response = self.client.get(url)
         self.assertEqual(len(response.context['form'].fields), 6)
         self.assertEqual(response.context['registry'], global_preferences_registry)
 
     def test_global_preference_filters_by_section(self):
-
+        self.client.login(username='admin', password="test")
         url = reverse("dynamic_preferences.global.section", kwargs={"section": 'user'})
         response = self.client.get(url)
         self.assertEqual(len(response.context['form'].fields), 2)
 
     def test_preference_are_updated_on_form_submission(self):
+        self.client.login(username='admin', password="test")
         url = reverse("dynamic_preferences.global.section", kwargs={"section": 'user'})
         response = self.client.post(url, {'user.max_users': 95, 'user.registration_allowed': True})
+        
         self.assertEqual(global_preferences.get(section="user", name="max_users").value, 95)
         self.assertEqual(global_preferences.get(section="user", name="registration_allowed").value, True)

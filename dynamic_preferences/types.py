@@ -63,7 +63,7 @@ class StringPreference(BasePreferenceType):
 
     field = CharField
     serializer = StringSerializer
-
+    default = ""
 
 class ChoicePreference(BasePreferenceType):
 
