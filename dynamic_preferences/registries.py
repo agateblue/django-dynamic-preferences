@@ -126,7 +126,6 @@ def autodiscover(force_reload=True):
     """
     #print('Autodiscovering dynamic-preferences...')
     clear()
-
     prefix = ""
 
     try:

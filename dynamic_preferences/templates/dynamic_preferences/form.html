@@ -1,0 +1,16 @@
+{% extends "dynamic_preferences/base.html" %}
+{% load i18n %}
+{% block content %}
+
+    <ul class="sections">
+        {% for section in registry.sections %}
+            <li><a href="{% url 'dynamic_preferences.global.section' section=section %}">{{ section }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <form action="" enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="{% trans 'Submit' %}" />
+    </form>
+{% endblock %}

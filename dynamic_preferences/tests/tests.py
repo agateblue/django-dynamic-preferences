@@ -305,23 +305,23 @@ class TestFormBuilder(TestCase):
     def test_can_build_global_preference_form(self):
         # We want to display a form with two global preferences
         # RegistrationAllowed and MaxUsers
-        form = global_preference_form_builder(preferences=['user.registration_allowed', "user.max_users"])
+        form = global_preference_form_builder(preferences=['user.registration_allowed', "user.max_users"])()
 
         self.assertEqual(len(form.fields), 2)
         self.assertEqual(form.fields['user.registration_allowed'].initial, False)
 
     def test_can_build_preference_form_from_sections(self):
-        form = global_preference_form_builder(section='test')
+        form = global_preference_form_builder(section='test')()
 
         self.assertEqual(len(form.fields), 3)
 
     def test_can_build_global_preference_form_from_sections(self):
-        form = global_preference_form_builder(section='test')
+        form = global_preference_form_builder(section='test')()
 
         self.assertEqual(len(form.fields), 3)
 
     def test_can_build_user_preference_form_from_sections(self):
-        form = user_preference_form_builder(section='test')
+        form = user_preference_form_builder(section='test')()
 
         self.assertEqual(len(form.fields), 4)
 
@@ -335,8 +335,15 @@ class TestViews(LiveServerTestCase):
         self.admin.set_password('admin')
         self.admin.save()
 
-    def test_global_preference_view_need_login(self):
+    def test_global_preference_view_display_form(self):
 
         url = reverse("dynamic_preferences.global")
         response = self.client.get(url)
-        self.assertRedirects(response, reverse('admin:login') + '?next=' + url)
+        self.assertEqual(len(response.context['form'].fields), 6)
+        self.assertEqual(response.context['registry'], global_preferences_registry)
+
+    def test_global_preference_filters_by_section(self):
+
+        url = reverse("dynamic_preferences.global.section", kwargs={"section": 'user'})
+        response = self.client.get(url)
+        self.assertEqual(len(response.context['form'].fields), 2)

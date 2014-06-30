@@ -24,8 +24,8 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
         preferences_obj = registry.preferences(section=kwargs.get('section', None))
 
     fields = {preference.identifier(): preference.field for preference in preferences_obj}
-
-    form_class = type('CustomGlobalPreferenceForm', (form_base_class,), {'fields': fields})
+    form_class = type('Custom'+form_base_class.__name__, (form_base_class,), {})
+    form_class.base_fields = fields
     return form_class
 
 def global_preference_form_builder(preferences=[], **kwargs):
@@ -50,6 +50,7 @@ class PreferenceForm(forms.Form):
 
     registry = None
 
+    
 class GlobalPreferenceForm(PreferenceForm):
 
     registry = global_preferences_registry

@@ -25,6 +25,6 @@ Thumbs.db
 *~
 
 docs/_*
-.sq3
-.sqlite*
-.sb
+*.sq3
+*.sqlite*
+*.sb

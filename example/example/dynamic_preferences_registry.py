@@ -1,0 +1,1 @@
+from dynamic_preferences.tests.dynamic_preferences_registry import *
