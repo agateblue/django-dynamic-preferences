@@ -24,6 +24,18 @@ class MaxUsers(IntPreference, GlobalPreference):
     default = 100
 
 @register
+class FavoriteVegetable(ChoicePreference, GlobalPreference):
+
+    choices = (
+        ("C", "Carrot"),
+        ("T", "Tomato. I know, it's not a vegetable"),
+        ("P", "Potato")
+    )
+    section = "user"
+    name = "favorite_vegetable"
+    default = "C"
+
+@register
 class FavoriteColour(UserPreference, StringPreference):
     """
     What's your favorite colour ?
@@ -33,13 +45,14 @@ class FavoriteColour(UserPreference, StringPreference):
     default = "Green"
 
 
-class BaseTestPref:
+
+class BaseTestPref(object):
     section = "test"
 
 
 # No section pref
 @register
-class RegistrationAllowed(BooleanPreference, GlobalPreference):
+class NoSection(BooleanPreference, GlobalPreference):
     name = "no_section"
     default = False
 

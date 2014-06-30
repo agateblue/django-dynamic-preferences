@@ -68,7 +68,7 @@ class BasePreference(object):
         Return the name and the section of the Preference joined with a separator, with the form `section<separator>name`
         """
         section = self.section or ""
-        return separator.join([section, self.name])
+        return unicode(separator.join([section, self.name]))
 
 class GlobalPreference(BasePreference):
     """

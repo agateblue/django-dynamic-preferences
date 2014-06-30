@@ -5,7 +5,7 @@ from os.path import dirname, realpath
 import django
 import sys
 import os
-
+from dynamic_preferences.registries import autodiscover
 # Give feedback on used versions
 sys.stderr.write('Using Python version {0} from {1}\n'.format(sys.version[:5], sys.executable))
 sys.stderr.write('Using Django version {0} from {1}\n'.format(
@@ -48,7 +48,7 @@ settings.configure(
 
     DYNAMIC_PREFERENCES_USE_TEST_PREFERENCES=True,
 )
-
+autodiscover()
 call_command('syncdb', verbosity=1, interactive=False)
 
 

@@ -2,7 +2,7 @@
 
 from django.conf import settings
 from django.utils.importlib import import_module
-
+from types import StringPreference
 
 class PreferenceRegistry(dict):
     """
@@ -124,7 +124,7 @@ def autodiscover(force_reload=True):
     :param force_reload: if set to `True`, the method will reimport previously imported modules, if any
     :type force_reload: bool.
     """
-    #print('Autodiscovering dynamic-preferences...')
+    print('autodiscovering...')
     clear()
     prefix = ""
 
@@ -151,7 +151,6 @@ def autodiscover(force_reload=True):
             pass
 
 def register(cls):
-
     instance = cls()
     cls.registry.register(name=cls.name, section=cls.section, preference=instance)
     return cls

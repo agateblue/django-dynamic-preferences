@@ -25,7 +25,7 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
 
     fields = {}
     for preference in preferences_obj:
-        f = preference.field 
+        f = preference.field
         model_kwargs = kwargs.get('model', {})
         f.initial = preference.to_model(**model_kwargs).value
         fields[preference.identifier()] = f

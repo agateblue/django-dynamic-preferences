@@ -77,6 +77,8 @@ class BasePreferenceModel(models.Model):
 
     value = property(get_value, set_value)
 
+    def __unicode__(self):
+        return self.preference.identifier()
 
 class GlobalPreferenceModel(BasePreferenceModel):
 
@@ -85,6 +87,9 @@ class GlobalPreferenceModel(BasePreferenceModel):
     class Meta:
         unique_together = ('section', 'name')
         app_label = 'dynamic_preferences'
+
+        verbose_name = "global preference"
+        verbose_name_plural = "global preferences"
 
 
 class UserPreferenceModel(BasePreferenceModel):
@@ -95,6 +100,8 @@ class UserPreferenceModel(BasePreferenceModel):
     class Meta:
         unique_together = ('user', 'section', 'name')
         app_label = 'dynamic_preferences'
+        verbose_name = "user preference"
+        verbose_name_plural = "user preferences"
 
 class SitePreferenceModel(BasePreferenceModel):
 
@@ -104,6 +111,8 @@ class SitePreferenceModel(BasePreferenceModel):
     class Meta:
         unique_together = ('site', 'section', 'name')
         app_label = 'dynamic_preferences'
+        verbose_name = "site preference"
+        verbose_name_plural = "site preferences"
 
 
 global_preferences = GlobalPreferenceModel.objects
