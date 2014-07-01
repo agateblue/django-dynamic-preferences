@@ -23,7 +23,7 @@ First, create a `dynamic_preferences_registry.py` file within one of your projec
 
 Let's declare a few preferences in this file::
 
-    from dynamic_preferences.models import UserPreferenceModel, GlobalPreference
+    from dynamic_preferences.models import UserPreference, GlobalPreference
     from dynamic_preferences.types import BooleanPreference, StringPreference
     from dynamic_preferences.registries import register
 
