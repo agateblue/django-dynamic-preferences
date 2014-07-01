@@ -15,4 +15,4 @@ urlpatterns = patterns('',
 
 
 from dynamic_preferences.registries import autodiscover
-autodiscover()
+autodiscover(True)

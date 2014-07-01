@@ -24,6 +24,13 @@ class MaxUsers(IntPreference, GlobalPreference):
     default = 100
 
 @register
+class ItemsPerPage(IntPreference, GlobalPreference):
+   
+    section = "user"
+    name = "items_per_page"
+    default = 25
+
+@register
 class FavoriteVegetable(ChoicePreference, GlobalPreference):
 
     choices = (

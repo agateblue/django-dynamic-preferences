@@ -49,6 +49,7 @@ class PreferencesRegistry(dict):
         :return: a :py:class:`prefs.BasePreference` instance
         """
         # try dotted notation
+        print(name, section)
         try:
             section, name = name.split('.')
             return self[section][name]
@@ -61,8 +62,8 @@ class PreferencesRegistry(dict):
             return self[section][name]
 
         except:    
-            raise KeyError("No such preference in {0} with section={1} and name={2}. Available keys are {3}".format(
-                self.__class__.__name__, section, name, ", ".join(self.keys())))
+            raise ValueError("No such preference in {0} with section={1} and name={2}".format(
+                self.__class__.__name__, section, name))
 
     def sections(self):
         """
@@ -92,7 +93,7 @@ class PreferencesRegistry(dict):
         Return a list of model instances corresponding to registered preferences
         This method calls :py:meth:`preferences.BasePreference.to_model`, see related documentation for more information
 
-        :param section: The section name under which the preference is registered
+        :param section: The section name under which the preferences are registered
         :type section: str.
         :param kwargs: Keyword arguments that will be passed directly to `to_model()`
         :return: a list of :py:class:`models.BasePreferenceModel` instances
@@ -100,12 +101,19 @@ class PreferencesRegistry(dict):
 
         return [preference.to_model(**kwargs) for preference in self.preferences(section)]
 
+    def populate(self, **kwargs):
+        """
+        Populate database with registered preferences and default values
+        """
+        raise NotImplementedError
 
 #: The package where autodiscover will try to find preferences to register
 preferences_package = "dynamic_preferences_registry"
 
 class GlobalPreferencesRegistry(PreferencesRegistry):
-    pass
+    def populate(self, **kwargs):
+        
+        return self.models(**kwargs)
 
 class SitePreferencesRegistry(PreferencesRegistry):
     pass
@@ -156,6 +164,8 @@ def autodiscover(force_reload=True):
 
         except ImportError, e:
             pass
+
+    global_preferences_registry.populate()
 
 def register(cls):
     instance = cls()
