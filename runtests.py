@@ -48,8 +48,8 @@ settings.configure(
 
     DYNAMIC_PREFERENCES_USE_TEST_PREFERENCES=True,
 )
-autodiscover()
 call_command('syncdb', verbosity=1, interactive=False)
+autodiscover()
 
 
 # ---- app start

@@ -34,16 +34,16 @@ class TestTutorial(LiveServerTestCase):
 
         self.assertEqual(global_preferences.get(section="user", name="registration_allowed").value, True)
 
-        favorite_colour_preference, created = user_preferences.get_or_create(section="misc", name="favorite_colour",
+        favorite_colour_preference, created = user_preferences.get_or_create(section="misc", name="favourite_colour",
                                                                 user=self.henri)
         self.assertEqual(favorite_colour_preference.value, 'Green')
 
         favorite_colour_preference.value = 'Blue'
         favorite_colour_preference.save()
 
-        self.assertEqual(user_preferences.get(section="misc", name="favorite_colour", user=self.henri).value, 'Blue')
+        self.assertEqual(user_preferences.get(section="misc", name="favourite_colour", user=self.henri).value, 'Blue')
 
-        self.assertEqual(self.henri.preferences.get(section="misc", name="favorite_colour").value, 'Blue')
+        self.assertEqual(self.henri.preferences.get(section="misc", name="favourite_colour").value, 'Blue')
 
 class TestModels(LiveServerTestCase):
     def test_can_save_and_retrieve_preference_with_section_none(self):
@@ -186,10 +186,10 @@ class TestRegistry(LiveServerTestCase):
     def test_can_autodiscover_multiple_times(self):
         autodiscover()
         self.assertEqual(len(global_preferences_registry.preferences()), 7)
-        self.assertEqual(len(user_preferences_registry.preferences()), 5)
+        self.assertEqual(len(user_preferences_registry.preferences()), 6)
         autodiscover()
         self.assertEqual(len(global_preferences_registry.preferences()), 7)
-        self.assertEqual(len(user_preferences_registry.preferences()), 5)
+        self.assertEqual(len(user_preferences_registry.preferences()), 6)
 
     def test_can_autodiscover_site_preferences(self):
         clear()
@@ -363,7 +363,17 @@ class TestViews(LiveServerTestCase):
         url = reverse("dynamic_preferences.global.section", kwargs={"section": 'user'})
         response = self.client.post(url, {'user.max_users': 95, 'user.registration_allowed': True,
                                           'user.favorite_vegetable': "P"})
-        print(response.content)
         self.assertEqual(global_preferences.get(section="user", name="max_users").value, 95)
         self.assertEqual(global_preferences.get(section="user", name="registration_allowed").value, True)
         self.assertEqual(global_preferences.get(section="user", name="favorite_vegetable").value, 'P')
+
+    def test_user_preference_form_is_bound_with_current_user(self):
+        self.client.login(username='henri', password="test")
+        self.assertEqual(user_preferences.get_or_create(user=self.henri, section="misc", name='favourite_colour')[0].value, 'Green')
+        self.assertEqual(user_preferences.get_or_create(user=self.henri, section="misc", name='is_zombie')[0].value, True)
+
+        url = reverse("dynamic_preferences.user.section", kwargs={'section': 'misc'})
+        response = self.client.post(url, {'misc.favourite_colour': 'Purple', 'misc.is_zombie': False})
+
+        self.assertEqual(self.henri.preferences.get(section="misc", name='favourite_colour').value, 'Purple')
+        self.assertEqual(self.henri.preferences.get(section="misc", name='is_zombie').value, False)

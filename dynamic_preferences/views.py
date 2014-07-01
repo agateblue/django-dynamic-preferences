@@ -1,5 +1,6 @@
 from django.views.generic import TemplateView, FormView
-from forms import preference_form_builder
+from forms import preference_form_builder, user_preference_form_builder
+from registries import user_preferences_registry
 
 class PreferenceFormView(FormView):
     """Display a form for updating preferences of the given section provided via URL arg.
@@ -34,3 +35,14 @@ class PreferenceFormView(FormView):
         
         form.update_preferences()
         return super(PreferenceFormView, self).form_valid(form)
+
+class UserPreferenceFormView(PreferenceFormView):
+    """
+    Will pass `request.user` to form_builder
+    """
+    registry = user_preferences_registry
+    
+    def get_form_class(self, *args, **kwargs):
+        section = self.kwargs.get('section', None)
+        form_class = user_preference_form_builder(user=self.request.user, section=section)
+        return form_class

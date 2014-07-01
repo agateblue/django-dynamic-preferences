@@ -24,15 +24,19 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
         preferences_obj = registry.preferences(section=kwargs.get('section', None))
 
     fields = {}
+    instances = []
     for preference in preferences_obj:
         f = preference.field
         model_kwargs = kwargs.get('model', {})
-        f.initial = preference.to_model(**model_kwargs).value
+        instance = preference.to_model(**model_kwargs)
+        f.initial = instance.value
         fields[preference.identifier()] = f
+        instances.append(instance)
 
     form_class = type('Custom'+form_base_class.__name__, (form_base_class,), {})
     form_class.base_fields = fields
     form_class.preferences = preferences_obj
+    form_class.instances = instances
     return form_class
 
 def global_preference_form_builder(preferences=[], **kwargs):
@@ -59,8 +63,7 @@ class PreferenceForm(forms.Form):
     registry = None
 
     def update_preferences(self, **kwargs):
-        for preference in self.preferences:
-            instance = preference.to_model(**kwargs.get('model', {}))
+        for instance in self.instances:
             instance.value = self.cleaned_data[instance.preference.identifier()]
             instance.save()
 

@@ -36,15 +36,22 @@ class FavoriteVegetable(ChoicePreference, GlobalPreference):
     default = "C"
 
 @register
-class FavoriteColour(UserPreference, StringPreference):
+class FavouriteColour(UserPreference, StringPreference):
     """
-    What's your favorite colour ?
+    What's your favourite colour ?
     """
     section = "misc"
-    name = "favorite_colour"
+    name = "favourite_colour"
     default = "Green"
 
-
+@register
+class IsZombie(BooleanPreference, UserPreference):
+    """
+    Are you a zombie ?
+    """
+    section = "misc"
+    name = "is_zombie"
+    default = True
 
 class BaseTestPref(object):
     section = "test"

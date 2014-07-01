@@ -4,7 +4,7 @@ from django.conf import settings
 from django.utils.importlib import import_module
 from types import StringPreference
 
-class PreferenceRegistry(dict):
+class PreferencesRegistry(dict):
     """
     Registries are special dictionaries that are used by dynamic-preferences to register and access your preferences.
     dynamic-preferences has one registry per Preference type:
@@ -17,6 +17,8 @@ class PreferenceRegistry(dict):
 
     """
 
+    #: a name to identify the registry
+    name = "preferences_registry"
     def register(self, name, section, preference):
         """
         Store the given preference in the registry. Will also create the preference in database if it does not exist
@@ -37,7 +39,7 @@ class PreferenceRegistry(dict):
             self[section] = {}
             self[section][name] = preference
 
-    def get(self, name, section=None, d=None):
+    def get(self, name, section=None):
         """
         Returns a previously registered preference
 
@@ -45,7 +47,6 @@ class PreferenceRegistry(dict):
         :type section: str.
         :param name: The name of the preference. You can use dotted notation 'section.name' if you want to avoid providing section param
         :type name: str.
-        :param d: The default value that will be returned if parames match no preference
         :return: a :py:class:`prefs.BasePreference` instance
         """
         # try dotted notation
@@ -60,10 +61,9 @@ class PreferenceRegistry(dict):
         try:
             return self[section][name]
 
-        except KeyError:
-            
-
-            return d
+        except:    
+            raise KeyError("No such preference in {0} with section={1} and name={2}. Available keys are {3}".format(
+                self.__class__.__name__, section, name, ", ".join(self.keys())))
 
     def sections(self):
         """
@@ -105,9 +105,18 @@ class PreferenceRegistry(dict):
 #: The package where autodiscover will try to find preferences to register
 preferences_package = "dynamic_preferences_registry"
 
-user_preferences_registry = PreferenceRegistry()
-site_preferences_registry = PreferenceRegistry()
-global_preferences_registry = PreferenceRegistry()
+class GlobalPreferencesRegistry(PreferencesRegistry):
+    pass
+
+class SitePreferencesRegistry(PreferencesRegistry):
+    pass
+
+class UserPreferencesRegistry(PreferencesRegistry):
+    pass
+
+user_preferences_registry = UserPreferencesRegistry()
+site_preferences_registry = SitePreferencesRegistry()
+global_preferences_registry = GlobalPreferencesRegistry()
 
 def clear():
     """
@@ -124,7 +133,6 @@ def autodiscover(force_reload=True):
     :param force_reload: if set to `True`, the method will reimport previously imported modules, if any
     :type force_reload: bool.
     """
-    print('autodiscovering...')
     clear()
     prefix = ""
 
@@ -152,5 +160,7 @@ def autodiscover(force_reload=True):
 
 def register(cls):
     instance = cls()
+
     cls.registry.register(name=cls.name, section=cls.section, preference=instance)
+    
     return cls
