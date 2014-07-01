@@ -31,7 +31,17 @@ class BasePreferenceType(object):
     #: a default value or a callable that return a value to be used as default
     default_value = None
 
-    _field = None
+    _field = None        
+
+    def get_field_kwargs(self):
+        field_kwargs = dict(self._default_field_attributes)
+
+        try:
+            field_kwargs['initial'] = self.initial
+        except AttributeError:
+            pass
+        field_kwargs.update(self.field_attributes)
+        return field_kwargs
 
     @cached_property
     def default(self):
@@ -60,16 +70,8 @@ class BasePreferenceType(object):
             Create an actual instance of self.field
             Override this method if needed
         """
-        params = dict(self._default_field_attributes)
-
-        try:
-            params['initial'] = self.initial
-        except AttributeError:
-            pass
-        params.update(self.field_attributes)
-        if params.get('choices', None) is not None:
-            pass
-        return self.field_class(**params)
+        
+        return self.field_class(**self.get_field_kwargs())
 
 
 class BooleanPreference(BasePreferenceType):
@@ -102,9 +104,9 @@ class ChoicePreference(BasePreferenceType):
     field_class = ChoiceField
     serializer = StringSerializer
 
-    def __init__(self):
+    def get_field_kwargs(self):
+        field_kwargs = super(ChoicePreference, self).get_field_kwargs()
 
-        super(ChoicePreference, self).__init__()
-        if self.choices:
-            self.field_attributes['choices'] = self.choices
+        field_kwargs['choices'] = self.choices or self.field_attribute['initial']
+        return field_kwargs
 

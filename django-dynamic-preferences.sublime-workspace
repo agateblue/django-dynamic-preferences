@@ -4,6 +4,162 @@
 		"selected_items":
 		[
 			[
+				"model",
+				"model_kwargs"
+			],
+			[
+				"global",
+				"global_preferences"
+			],
+			[
+				"Globa",
+				"GlobalPreferenceModel"
+			],
+			[
+				"regi",
+				"registration_allowed"
+			],
+			[
+				"prefere",
+				"preferences_obj"
+			],
+			[
+				"Prefe",
+				"PreferenceForm"
+			],
+			[
+				"prefe",
+				"preferences_obj"
+			],
+			[
+				"Preff",
+				"PreferenceFormView"
+			],
+			[
+				"reg",
+				"registry"
+			],
+			[
+				"preference",
+				"preference_form_builder"
+			],
+			[
+				"global_pre",
+				"global_preferences_registry"
+			],
+			[
+				"dyn",
+				"dynamic_preferences_registry"
+			],
+			[
+				"user_pre",
+				"user_preferences_registry"
+			],
+			[
+				"au",
+				"auth"
+			],
+			[
+				"cont",
+				"contrib"
+			],
+			[
+				"dynami",
+				"dynamic_preferences"
+			],
+			[
+				"user",
+				"user_preference_form_builder"
+			],
+			[
+				"Site",
+				"SitePreferenceForm"
+			],
+			[
+				"User",
+				"UserPreferenceForm"
+			],
+			[
+				"GLo",
+				"GlobalPreferenceForm"
+			],
+			[
+				"Glo",
+				"GlobalPreferenceForm"
+			],
+			[
+				"pref",
+				"preference_form_builder"
+			],
+			[
+				"re",
+				"registry"
+			],
+			[
+				"site",
+				"site_preferences_registry"
+			],
+			[
+				"glob",
+				"global_preferences_registry"
+			],
+			[
+				"Pre",
+				"PreferenceForm"
+			],
+			[
+				"Att",
+				"AttributeError	error"
+			],
+			[
+				"Value",
+				"ValueError	error"
+			],
+			[
+				"Mode",
+				"ModelForm	ModelForm"
+			],
+			[
+				"Us",
+				"UserPreference"
+			],
+			[
+				"registratio",
+				"registration_allowed"
+			],
+			[
+				"do",
+				"dotted_result"
+			],
+			[
+				"registr",
+				"registration_allowed"
+			],
+			[
+				"glo",
+				"global_preferences_registry"
+			],
+			[
+				"form",
+				"form_class"
+			],
+			[
+				"No",
+				"NotImplementedError	error"
+			],
+			[
+				"global_",
+				"global_preferences_registry"
+			],
+			[
+				"no",
+				"no_section_pref"
+			],
+			[
+				"Global",
+				"GlobalPreferenceFormBuilder"
+			],
+			[
 				"flask",
 				"flask_login"
 			],
@@ -296,10 +452,6 @@
 				"entity"
 			],
 			[
-				"user",
-				"user_id"
-			],
-			[
 				"dis",
 				"display_item_id"
 			],
@@ -362,192 +514,112 @@
 			[
 				"list-style",
 				"list-style-type"
-			],
-			[
-				"deta",
-				"detail_first"
-			],
-			[
-				"fe",
-				"fetch"
-			],
-			[
-				"pods",
-				"pod_params"
-			],
-			[
-				"page",
-				"page_class"
-			],
-			[
-				"background",
-				"background-color"
-			],
-			[
-				"image",
-				"image_url"
-			],
-			[
-				"ima",
-				"image_type"
-			],
-			[
-				"Base",
-				"BaseEntity"
-			],
-			[
-				"Ba",
-				"BaseEntity"
-			],
-			[
-				"Sub",
-				"SubscriptionEntry"
-			],
-			[
-				"des",
-				"destroyMenu"
-			],
-			[
-				"reverse",
-				"reverse_lazy"
-			],
-			[
-				"add",
-				"add_webdocument_workspace_action"
-			],
-			[
-				"mod",
-				"model_actions"
-			],
-			[
-				"action",
-				"action_registry"
-			],
-			[
-				"ac",
-				"actions_registry"
-			],
-			[
-				"f",
-				"file_name"
-			],
-			[
-				"Kii",
-				"KiiModelActionsRegistry"
-			],
-			[
-				"re",
-				"register_actions"
-			],
-			[
-				"own",
-				"owner_only"
-			],
-			[
-				"is",
-				"is_owner"
-			],
-			[
-				"Wor",
-				"Workspace"
-			],
-			[
-				"get",
-				"get_edit_url"
-			],
-			[
-				"inh",
-				"private_inherited"
-			],
-			[
-				"workspaces",
-				"library_workspaces"
-			],
-			[
-				"pri",
-				"private_parent"
-			],
-			[
-				"priv",
-				"private_inherited"
-			],
-			[
-				"items",
-				"items_url"
-			],
-			[
-				"User",
-				"UserFactory"
-			],
-			[
-				"ite",
-				"items_url"
-			],
-			[
-				"w",
-				"workspaces"
-			],
-			[
-				"crea",
-				"create_storableandtaggableitems"
-			],
-			[
-				"Sto",
-				"StorableAndTaggableItemFactory"
-			],
-			[
-				"Stora",
-				"StorableAndTaggableItem"
-			],
-			[
-				"create",
-				"create_workspace"
-			],
-			[
-				"private_in",
-				"private_inherited"
-			],
-			[
-				"pr",
-				"private"
-			],
-			[
-				"private",
-				"private_inherited"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "test_settings.py",
+			"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/tests/tests.py",
 			"settings":
 			{
-				"buffer_size": 1049,
+				"buffer_size": 15063,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "dynamic_preferences/settings.py",
+			"file": "/home/eliotberriot/Seafile/Projets/lovecommons/contracts/tests.py",
 			"settings":
 			{
-				"buffer_size": 20,
+				"buffer_size": 10975,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "dynamic_preferences/models.py",
+			"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/templates/dynamic_preferences/form.html",
 			"settings":
 			{
-				"buffer_size": 2494,
+				"buffer_size": 501,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "dynamic_preferences/utils_functions.py",
+			"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/views.py",
 			"settings":
 			{
-				"buffer_size": 399,
+				"buffer_size": 1155,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/urls.py",
+			"settings":
+			{
+				"buffer_size": 792,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/preferences.py",
+			"settings":
+			{
+				"buffer_size": 3101,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/registries.py",
+			"settings":
+			{
+				"buffer_size": 5070,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/example/example/urls.py",
+			"settings":
+			{
+				"buffer_size": 436,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/forms.py",
+			"settings":
+			{
+				"buffer_size": 2992,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/example/example/settings.py",
+			"settings":
+			{
+				"buffer_size": 2165,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/admin.py",
+			"settings":
+			{
+				"buffer_size": 687,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/types.py",
+			"settings":
+			{
+				"buffer_size": 1877,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/tests/dynamic_preferences_registry.py",
+			"settings":
+			{
+				"buffer_size": 2411,
 				"line_ending": "Unix"
 			}
 		}
@@ -615,8 +687,25 @@
 	},
 	"file_history":
 	[
-		"/home/eliotberriot/Bureau/Projets/Cent Paroles/koulberg",
+		"/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/urls.py",
+		"/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/example/example/dynamic_preferences_registry.py",
+		"/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/.gitignore",
+		"/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/example/example/settings.py",
+		"/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/templates/dynamic_preferences/sections.html",
+		"/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/templates/dynamic_preferences/base.html",
+		"/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/tests/dynamic_preferences_registry.py",
+		"/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/example/example/urls.py",
+		"/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/runtests.py",
 		"/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/manage.py",
+		"/home/eliotberriot/Seafile/Projets/lovecommons/contracts/tests.py",
+		"/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/models.py",
+		"/home/eliotberriot/Seafile/Projets/django-dynamic-preferences/dynamic_preferences/settings.py",
+		"/home/eliotberriot/Seafile/Projets/django-dynamic-preferences/dynamic_preferences/models.py",
+		"/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/test_settings.py",
+		"/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/settings.py",
+		"/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/pearch.sublime-project",
+		"/home/eliotberriot/Seafile/Projets/django-dynamic-preferences/test_settings.py",
+		"/home/eliotberriot/Bureau/Projets/Cent Paroles/koulberg",
 		"/home/eliotberriot/Bureau/Projets/fwype/README.md",
 		"/home/eliotberriot/Bureau/Projets/fwype/fab_settings.py",
 		"/home/eliotberriot/Bureau/Projets/fwype/.gitignore",
@@ -725,24 +814,7 @@
 		"/home/eliotberriot/Seafile/Hat/Projets/Pigache/theme/header-front.php",
 		"/home/eliotberriot/Seafile/Hat/Projets/Pigache/theme/pods-list-video.php",
 		"/home/eliotberriot/Seafile/Hat/Communication/hat/hat/urls.py",
-		"/home/eliotberriot/Seafile/Hat/Projets/Pigache/theme/content-none.php",
-		"/home/eliotberriot/Seafile/Hat/Projets/Pigache/theme/page_pods-video.php",
-		"/home/eliotberriot/Seafile/Hat/Projets/Camédia/assets/avis maquette 1",
-		"/home/eliotberriot/Seafile/Hat/Communication/hat/hat/settings.py",
-		"/home/eliotberriot/Seafile/Archives/Important/Logement/89 rue Jean de Bernardy/appel 13-12-2013",
-		"/home/eliotberriot/facebook-phpsh-e839d58/README.md",
-		"/home/eliotberriot/Seafile/Hat/Projets/Camédia/theme/.git/config",
-		"/home/eliotberriot/Seafile/Hat/Projets/Petrovitch et Robinson/theme/foundation5/scss/app.scss",
-		"/home/eliotberriot/Seafile/Hat/Projets/Camédia/assets/couleurs",
-		"/home/eliotberriot/Seafile/Hat/Projets/Camédia/theme/fab_settings.py",
-		"/home/eliotberriot/Seafile/Hat/Projets/Pigache/theme/foundation/scss/app.scss",
-		"/home/eliotberriot/Seafile/Hat/Projets/Pigache/theme/page_pods_private_gallery.php",
-		"/home/eliotberriot/Seafile/Hat/Projets/Pigache/theme/single-private_gallery.php",
-		"/home/eliotberriot/Seafile/Hat/Projets/Petrovitch et Robinson/theme/pods-detail-collection.php",
-		"/home/eliotberriot/Seafile/Hat/Projets/Pigache/theme/footer.php",
-		"/home/eliotberriot/sources/1flow/Makefile",
-		"/home/eliotberriot/Seafile/Hat/Projets/Meta/hat_base/footer.php",
-		"/home/eliotberriot/Seafile/Hat/Projets/Meta/hat_base/content.php"
+		"/home/eliotberriot/Seafile/Hat/Projets/Pigache/theme/content-none.php"
 	],
 	"find":
 	{
@@ -760,6 +832,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"redire",
+			"MaxUs",
 			"settings.",
 			"private",
 			"search",
@@ -908,88 +982,205 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 8,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "test_settings.py",
+					"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/tests/tests.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1049,
+						"buffer_size": 15063,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1048,
-								1048
+								13064,
+								13064
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 2,
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage",
+							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 5246.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "dynamic_preferences/settings.py",
+					"file": "/home/eliotberriot/Seafile/Projets/lovecommons/contracts/tests.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 20,
+						"buffer_size": 10975,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								20,
-								20
+								5677,
+								5677
 							]
 						],
 						"settings":
 						{
-							"auto_name": "",
-							"syntax": "Packages/Python/Python.tmLanguage"
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": -0.0,
+						"translation.y": 2527.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/templates/dynamic_preferences/form.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 501,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								82,
+								82
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Djaneiro/Syntaxes/HTML (Django).tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "dynamic_preferences/models.py",
+					"buffer": 3,
+					"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/views.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2494,
+						"buffer_size": 1155,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								52,
-								52
+								1090,
+								1090
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.tmLanguage",
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 102.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/urls.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 792,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								628,
+								628
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/preferences.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3101,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2335,
+								2335
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 459.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/registries.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5070,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4317,
+								4317
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
@@ -997,16 +1188,162 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "dynamic_preferences/utils_functions.py",
+					"buffer": 7,
+					"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/example/example/urls.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 436,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								435,
+								435
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/forms.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2992,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1221,
+								1221
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage"
+						},
+						"translation.x": -0.0,
+						"translation.y": 102.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/example/example/settings.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2165,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1185,
+								1185
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": -0.0,
+						"translation.y": 204.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/admin.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 687,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								437,
+								437
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/types.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1877,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1771,
+								1771
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 668.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "/home/eliotberriot/Bureau/Projets/django-dynamic-preferences/dynamic_preferences/tests/dynamic_preferences_registry.py",
 					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 399,
+						"buffer_size": 2411,
 						"regions":
 						{
 						},
@@ -1019,7 +1356,7 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.tmLanguage",
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
@@ -1027,7 +1364,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -1133,7 +1470,7 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 240.0,
+	"side_bar_width": 360.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
