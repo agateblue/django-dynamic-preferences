@@ -62,7 +62,7 @@ class PreferencesRegistry(dict):
             return self[section][name]
 
         except:    
-            raise ValueError("No such preference in {0} with section={1} and name={2}".format(
+            raise KeyError("No such preference in {0} with section={1} and name={2}".format(
                 self.__class__.__name__, section, name))
 
     def sections(self):

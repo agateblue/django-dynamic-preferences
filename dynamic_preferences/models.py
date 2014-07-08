@@ -8,7 +8,7 @@ from django.contrib.sites.models import Site
 from django.db.models.query import QuerySet
 from utils import update
 from django.conf import settings
-
+from django.utils.functional import cached_property
 from dynamic_preferences.registries import user_preferences_registry, site_preferences_registry, global_preferences_registry
 
 class PreferenceSite(Site):
@@ -55,13 +55,18 @@ class BasePreferenceModel(models.Model):
         super(BasePreferenceModel, self).__init__(*args, **kwargs)
 
         new = self.pk is None
-        self.preference = self.registry.get(section=self.section, name=self.name)
+
         if new:
             if v is not None:
                 self.value = v
             else:
                 self.value = self.preference.default
 
+
+
+    @cached_property
+    def preference(self):
+        return self.registry.get(section=self.section, name=self.name)
 
     def set_value(self, value):
         """
