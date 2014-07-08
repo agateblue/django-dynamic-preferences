@@ -15,6 +15,7 @@ Contents:
    preferences
    models
    registries
+   commands
 
 Indices and tables
 ==================

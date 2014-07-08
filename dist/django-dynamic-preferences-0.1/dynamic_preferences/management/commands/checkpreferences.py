@@ -2,10 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from dynamic_preferences.models import GlobalPreferenceModel, UserPreferenceModel, SitePreferenceModel
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
-from dynamic_preferences.registries import autodiscover, global_preferences_registry, user_preferences_registry, \
-    site_preferences_registry
-
-
+from dynamic_preferences.registries import global_preferences_registry, user_preferences_registry, site_preferences_registry
 def delete_preferences(queryset):
     """
     Delete preferences objects if they are not present in registry. Return a list of deleted objects
@@ -21,14 +18,12 @@ def delete_preferences(queryset):
             deleted.append(p)
 
     return deleted
-
-
 class Command(BaseCommand):
     help = "Find and delete preferences from database if they don't exist in registries. Create preferences that are " \
            "not present in database"
 
     def handle(self, *args, **options):
-        autodiscover()
+
         deleted = delete_preferences(GlobalPreferenceModel.objects.all())
         print("Deleted {0} global preference models : {1}".format(
             len(deleted),
@@ -54,7 +49,7 @@ class Command(BaseCommand):
         # Global
         preferences = global_preferences_registry.preferences()
         for p in preferences:
-            p.to_model()
+            preferences.to_model()
 
         print('Created/updated default global preferences')
 
@@ -70,7 +65,7 @@ class Command(BaseCommand):
 
         if user is not None:
             for p in preferences:
-                p.to_model(user=user)
+                preferences.to_model(user=user)
 
             print('Created/updated default preferences for first user')
 
@@ -86,7 +81,7 @@ class Command(BaseCommand):
 
         if site is not None:
             for p in preferences:
-                p.to_model(site=site)
+                preferences.to_model(site=site)
 
             print('Created/updated default preferences for first site')
 

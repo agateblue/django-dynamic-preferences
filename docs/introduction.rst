@@ -23,7 +23,7 @@ First, create a `dynamic_preferences_registry.py` file within one of your projec
 
 Let's declare a few preferences in this file::
 
-    from dynamic_preferences.models import UserPreference, GlobalPreference
+    from dynamic_preferences.preferences import UserPreference, GlobalPreference
     from dynamic_preferences.types import BooleanPreference, StringPreference
     from dynamic_preferences.registries import register
 
@@ -80,7 +80,8 @@ Now, we'll probably want to interact with our preferences::
     from django.contrib.auth.models import User
 
     henri = User.objects.get(username="henri")
-    favorite_colour_preference = user_preferences.get(section="misc", name="favorite_colour", user=henri)
+    favorite_colour_preference, created = user_preferences.get_or_create(section="misc", name="favorite_colour",
+    user=henri)
 
     assert favorite_colour_preference.value == 'Green'
 
