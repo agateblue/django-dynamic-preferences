@@ -185,10 +185,10 @@ class TestRegistry(LiveServerTestCase):
 
     def test_can_autodiscover_multiple_times(self):
         autodiscover()
-        self.assertEqual(len(global_preferences_registry.preferences()), 7)
+        self.assertEqual(len(global_preferences_registry.preferences()), 8)
         self.assertEqual(len(user_preferences_registry.preferences()), 6)
         autodiscover()
-        self.assertEqual(len(global_preferences_registry.preferences()), 7)
+        self.assertEqual(len(global_preferences_registry.preferences()), 8)
         self.assertEqual(len(user_preferences_registry.preferences()), 6)
 
     def test_can_autodiscover_site_preferences(self):
@@ -349,20 +349,20 @@ class TestViews(LiveServerTestCase):
         url = reverse("dynamic_preferences.global")
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
-        self.assertEqual(len(response.context['form'].fields), 7)
+        self.assertEqual(len(response.context['form'].fields), 8)
         self.assertEqual(response.context['registry'], global_preferences_registry)
 
     def test_global_preference_filters_by_section(self):
         self.client.login(username='admin', password="test")
         url = reverse("dynamic_preferences.global.section", kwargs={"section": 'user'})
         response = self.client.get(url)
-        self.assertEqual(len(response.context['form'].fields), 3)
+        self.assertEqual(len(response.context['form'].fields), 4)
 
     def test_preference_are_updated_on_form_submission(self):
         self.client.login(username='admin', password="test")
         url = reverse("dynamic_preferences.global.section", kwargs={"section": 'user'})
         response = self.client.post(url, {'user.max_users': 95, 'user.registration_allowed': True,
-                                          'user.favorite_vegetable': "P"})
+                                          'user.favorite_vegetable': "P", "user.items_per_page": 12})
         self.assertEqual(global_preferences.get(section="user", name="max_users").value, 95)
         self.assertEqual(global_preferences.get(section="user", name="registration_allowed").value, True)
         self.assertEqual(global_preferences.get(section="user", name="favorite_vegetable").value, 'P')

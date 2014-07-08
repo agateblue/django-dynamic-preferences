@@ -49,7 +49,6 @@ class PreferencesRegistry(dict):
         :return: a :py:class:`prefs.BasePreference` instance
         """
         # try dotted notation
-        print(name, section)
         try:
             section, name = name.split('.')
             return self[section][name]
