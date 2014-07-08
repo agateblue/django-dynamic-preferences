@@ -1,6 +1,0 @@
-include COPYING
-include README.md
-include runtests.py
-recursive-include docs
-recursive-include dynamic_preferences/templates *
-recursive-include dynamic_preferences/static *

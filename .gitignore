@@ -28,3 +28,7 @@ docs/_*
 *.sq3
 *.sqlite*
 *.sb
+
+
+*egg-info
+dist
