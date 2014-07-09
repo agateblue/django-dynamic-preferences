@@ -1,4 +1,5 @@
 include COPYING
+include CHANGES
 include README.md
 include runtests.py
 recursive-include docs
