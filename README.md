@@ -1,1 +1,1 @@
-Django-dynamic-preferences is a Django app (really?)
+Django-dynamic-preferences is a Django app designed to 

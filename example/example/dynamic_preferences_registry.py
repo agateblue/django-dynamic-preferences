@@ -59,3 +59,9 @@ class IsZombie(BooleanPreference, UserPreference):
     name = "is_zombie"
     default = True
 
+@register
+class IsFanOfTokioHotel(BooleanPreference, UserPreference):
+    
+    section = "music"
+    name = "is_fan_of_tokio_hotel"
+    default = False

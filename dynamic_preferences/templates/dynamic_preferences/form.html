@@ -2,11 +2,7 @@
 {% load i18n %}
 {% block content %}
 
-    <ul class="sections">
-        {% for section in registry.sections %}
-            <li><a href="{% url 'dynamic_preferences.global.section' section=section %}">{{ section }}</a></li>
-        {% endfor %}
-    </ul>
+    {% include "dynamic_preferences/sections.html" with sections=registry.sections %}
 
     <form action="" enctype="multipart/form-data" method="post">
         {% csrf_token %}

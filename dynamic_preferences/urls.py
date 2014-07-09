@@ -6,7 +6,7 @@ from registries import user_preferences_registry, global_preferences_registry
 from forms import GlobalPreferenceForm
 urlpatterns = patterns('',
 
-    url(r'^global$', 
+    url(r'^global/$', 
         staff_member_required(views.PreferenceFormView.as_view(
             registry=global_preferences_registry, 
             form_class=GlobalPreferenceForm)), 
@@ -17,7 +17,7 @@ urlpatterns = patterns('',
             form_class=GlobalPreferenceForm)), 
         name="dynamic_preferences.global.section"),
 
-    url(r'^user$', 
+    url(r'^user/$', 
         login_required(views.UserPreferenceFormView.as_view()), 
         name="dynamic_preferences.user"),
     url(r'^user/(?P<section>\w+)$', 

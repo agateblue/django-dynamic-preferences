@@ -3,11 +3,12 @@
     preferences types (Bool, int, etc.) and rules according validation
 
 """
-from django.forms import CharField, IntegerField, BooleanField, ChoiceField, DateTimeField
+from django.forms import CharField, IntegerField, BooleanField, ChoiceField, DateTimeField, TypedChoiceField
 from dynamic_preferences.serializers import *
 from django.utils.functional import cached_property
 import datetime
-
+from django import forms
+from django.utils.translation import ugettext_lazy as _
 
 class BasePreferenceType(object):
 
@@ -76,12 +77,14 @@ class BasePreferenceType(object):
 
 class BooleanPreference(BasePreferenceType):
 
-    _default_field_attributes = {
-        "required": False,  # Hack because of django boolean field handling
-        "initial": False
-    }
+    BOOL_CHOICES = ((True, _('yes')), (False, _('no')))
 
-    field_class = BooleanField
+    _default_field_attributes = {
+        "choices": BOOL_CHOICES,
+        "widget": forms.RadioSelect,
+        "coerce": lambda x: x == 'True',
+    }
+    field_class = TypedChoiceField
     serializer = BooleanSerializer
 
 

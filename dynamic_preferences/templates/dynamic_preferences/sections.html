@@ -1,6 +1,5 @@
-
 <ul class="sections">
-    {% for section in preferences_registry.sections %}
-        <li><a href="{% url 'dynamic_preferences.global.list.app' app=app %}">{{ app }}</a></li>
+    {% for section in sections %}
+        <li><a href="./{{ section }}">{{ section }}</a></li>
     {% endfor %}
 </ul>
