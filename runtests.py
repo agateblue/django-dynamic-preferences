@@ -69,7 +69,8 @@ settings.configure(
                 'level': 'DEBUG',
             },
         },
-    }
+    },
+    TESTING=True
 )
 call_command('syncdb', verbosity=1, interactive=False)
 autodiscover()

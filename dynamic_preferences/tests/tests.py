@@ -12,6 +12,7 @@ from types import *
 from dynamic_preferences_registry import *
 from dynamic_preferences.forms import global_preference_form_builder, user_preference_form_builder
 from django.core.urlresolvers import reverse
+from django.core.management import call_command
 
 class TestTutorial(LiveServerTestCase):
     """
@@ -53,6 +54,12 @@ class TestModels(LiveServerTestCase):
 
         self.assertEqual(global_preferences.filter(section=None, name="no_section").count(), 1)
 
+    def test_adding_user_create_default_prefe_rences(self):
+
+        u = User(username="post_create")
+        u.save()
+
+        self.assertEqual(u.preferences.count(), len(user_preferences_registry.preferences()))
 
 class TestDynamicPreferences(LiveServerTestCase):
 
@@ -154,12 +161,6 @@ class TestPreferenceObjects(LiveServerTestCase):
         preference = TestBooleanPreference()
 
         self.assertEqual(preference.field.initial, False)
-        self.assertEqual(preference.field.required, False)
-
-        preference = TestOverrideBooleanPreference()
-
-        self.assertEqual(preference.field.initial, True)
-        self.assertEqual(preference.field.required, True)
 
     def test_char_field_class_instantiation(self):
 
@@ -377,3 +378,34 @@ class TestViews(LiveServerTestCase):
 
         self.assertEqual(self.henri.preferences.get(section="misc", name='favourite_colour').value, 'Purple')
         self.assertEqual(self.henri.preferences.get(section="misc", name='is_zombie').value, False)
+
+    def test_preference_model_manager_to_dict(self):
+        call_command('checkpreferences', verbosity=1, interactive=False)
+        expected = {u'test': {u'TestGlobal1': u'default value', u'TestGlobal2': False, u'TestGlobal3': False}, None: {u'no_section': False}, u'user': {u'max_users': 100, u'items_per_page': 25, u'registration_allowed': False, u'favorite_vegetable': u'C'}}
+        self.assertEqual(global_preferences.to_dict(), expected)
+
+    def test_user_preference_model_manager_to_dict(self):
+        call_command('checkpreferences', verbosity=1, interactive=False)
+        user = User.objects.get(pk=1)
+        expected = {u'misc': {u'favourite_colour': u'Green', u'is_zombie': True}, u'test': {u'SUserStringPref': u'Hello world!', u'SiteBooleanPref': False, u'TestUserPref1': u'default value', u'TestUserPref2': u''}}
+        self.assertEqual(user_preferences.to_dict(user=user), expected)
+
+
+    def test_global_preference_mixin_pass_global_preferences_values_to_context(self):
+        
+        call_command('checkpreferences', verbosity=1, interactive=False)
+        url = reverse("dynamic_preferences.test.globalpreferencemixin")
+        response = self.client.get(url)
+        self.assertEqual(response.context['global_preferences'], global_preferences.to_dict())
+
+    def test_user_registry_mixin_pass_user_preferences_values_to_context(self):
+        call_command('checkpreferences', verbosity=1, interactive=False)
+        user = User.objects.get(pk=1)
+        self.client.login(username=user.username, password="test")
+        url = reverse("dynamic_preferences.test.userpreferencemixin")
+        response = self.client.get(url)
+
+        to_dict = user_preferences.to_dict(user=user)
+        self.assertEqual(response.context['user_preferences'], to_dict)
+
+

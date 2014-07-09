@@ -4,6 +4,15 @@ from django.contrib.auth.decorators import login_required
 from dynamic_preferences import views
 from registries import user_preferences_registry, global_preferences_registry
 from forms import GlobalPreferenceForm
+
+from django.conf import settings
+
+test = False
+try:
+    test = settings.TESTING
+except:
+    pass
+
 urlpatterns = patterns('',
 
     url(r'^global/$', 
@@ -24,3 +33,12 @@ urlpatterns = patterns('',
         login_required(views.UserPreferenceFormView.as_view()), 
         name="dynamic_preferences.user.section"),
 )
+
+if test:
+
+    urlpatterns += patterns('',
+        url(r'^test/preferencemixin/global$',views.GlobalPreferenceView.as_view(), name="dynamic_preferences.test.globalpreferencemixin"),
+        url(r'^test/preferencemixin/user$',views.UserPreferenceView.as_view(), name="dynamic_preferences.test.userpreferencemixin"),
+        url(r'^test/preferencemixin/$',views.PreferenceView.as_view(), name="dynamic_preferences.test.preferencemixin"),
+        
+    )

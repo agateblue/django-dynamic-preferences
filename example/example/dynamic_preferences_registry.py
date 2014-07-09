@@ -9,7 +9,7 @@ class RegistrationAllowed(BooleanPreference, GlobalPreference):
     """
     Are new registrations allowed ?
     """
-    section = "user"
+    section = "auth"
     name = "registration_allowed"
     default = False
 
@@ -18,14 +18,14 @@ class MaxUsers(IntPreference, GlobalPreference):
     """
     Are new registrations allowed ?
     """
-    section = "user"
+    section = "auth"
     name = "max_users"
     default = 100
 
 @register
 class ItemsPerPage(IntPreference, GlobalPreference):
 
-    section = "user"
+    section = "display"
     name = "items_per_page"
     default = 25
 
@@ -37,7 +37,7 @@ class FavoriteVegetable(ChoicePreference, GlobalPreference):
         ("T", "Tomato. I know, it's not a vegetable"),
         ("P", "Potato")
     )
-    section = "user"
+    section = "auth"
     name = "favorite_vegetable"
     default = "C"
 

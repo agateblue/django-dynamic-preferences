@@ -1,6 +1,49 @@
 from django.views.generic import TemplateView, FormView
 from forms import preference_form_builder, user_preference_form_builder
-from registries import user_preferences_registry
+from registries import user_preferences_registry, global_preferences_registry
+from models import user_preferences, global_preferences
+
+class GlobalPreferenceMixin(object):
+    """
+        Pass the values of global preferences to template context.
+        You can then access value with `global_preferences.<section>.<name>`
+    """ 
+    def get_context_data(self, *args, **kwargs):
+
+        context = super(GlobalPreferenceMixin, self).get_context_data(*args, **kwargs)
+
+        context['global_preferences'] = global_preferences.to_dict()
+
+        return context
+
+class GlobalPreferenceView(GlobalPreferenceMixin, TemplateView):
+    template_name = "dynamic_preferences/testcontext.html"
+
+class UserPreferenceMixin(object):
+    """
+        Pass the values of `request.user` preferences to template context.
+        You can then access value with `user_preferences.<section>.<name>`
+        If user is not logged in, an empty dictionary will be passed to context 
+    """ 
+    def get_context_data(self, *args, **kwargs):
+
+        context = super(UserPreferenceMixin, self).get_context_data(*args, **kwargs)
+
+        user = self.request.user
+        if user.is_authenticated():
+            context['user_preferences'] = user_preferences.to_dict(user=user)
+
+        return context
+    
+class UserPreferenceView(UserPreferenceMixin, TemplateView):
+    template_name = "dynamic_preferences/testcontext.html"
+
+class PreferenceMixin(UserPreferenceMixin, GlobalPreferenceMixin):
+    """Include both GlobalPreferences and preferences from request.user"""
+    pass
+
+class PreferenceView(PreferenceMixin, TemplateView):
+    template_name = "dynamic_preferences/testcontext.html"
 
 class PreferenceFormView(FormView):
     """Display a form for updating preferences of the given section provided via URL arg.

@@ -60,19 +60,13 @@ class Command(BaseCommand):
 
         # User
         preferences = user_preferences_registry.preferences()
-        try:
-            user = User.objects.get(pk=1)
+        users = User.objects.all()
 
-        except User.DoesNotExist:
-            print('Cannot create default preference for first user. Please create add at least one user in your '
-                  'database.')
-            user = None
-
-        if user is not None:
+        for user in users:
             for p in preferences:
                 p.to_model(user=user)
 
-            print('Created/updated default preferences for first user')
+        print('Created/updated default preferences for {0} users'.format(len(users)))
 
         # Site
         preferences = site_preferences_registry.preferences()

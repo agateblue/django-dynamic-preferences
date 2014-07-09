@@ -44,7 +44,7 @@ Let's declare a few preferences in this file::
         """
         Are new registrations allowed ?
         """
-        section = "user"
+        section = "auth"
         name = "registration_allowed"
         default = False
 
@@ -75,7 +75,7 @@ Most of the time, you probably won't need to manipulate preferences by hand, and
     # Retrieve the model object corresponding to our preference
     # we use django's regular get_or_create method to create the preference if it does not exist
 
-    registration_allowed_preference, created = global_preferences.get_or_create(section="user",
+    registration_allowed_preference, created = global_preferences.get_or_create(section="auth",
     name="registration_allowed")
 
     # get the value (Should be False, since RegistrationAllowed.default is False)
@@ -114,6 +114,34 @@ Admin integration
 
 Dynamic-preferences integrates with `django.contrib.admin` out of the box. You can therefore use the admin interface to edit preferences values, which is particularly convenient for global and per-site preferences.
 
+Accessing preferences values within a template
+**********************************************
+
+Dynamic-preferences provide some mixins that will pass registries values to your templates context::
+
+    # in views.py
+
+    from django.views.generic import TemplateView
+    from dynamic_preferences.views import PreferenceMixin
+
+    class MyView(PreferenceMixin, TemplateView):
+        template_name = "myapp/mytemplate.html"
+
+
+    # in myapp/mytemplate.html
+
+    {% if global_preferences.auth.registration_allowed %}
+        You can register an account on the website
+    {% else %}
+        Registrations are closed now
+    {% endif %}
+
+    # accessing user preferences requires an authenticated user
+
+    {% if request.user.is_authenticated %}
+        Hello {{ request.user.username }}, your favorite colour is {{ user_preferences.misc.favorite_colour }}.
+    {% endif %}
+
 Display preferences forms
 *************************
 
@@ -128,7 +156,31 @@ Then, in your code::
 
     from django.core.urlresolvers import reverse
 
+    # URL to a page that display a form to edit all global preferences
     url = reverse("dynamic_preferences.global")
+
+    # URL to a page that display a form to edit global preferences listed in section 'auth'
+    url = reverse("dynamic_preferences.global.section", kwargs={'section': 'auth'})
+
+    # URL to a page that display a form to edit all preferences of the user making the request
+    url = reverse("dynamic_preferences.user")
+
+    # URL to a page that display a form to edit preferences listed under section 'misc' of the user making the request
+    url = reverse("dynamic_preferences.user.section", kwargs={'section': 'misc'})
+
+Keep registries in sync with you database
+*****************************************
+
+If you add or remove preferences from your `dynamic_preferences_registry.py`, you may encounter `KeyError` exceptions when you try to display preferences related forms or admin pages. This happens because you have preferences instances in your database that does not correspond to any registered preference object in your registries. 
+
+To solve this, you can run ``python manage.py checkpreferences`` inside your project. This command will check every preference in database, and remove/create needed ones. Please note this can take some time if you have many users.
+
+A few settings
+**************
+
+Dynamic-preferences has a few settings you can modify in your `settings.py`.
+
+- :py:const:`CREATE_DEFAULT_PREFERENCES_FOR_NEW_USERS` : will create default preferences objects in database each time a new user is added (default is True). At the moment, this setting will only work with :py:class:`django.contrib.auth.models.User`.
 
 
 

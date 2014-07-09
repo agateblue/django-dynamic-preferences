@@ -123,7 +123,13 @@ class SitePreferencesRegistry(PreferencesRegistry):
     pass
 
 class UserPreferencesRegistry(PreferencesRegistry):
-    pass
+    
+    def create_default_preferences(self, user):
+        """
+            Create default preferences models for a given user
+        """
+        for preference in self.preferences():
+            preference.to_model(user=user)
 
 user_preferences_registry = UserPreferencesRegistry()
 site_preferences_registry = SitePreferencesRegistry()
@@ -161,14 +167,15 @@ def autodiscover(force_reload=True):
         package = '{0}{1}.{2}'.format(app, prefix, preferences_package)
 
         try:
-            print('Dynamic-preferences: importing {0}...'.format(package))
+            #print('Dynamic-preferences: importing {0}...'.format(package))
             mod = import_module(package)
             if force_reload:
                 # mainly used in tests
                 reload(mod)
 
         except ImportError, e:
-            print('Dynamic-preferences: cannnot import {0}, {1}'.format(package, e))
+            pass
+            #print('Dynamic-preferences: cannnot import {0}, {1}'.format(package, e))
 
     global_preferences_registry.populate()
 

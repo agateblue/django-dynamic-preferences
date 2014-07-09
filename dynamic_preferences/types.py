@@ -84,6 +84,7 @@ class BooleanPreference(BasePreferenceType):
         "widget": forms.RadioSelect,
         "coerce": lambda x: x == 'True',
     }
+    default = False
     field_class = TypedChoiceField
     serializer = BooleanSerializer
 
