@@ -4,11 +4,6 @@
 .sublime*
 .idea
 
-dynamic_preferences/settings.py
-dynamic_preferences/wsgi.py
-dynamic_preferences/settings.py
-manage.py
-
 fab_settings.py
 # OS generated files #
 ######################
