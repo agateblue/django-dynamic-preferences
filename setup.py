@@ -11,7 +11,7 @@ setup(
     version=dynamic_preferences.__version__,
     packages=find_packages(),
     include_package_data=True,
-    license='GPLv3',  # example license
+    license='BSD',  # example license
     description='A django app for registering dynamic global, site and user preferences',
     long_description=README,
     url='http://code.eliotberriot.com/eliotberriot/django-dynamic-preferences',
@@ -22,7 +22,7 @@ setup(
         'Environment :: Web Environment',
         'Framework :: Django',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)', # example license
+        'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         # Replace these appropriately if you are stuck on Python 2.

@@ -17,3 +17,7 @@ Links:
 - [Project page](http://code.eliotberriot.com/eliotberriot/django-dynamic-preferences)
 - [Documentation](http://django-dynamic-preferences.readthedocs.org)
 - [PyPi package](https://pypi.python.org/pypi/django-dynamic-preferences)
+
+# License
+
+The project is licensed under BSD licence.
