@@ -20,6 +20,18 @@ Add this to your :py:const:`settings.INSTALLED_APPS`::
         'dynamic_preferences',        
     )
 
+Then, create missing tables in your database::
+    
+    python manage.py syncdb
+
+
+Add this to :py:const:`settings.TEMPLATE_CONTEXT_PROCESSORS` if you want to access preferences from templates::
+    TEMPLATE_CONTEXT_PROCESSORS =  (
+        'django.core.context_processors.request',
+        'dynamic_preferences.processors.global_preferences',
+        'dynamic_preferences.processors.user_preferences',
+    )
+
 Activate autodiscovering of registered preferences by appending the following to your `urls.py`::
 
     from dynamic_preferences.registries import autodiscover

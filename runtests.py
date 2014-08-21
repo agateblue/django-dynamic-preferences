@@ -29,8 +29,8 @@ settings.configure(
     },
     TEMPLATE_CONTEXT_PROCESSORS = default_settings.TEMPLATE_CONTEXT_PROCESSORS + (
         'django.core.context_processors.request',
-        'dynamic_preferences.processors.global_preferences_objects',
-        'dynamic_preferences.processors.user_preferences_objects',
+        'dynamic_preferences.processors.global_preferences',
+        'dynamic_preferences.processors.user_preferences',
     ),
     INSTALLED_APPS = (
         'django.contrib.auth',
