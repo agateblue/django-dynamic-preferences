@@ -37,8 +37,5 @@ urlpatterns = patterns('',
 if test:
 
     urlpatterns += patterns('',
-        url(r'^test/preferencemixin/global$',views.GlobalPreferenceView.as_view(), name="dynamic_preferences.test.globalpreferencemixin"),
-        url(r'^test/preferencemixin/user$',views.UserPreferenceView.as_view(), name="dynamic_preferences.test.userpreferencemixin"),
-        url(r'^test/preferencemixin/$',views.PreferenceView.as_view(), name="dynamic_preferences.test.preferencemixin"),
-        
+        url(r'^test/template$',views.RegularTemplateView.as_view(), name="dynamic_preferences.test.templateview"),      
     )

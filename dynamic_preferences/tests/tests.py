@@ -391,21 +391,17 @@ class TestViews(LiveServerTestCase):
         self.assertEqual(user_preferences.to_dict(user=user), expected)
 
 
-    def test_global_preference_mixin_pass_global_preferences_values_to_context(self):
-        
+    def test_template_gets_global_preferences_via_template_processor(self):
         call_command('checkpreferences', verbosity=1, interactive=False)
-        url = reverse("dynamic_preferences.test.globalpreferencemixin")
+        url = reverse("dynamic_preferences.test.templateview")
         response = self.client.get(url)
         self.assertEqual(response.context['global_preferences'], global_preferences.to_dict())
 
-    def test_user_registry_mixin_pass_user_preferences_values_to_context(self):
+    def test_template_gets_user_preferences_via_template_processor(self):
         call_command('checkpreferences', verbosity=1, interactive=False)
         user = User.objects.get(pk=1)
         self.client.login(username=user.username, password="test")
-        url = reverse("dynamic_preferences.test.userpreferencemixin")
+        url = reverse("dynamic_preferences.test.templateview")
         response = self.client.get(url)
-
         to_dict = user_preferences.to_dict(user=user)
         self.assertEqual(response.context['user_preferences'], to_dict)
-
-

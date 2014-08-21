@@ -117,16 +117,7 @@ Dynamic-preferences integrates with `django.contrib.admin` out of the box. You c
 Accessing preferences values within a template
 **********************************************
 
-Dynamic-preferences provide some mixins that will pass registries values to your templates context::
-
-    # in views.py
-
-    from django.views.generic import TemplateView
-    from dynamic_preferences.views import PreferenceMixin
-
-    class MyView(PreferenceMixin, TemplateView):
-        template_name = "myapp/mytemplate.html"
-
+Dynamic-preferences provide some context processors (remember to ad them to your settings, as described in "Installation") that will pass registries values to your templates context. You can access passed values as follows::
 
     # in myapp/mytemplate.html
 
