@@ -1,6 +1,20 @@
 Changelog
 =========
 
+0.2.3
+*****
+
+On 22/08/2014
+
+- Added LongStringPreference
+
+0.2.2
+*****
+
+On 21/08/2014
+
+- Removed view that added global and user preferences to context. They are now replaced by template context processors
+
 0.2.1
 *****
 
