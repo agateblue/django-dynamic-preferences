@@ -22,6 +22,14 @@ class MaxUsers(IntPreference, GlobalPreference):
     name = "max_users"
     default = 100
 
+
+@register
+class Header(LongStringPreference, GlobalPreference):
+    
+    section = "general"
+    name = "presentation"
+    default = "You need a presentation"
+
 @register
 class ItemsPerPage(IntPreference, GlobalPreference):
 

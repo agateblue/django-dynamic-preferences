@@ -101,6 +101,10 @@ class StringPreference(BasePreferenceType):
     serializer = StringSerializer
     default = ""
 
+class LongStringPreference(StringPreference):
+    _default_field_attributes = {
+        "widget": forms.Textarea,
+    }
 
 class ChoicePreference(BasePreferenceType):
 
