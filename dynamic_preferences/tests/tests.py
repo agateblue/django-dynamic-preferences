@@ -1,6 +1,6 @@
 from django.test import LiveServerTestCase, TestCase
 from dynamic_preferences.preferences import site_preferences_registry, user_preferences_registry, global_preferences_registry, SitePreference, UserPreference
-from dynamic_preferences.models import SitePreferenceModel, UserPreferenceModel,PreferenceSite, PreferenceUser, global_preferences, user_preferences
+from dynamic_preferences.models import SitePreferenceModel, UserPreferenceModel, global_preferences, user_preferences
 
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
@@ -65,10 +65,10 @@ class TestDynamicPreferences(LiveServerTestCase):
 
     def setUp(self):
 
-        self.test_user = PreferenceUser(username="test", password="test", email="test@test.com")
+        self.test_user = User(username="test", password="test", email="test@test.com")
         self.test_user.save()
 
-        self.test_site = PreferenceSite(domain="www.test.com", name="test")
+        self.test_site = Site(domain="www.test.com", name="test")
         self.test_site.save()
 
     def test_can_get_preference_value_by_key(self):

@@ -6,22 +6,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.db.models.query import QuerySet
-from utils import update
+from .utils import update
 from django.conf import settings
 from django.utils.functional import cached_property
 from dynamic_preferences.registries import user_preferences_registry, site_preferences_registry, global_preferences_registry
 
-class PreferenceSite(Site):
-
-    class Meta:
-        proxy = True
-        app_label = 'dynamic_preferences'
-
-
-class PreferenceUser(User):
-    class Meta:
-        proxy = True
-        app_label = 'dynamic_preferences'
 
 
 class PreferenceModelManager(models.Manager):

@@ -1,5 +1,6 @@
 import os
 from setuptools import setup, find_packages
+import django
 import dynamic_preferences
 README = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
 

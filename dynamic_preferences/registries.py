@@ -159,7 +159,7 @@ def autodiscover(force_reload=True):
         if test:
             # Import test preferences instead of regular ones
             prefix = ".tests"
-    except AttributeError, e:
+    except AttributeError as e:
         pass
 
     for app in settings.INSTALLED_APPS:
@@ -173,7 +173,7 @@ def autodiscover(force_reload=True):
                 # mainly used in tests
                 reload(mod)
 
-        except ImportError, e:
+        except ImportError as e:
             pass
             #print('Dynamic-preferences: cannnot import {0}, {1}'.format(package, e))
 

@@ -27,6 +27,14 @@ settings.configure(
             'NAME': ':memory:'
         }
     },
+    MIDDLEWARE_CLASSES = (
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    ),
     TEMPLATE_CONTEXT_PROCESSORS = default_settings.TEMPLATE_CONTEXT_PROCESSORS + (
         'django.core.context_processors.request',
         'dynamic_preferences.processors.global_preferences',
@@ -72,8 +80,11 @@ settings.configure(
             },
         },
     },
-    TESTING=True
+    TESTING=True,
+    TEST_RUNNER='django_nose.NoseTestSuiteRunner',
 )
+
+django.setup()
 call_command('syncdb', verbosity=1, interactive=False)
 autodiscover()
 
