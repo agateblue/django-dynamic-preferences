@@ -9,7 +9,7 @@ from dynamic_preferences.serializers import *
 from django.template import defaultfilters
 from dynamic_preferences.registries import autodiscover, clear
 from types import *
-from dynamic_preferences_registry import *
+from .test_app.dynamic_preferences_registry import *
 from dynamic_preferences.forms import global_preference_form_builder, user_preference_form_builder
 from django.core.urlresolvers import reverse
 from django.core.management import call_command
@@ -193,7 +193,7 @@ class TestRegistry(LiveServerTestCase):
         self.assertEqual(len(user_preferences_registry.preferences()), 6)
 
     def test_can_autodiscover_site_preferences(self):
-        clear()
+        #clear()
         with self.assertRaises(KeyError):
             site_preferences_registry.preferences(section='test')
         autodiscover(force_reload=True)
@@ -202,7 +202,7 @@ class TestRegistry(LiveServerTestCase):
 
     def test_can_autodiscover_user_preferences(self):
 
-        clear()
+        #clear()
         with self.assertRaises(KeyError):
             user_preferences_registry.preferences(section='test')
 

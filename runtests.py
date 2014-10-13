@@ -16,6 +16,8 @@ sys.stderr.write('Using Django version {0} from {1}\n'.format(
 
 # Detect location and available modules
 module_root = dirname(realpath(__file__))
+sys.path.append(module_root)
+
 
 # Inline settings file
 settings.configure(
@@ -47,6 +49,7 @@ settings.configure(
         'django.contrib.sessions',
         'django.contrib.admin',
         'dynamic_preferences',
+        'tests.test_app'
     ),
     ROOT_URLCONF = 'dynamic_preferences.urls',
     SITE_ID = 1,    

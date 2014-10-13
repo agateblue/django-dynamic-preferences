@@ -143,7 +143,7 @@ def clear():
     site_preferences_registry.clear()
     user_preferences_registry.clear()
 
-def autodiscover(force_reload=True):
+def autodiscover(force_reload=False):
     """
     Populate the registry by iterating through every section declared in :py:const:`settings.INSTALLED_APPS`.
 
@@ -151,21 +151,13 @@ def autodiscover(force_reload=True):
     :type force_reload: bool.
     """
     print('Dynamic-preferences: autodiscovering preferences...')
-    clear()
-    prefix = ""
+    if force_reload:
+        clear()
 
-    try:
-        test = settings.DYNAMIC_PREFERENCES_USE_TEST_PREFERENCES
-        if test:
-            # Import test preferences instead of regular ones
-            prefix = ".tests"
-    except AttributeError as e:
-        pass
 
     for app in settings.INSTALLED_APPS:
         # try to import self.package inside current app
-        package = '{0}{1}.{2}'.format(app, prefix, preferences_package)
-
+        package = '{0}.{1}'.format(app, preferences_package)
         try:
             #print('Dynamic-preferences: importing {0}...'.format(package))
             mod = import_module(package)
@@ -177,11 +169,11 @@ def autodiscover(force_reload=True):
             pass
             #print('Dynamic-preferences: cannnot import {0}, {1}'.format(package, e))
 
-    global_preferences_registry.populate()
+    
 
 def register(cls):
     instance = cls()
-
+    print('registering', cls)
     cls.registry.register(name=cls.name, section=cls.section, preference=instance)
     
     return cls
