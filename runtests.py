@@ -95,7 +95,7 @@ verbosity = 2 if '-v' in sys.argv else 1
 from django.test.utils import get_runner
 TestRunner = get_runner(settings) # DjangoTestSuiteRunner
 runner = TestRunner(verbosity=verbosity, interactive=True, failfast=False)
-failures = runner.run_tests(['dynamic_preferences'])
+failures = runner.run_tests(['tests'])
 
 if failures:
     sys.exit(bool(failures))
