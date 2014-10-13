@@ -51,7 +51,7 @@ settings.configure(
         'dynamic_preferences',
         'tests.test_app'
     ),
-    ROOT_URLCONF = 'dynamic_preferences.urls',
+    ROOT_URLCONF = 'tests.urls',
     SITE_ID = 1,    
     STATIC_URL = "/static/",
     TEMPLATE_LOADERS = (

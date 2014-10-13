@@ -386,7 +386,7 @@ class TestViews(LiveServerTestCase):
 
     def test_user_preference_model_manager_to_dict(self):
         call_command('checkpreferences', verbosity=1, interactive=False)
-        user = User.objects.get(pk=1)
+        user = User.objects.get(pk=self.henri.pk)
         expected = {u'misc': {u'favourite_colour': u'Green', u'is_zombie': True}, u'test': {u'SUserStringPref': u'Hello world!', u'SiteBooleanPref': False, u'TestUserPref1': u'default value', u'TestUserPref2': u''}}
         self.assertEqual(user_preferences.to_dict(user=user), expected)
 
@@ -399,7 +399,7 @@ class TestViews(LiveServerTestCase):
 
     def test_template_gets_user_preferences_via_template_processor(self):
         call_command('checkpreferences', verbosity=1, interactive=False)
-        user = User.objects.get(pk=1)
+        user = User.objects.get(pk=self.henri.pk)
         self.client.login(username=user.username, password="test")
         url = reverse("dynamic_preferences.test.templateview")
         response = self.client.get(url)
