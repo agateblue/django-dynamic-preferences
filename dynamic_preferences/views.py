@@ -1,7 +1,7 @@
 from django.views.generic import TemplateView, FormView
-from forms import preference_form_builder, user_preference_form_builder
-from registries import user_preferences_registry, global_preferences_registry
-from models import user_preferences, global_preferences
+from .forms import preference_form_builder, user_preference_form_builder
+from .registries import user_preferences_registry, global_preferences_registry
+from .models import user_preferences, global_preferences
 
 """Todo : remove these views and use only context processors"""
 class RegularTemplateView(TemplateView):

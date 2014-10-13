@@ -1,4 +1,4 @@
-from models import global_preferences as gb, user_preferences as up
+from .models import global_preferences as gb, user_preferences as up
 
 def global_preferences(request):
     """

@@ -89,7 +89,7 @@ class StringSerializer(BaseSerializer):
 
     @classmethod
     def serialize(cls, value, **kwargs):
-        if not isinstance(value, basestring):
+        if not isinstance(value, str):
             raise cls.exception("Cannot serialize, value {0} is not a string".format(value))
 
         if kwargs.get("escape_html", False):
@@ -99,7 +99,7 @@ class StringSerializer(BaseSerializer):
 
     @classmethod
     def deserialize(cls, value, **kwargs):
-        if not isinstance(value, basestring):
+        if not isinstance(value, str):
             raise cls.exception("Cannot deserialize, value {0} is not a string".format(value))
 
         return value

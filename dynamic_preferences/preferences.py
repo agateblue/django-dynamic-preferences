@@ -7,8 +7,9 @@ UserPreference, SitePreference and GlobalPreference are mapped to corresponding 
 which store the actual values.
 
 """
-from registries import user_preferences_registry, site_preferences_registry, global_preferences_registry
-from dynamic_preferences.models import SitePreferenceModel, UserPreferenceModel, GlobalPreferenceModel
+from __future__ import unicode_literals
+from .registries import user_preferences_registry, site_preferences_registry, global_preferences_registry
+from .models import SitePreferenceModel, UserPreferenceModel, GlobalPreferenceModel
 
 
 class BasePreference(object):
@@ -68,7 +69,7 @@ class BasePreference(object):
         Return the name and the section of the Preference joined with a separator, with the form `section<separator>name`
         """
         section = self.section or ""
-        return unicode(separator.join([section, self.name]))
+        return separator.join([section, self.name])
 
 class GlobalPreference(BasePreference):
     """

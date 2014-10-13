@@ -1,5 +1,5 @@
 from django import forms
-from registries import global_preferences_registry, user_preferences_registry, site_preferences_registry
+from .registries import global_preferences_registry, user_preferences_registry, site_preferences_registry
 
 def preference_form_builder(form_base_class, preferences=[], **kwargs):
     """

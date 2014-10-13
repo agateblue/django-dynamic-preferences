@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from django.test import LiveServerTestCase, TestCase
 from dynamic_preferences.preferences import site_preferences_registry, user_preferences_registry, global_preferences_registry, SitePreference, UserPreference
 from dynamic_preferences.models import SitePreferenceModel, UserPreferenceModel, global_preferences, user_preferences
