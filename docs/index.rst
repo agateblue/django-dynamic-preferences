@@ -21,6 +21,8 @@ and automatically deserialized when you want to access them.
 
 With dynamic-preferences, you can update settings on the fly, through django's admin or custom forms, without restarting your application.
 
+The project has been tested under Python 2.7, Python 3.4 and Django 1.7.
+
 If you're still interessed, head over :doc:`quickstart`.
 
 
