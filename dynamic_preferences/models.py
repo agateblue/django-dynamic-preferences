@@ -63,8 +63,8 @@ class BasePreferenceModel(models.Model):
     def __init__(self, *args, **kwargs):
         # Check if the model is already saved in DB
 
-        v = kwargs.pop("value", None)
 
+        v = kwargs.pop("value", None)
         super(BasePreferenceModel, self).__init__(*args, **kwargs)
 
         new = self.pk is None
@@ -141,15 +141,16 @@ user_preferences = UserPreferenceModel.objects
 # Right now, only works if the model is django.contrib.auth.models.User
 # And if settings.CREATE_DEFAULT_PREFERENCES_FOR_NEW_USERS is set to True in settings
 
-create_default_preferencesfor_new_users = getattr(settings, 'CREATE_DEFAULT_PREFERENCES_FOR_NEW_USERS', True)
 from django.db.models.signals import post_save
+from django.contrib.auth.models import User
 
 def create_default_preferences(sender, **kwargs): 
-    # the object which is saved can be accessed via kwargs 'instance' key.
-    obj = kwargs['instance']
-    created = kwargs.get("created")
-    user_preferences_registry.create_default_preferences(obj)
+    create_default_preferencesfor_new_users = getattr(settings, 'CREATE_DEFAULT_PREFERENCES_FOR_NEW_USERS', True)
+    if create_default_preferencesfor_new_users and settings.AUTH_USER_MODEL == "auth.User":
+        # the object which is saved can be accessed via kwargs 'instance' key.
+        obj = kwargs['instance']
+        created = kwargs.get("created")
+        user_preferences_registry.create_default_preferences(obj)
 
-if create_default_preferencesfor_new_users and settings.AUTH_USER_MODEL == "auth.User":
-    from django.contrib.auth.models import User
-    post_save.connect(create_default_preferences, sender=User)
+
+post_save.connect(create_default_preferences, sender=User)

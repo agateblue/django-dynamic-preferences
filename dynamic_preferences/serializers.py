@@ -1,3 +1,6 @@
+from __future__ import unicode_literals
+
+
 class SerializationError(Exception):
     pass
 
@@ -89,7 +92,7 @@ class StringSerializer(BaseSerializer):
 
     @classmethod
     def serialize(cls, value, **kwargs):
-        if not isinstance(value, str):
+        if not isinstance(value, str) and not isinstance(value, unicode):
             raise cls.exception("Cannot serialize, value {0} is not a string".format(value))
 
         if kwargs.get("escape_html", False):
@@ -99,7 +102,8 @@ class StringSerializer(BaseSerializer):
 
     @classmethod
     def deserialize(cls, value, **kwargs):
-        if not isinstance(value, str):
-            raise cls.exception("Cannot deserialize, value {0} is not a string".format(value))
-
-        return value
+        """String deserialisation just return the value as a string"""
+        try:
+            return str(value)
+        except:
+            raise cls.exception("Cannot deserialize value {0} tostring".format(value))

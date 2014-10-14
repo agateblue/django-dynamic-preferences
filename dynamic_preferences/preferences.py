@@ -44,6 +44,7 @@ class BasePreference(object):
         :param kwargs: Keyword arguments that will be passed directly to queryset or new model
         :return: a :py:class:`models.BasePreferenceModel` instance
         """
+
         value = kwargs.pop('value', None)
 
         try:
@@ -54,6 +55,7 @@ class BasePreference(object):
             )
 
         except self.model.DoesNotExist:
+            
             preference = self.model(
                 section=self.section,
                 name=self.name,

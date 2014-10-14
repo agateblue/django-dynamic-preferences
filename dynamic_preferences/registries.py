@@ -173,7 +173,7 @@ def autodiscover(force_reload=False):
 
 def register(cls):
     instance = cls()
-    print('registering', cls)
+    
     cls.registry.register(name=cls.name, section=cls.section, preference=instance)
     
     return cls

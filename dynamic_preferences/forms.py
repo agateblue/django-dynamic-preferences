@@ -13,7 +13,7 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
     if len(preferences) > 0:
         # Preferences have been selected explicitly 
         for pref in preferences:
-            if type(pref) == str:
+            if isinstance(pref, unicode):
                 preferences_obj.append(registry.get(name=pref))
             elif type(pref) == tuple:
                 preferences_obj.append(registry.get(name=pref[0], section=pref[1]))

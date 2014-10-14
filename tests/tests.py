@@ -14,6 +14,8 @@ from .test_app.dynamic_preferences_registry import *
 from dynamic_preferences.forms import global_preference_form_builder, user_preference_form_builder
 from django.core.urlresolvers import reverse
 from django.core.management import call_command
+from django.test.utils import override_settings
+
 
 class TestTutorial(LiveServerTestCase):
     """
@@ -103,12 +105,16 @@ class TestDynamicPreferences(LiveServerTestCase):
         self.assertEqual(test_site_pref1.name, "TestSitePref1")
         self.assertEqual(test_site_pref1.value, "new site value")
 
+
     def test_user_preference_is_saved_to_database(self):
+        with self.settings(CREATE_DEFAULT_PREFERENCES_FOR_NEW_USERS=False):
+            user = User(username="hello")
+            user.save()
 
         user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
-        instance = user_pref1.to_model(user=self.test_user, value="new user value")
+        instance = user_pref1.to_model(user=user, value="new user value")
 
-        test_user_pref1 = UserPreferenceModel.objects.get(section="test", name="TestUserPref1", user=self.test_user)
+        test_user_pref1 = UserPreferenceModel.objects.get(section="test", name="TestUserPref1", user=user)
         self.assertEqual(user_pref1, test_user_pref1.preference)
         self.assertEqual(test_user_pref1.section, "test")
         self.assertEqual(test_user_pref1.name, "TestUserPref1")
@@ -194,7 +200,7 @@ class TestRegistry(LiveServerTestCase):
         self.assertEqual(len(user_preferences_registry.preferences()), 6)
 
     def test_can_autodiscover_site_preferences(self):
-        #clear()
+        clear()
         with self.assertRaises(KeyError):
             site_preferences_registry.preferences(section='test')
         autodiscover(force_reload=True)
@@ -203,7 +209,7 @@ class TestRegistry(LiveServerTestCase):
 
     def test_can_autodiscover_user_preferences(self):
 
-        #clear()
+        clear()
         with self.assertRaises(KeyError):
             user_preferences_registry.preferences(section='test')
 
@@ -293,9 +299,6 @@ class TestSerializers(LiveServerTestCase):
             s.deserialize(s.serialize("<span>Please, I don't wanna disappear</span>", **kwargs)),
             defaultfilters.force_escape("<span>Please, I don't wanna disappear</span>")
         )
-
-        with self.assertRaises(s.exception):
-            s.deserialize({"FOR": "THE", "H":0, "R":"DE!!"})
 
    
 class TestViews(LiveServerTestCase):
