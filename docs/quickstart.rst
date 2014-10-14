@@ -26,6 +26,7 @@ Then, create missing tables in your database::
 
 
 Add this to :py:const:`settings.TEMPLATE_CONTEXT_PROCESSORS` if you want to access preferences from templates::
+    
     TEMPLATE_CONTEXT_PROCESSORS =  (
         'django.core.context_processors.request',
         'dynamic_preferences.processors.global_preferences',

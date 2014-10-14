@@ -1,5 +1,0 @@
-Preferences
-===========
-
-.. automodule:: preferences
-    :members:
