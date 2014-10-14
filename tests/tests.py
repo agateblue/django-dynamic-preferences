@@ -336,18 +336,19 @@ class TestViews(LiveServerTestCase):
 
     def test_global_preference_view_requires_staff_member(self):
         url = reverse("dynamic_preferences.global")
-        response = self.client.get(url)
-        self.assertIn('body class="login"', response.content)
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, "/admin/login/?next=/global/")
 
         self.client.login(username='henri', password="test")
         response = self.client.get(url)
-        self.assertIn('body class="login"', response.content)
+        self.assertRedirects(response, "/admin/login/?next=/global/")
 
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
 
         self.assertEqual(self.admin.is_authenticated(), True)
-        self.assertNotIn('body class="login"', response.content)
+        self.assertEqual(response.status_code, 200)
 
     def test_global_preference_view_display_form(self):
 
