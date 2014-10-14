@@ -5,6 +5,15 @@ from django.utils.importlib import import_module
 # import the logging library
 import logging
 
+try:
+    # use Python3 reload
+    from imp import reload
+
+except:
+
+    # we are on Python2
+    pass
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -139,6 +148,7 @@ def clear():
     """
     Remove all data from registries
     """
+
     global_preferences_registry.clear()
     site_preferences_registry.clear()
     user_preferences_registry.clear()
@@ -160,10 +170,11 @@ def autodiscover(force_reload=False):
         package = '{0}.{1}'.format(app, preferences_package)
         try:
             #print('Dynamic-preferences: importing {0}...'.format(package))
-            mod = import_module(package)
+            module = import_module(package)
+
             if force_reload:
                 # mainly used in tests
-                reload(mod)
+                reload(module)
 
         except ImportError as e:
             pass
@@ -172,8 +183,9 @@ def autodiscover(force_reload=False):
     
 
 def register(cls):
-    instance = cls()
     
+    instance = cls()
+
     cls.registry.register(name=cls.name, section=cls.section, preference=instance)
     
     return cls

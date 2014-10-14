@@ -9,7 +9,7 @@ from django.db import IntegrityError
 from dynamic_preferences.serializers import *
 from django.template import defaultfilters
 from dynamic_preferences.registries import autodiscover, clear
-from types import *
+from .types import *
 from .test_app.dynamic_preferences_registry import *
 from dynamic_preferences.forms import global_preference_form_builder, user_preference_form_builder
 from django.core.urlresolvers import reverse

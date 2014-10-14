@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from six import string_types
 
 
 class SerializationError(Exception):
@@ -92,7 +93,7 @@ class StringSerializer(BaseSerializer):
 
     @classmethod
     def serialize(cls, value, **kwargs):
-        if not isinstance(value, str) and not isinstance(value, unicode):
+        if not isinstance(value, string_types):
             raise cls.exception("Cannot serialize, value {0} is not a string".format(value))
 
         if kwargs.get("escape_html", False):

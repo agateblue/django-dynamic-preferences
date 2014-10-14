@@ -1,5 +1,6 @@
 from django import forms
 from .registries import global_preferences_registry, user_preferences_registry, site_preferences_registry
+from six import string_types
 
 def preference_form_builder(form_base_class, preferences=[], **kwargs):
     """
@@ -13,7 +14,7 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
     if len(preferences) > 0:
         # Preferences have been selected explicitly 
         for pref in preferences:
-            if isinstance(pref, unicode):
+            if isinstance(pref, string_types):
                 preferences_obj.append(registry.get(name=pref))
             elif type(pref) == tuple:
                 preferences_obj.append(registry.get(name=pref[0], section=pref[1]))
