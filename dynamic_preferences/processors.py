@@ -1,11 +1,11 @@
-from .models import global_preferences as gb, user_preferences as up
+from .models import GlobalPreferenceModel, UserPreferenceModel
 
 def global_preferences(request):
     """
         Pass the values of global preferences to template context.
         You can then access value with `global_preferences.<section>.<name>`
     """
-    return {'global_preferences': gb.to_dict()}
+    return {'global_preferences': GlobalPreferenceModel.objects.to_dict()}
 
 
 def user_preferences(request):
@@ -17,6 +17,6 @@ def user_preferences(request):
 
     user = request.user
     if user.is_authenticated():
-        return {'user_preferences': up.to_dict(user=user)}
+        return {'user_preferences': UserPreferenceModel.objects.to_dict(instance=user)}
 
     return {}

@@ -1,9 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
-from dynamic_preferences.models import GlobalPreferenceModel, UserPreferenceModel, SitePreferenceModel
-from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
-from dynamic_preferences.registries import autodiscover, global_preferences_registry, user_preferences_registry, \
-    site_preferences_registry
+from dynamic_preferences.models import GlobalPreferenceModel, UserPreferenceModel
+from dynamic_preferences import global_preferences
+from dynamic_preferences.registries import preference_models
 
 
 def delete_preferences(queryset):
@@ -28,61 +26,24 @@ class Command(BaseCommand):
            "not present in database"
 
     def handle(self, *args, **options):
-        autodiscover()
-        deleted = delete_preferences(GlobalPreferenceModel.objects.all())
-        print("Deleted {0} global preference models : {1}".format(
-            len(deleted),
-            ", ".join(['Section: {0} - Name: {1}'.format(p.section, p.name) for p in deleted])
-            )
-        )
-
-        deleted = delete_preferences(UserPreferenceModel.objects.all())
-        print("Deleted {0} user preference models : {1}".format(
-            len(deleted),
-            ", ".join(['Section: {0} - Name: {1}'.format(p.section, p.name) for p in deleted])
-            )
-        )
-
-        deleted = delete_preferences(SitePreferenceModel.objects.all())
-        print("Deleted {0} site preference models : {1}".format(
-            len(deleted),
-            ", ".join(['Section: {0} - Name: {1}'.format(p.section, p.name) for p in deleted])
-            )
-        )
 
         # Create needed preferences
         # Global
-        preferences = global_preferences_registry.preferences()
+        print('Creating missing global preferences...')        
+        preferences = global_preferences.preferences()
         for p in preferences:
             p.to_model()
 
-        print('Created/updated default global preferences')
+        deleted = delete_preferences(GlobalPreferenceModel.objects.all())
+        print("Deleted {0} global preferences".format(len(deleted)))
 
-        # User
-        preferences = user_preferences_registry.preferences()
-        users = User.objects.all()
-
-        for user in users:
-            for p in preferences:
-                p.to_model(user=user)
-
-        print('Created/updated default preferences for {0} users'.format(len(users)))
-
-        # Site
-        preferences = site_preferences_registry.preferences()
-        try:
-            site = Site.objects.get(pk=1)
-
-        except Site.DoesNotExist:
-            print('Cannot create default preference for first site. Please create add at least one site in your '
-                  'database.')
-            site = None
-
-        if site is not None:
-            for p in preferences:
-                p.to_model(site=site)
-
-            print('Created/updated default preferences for first site')
-
-
+        for preference_model, registry in preference_models.items():
+            deleted = delete_preferences(preference_model.objects.all())
+            print("Deleted {0} {1} preferences".format(len(deleted), preference_model.__class__.__name__))
+            print('Creating missing preferences for {0} model...'.format(preference_model.get_instance_model().__name__))
+            for instance in preference_model.get_instance_model().objects.all():
+                for p in registry.preferences():
+                    pref = p.to_model(instance=instance)
+                    if not pref.pk:
+                        pref.save()
 

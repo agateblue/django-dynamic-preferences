@@ -1,3 +1,5 @@
+**Warning: This project should not be considered as stable at the moment.**
+
 # What is dynamic-preferences ?
 
 Dynamic-preferences is a Django app designed to manage your project settings. While most of the time,
@@ -17,6 +19,19 @@ Links:
 - [Project page](http://code.eliotberriot.com/eliotberriot/django-dynamic-preferences)
 - [Documentation](http://django-dynamic-preferences.readthedocs.org)
 - [PyPi package](https://pypi.python.org/pypi/django-dynamic-preferences)
+
+
+# Changelog
+
+## 0.3
+
+This version breaks compatibility with 0.2.
+
+- Dropped support of django < 1.7
+- Tests refactoring
+- Added database migrations
+- Deleted SitePreferenceModel in favor of a more generic solution (PerInstancePreferenceModel). UserPreferenceModel is still here because it will be commonly used.
+- Major API cleanup
 
 # License
 

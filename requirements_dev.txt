@@ -1,0 +1,4 @@
+django<1.8
+nose
+django-nose
+six
