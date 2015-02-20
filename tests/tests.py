@@ -1,10 +1,9 @@
 from __future__ import unicode_literals
 from django.test import LiveServerTestCase, TestCase
-from dynamic_preferences.preferences import site_preferences_registry, user_preferences_registry, global_preferences_registry, SitePreference, UserPreference
-from dynamic_preferences.models import SitePreferenceModel, UserPreferenceModel, global_preferences, user_preferences
+from dynamic_preferences.preferences import user_preferences_registry, global_preferences_registry, UserPreference
+from dynamic_preferences.models import UserPreferenceModel, global_preferences, user_preferences
 
 from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 from django.db import IntegrityError
 from dynamic_preferences.serializers import *
 from django.template import defaultfilters
@@ -71,68 +70,47 @@ class TestDynamicPreferences(LiveServerTestCase):
         self.test_user = User(username="test", password="test", email="test@test.com")
         self.test_user.save()
 
-        self.test_site = Site(domain="www.test.com", name="test")
-        self.test_site.save()
-
     def test_can_get_preference_value_by_key(self):
-
-        site_pref1 = site_preferences_registry.get("TestSitePref1", "test")
-        self.assertEqual(site_pref1.default, TestSitePref1.default)
 
         user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
         self.assertEqual(user_pref1.default, TestUserPref1.default)
 
-    def test_can_change_site_preference_value(self):
-
-        site_pref1 = site_preferences_registry.get("TestSitePref1", "test")
-        site_pref1.value = "new value"
-
-        self.assertEqual(site_preferences_registry.get("TestSitePref1", "test").value, "new value")
+    def test_can_change_user_preference_value(self):
 
         user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
         user_pref1.value = "new value"
 
         self.assertEqual(user_preferences_registry.get("TestUserPref1","test").value, "new value")
 
-    def test_site_preference_is_saved_to_database(self):
+    def test_preference_is_saved_to_database(self):
 
-        site_pref1 = site_preferences_registry.get("TestSitePref1", "test")
-        site_pref1.to_model(instance=self.test_site, value="new site value")
+        user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
+        p = user_pref1.to_model(instance=self.test_user)
+        p.value = 'new test value'
+        p.save()
+        test_user_pref1 = UserPreferenceModel.objects.get(section="test", name="TestUserPref1", instance=self.test_user)
 
-        test_site_pref1 = SitePreferenceModel.objects.get(section="test", name="TestSitePref1", instance=self.test_site)
-        self.assertEqual(site_pref1, test_site_pref1.preference)
-        self.assertEqual(test_site_pref1.section, "test")
-        self.assertEqual(test_site_pref1.name, "TestSitePref1")
-        self.assertEqual(test_site_pref1.value, "new site value")
-
+        self.assertEqual(user_pref1, test_user_pref1.preference)
+        self.assertEqual(test_user_pref1.section, "test")
+        self.assertEqual(test_user_pref1.name, "TestUserPref1")
+        self.assertEqual(test_user_pref1.value, "new test value")
 
     def test_user_preference_is_saved_to_database(self):
-        with self.settings(CREATE_DEFAULT_PREFERENCES_FOR_NEW_USERS=False):
-            user = User(username="hello")
-            user.save()
+        user = User(username="hello")
+        user.save()
 
         user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
         instance = user_pref1.to_model(instance=user)
         instance.value = "new user value"
         instance.save()
-        
+
         test_user_pref1 = UserPreferenceModel.objects.get(section="test", name="TestUserPref1", instance=user)
         self.assertEqual(user_pref1, test_user_pref1.preference)
         self.assertEqual(test_user_pref1.section, "test")
         self.assertEqual(test_user_pref1.name, "TestUserPref1")
         self.assertEqual(test_user_pref1.value, "new user value")
 
-    def test_site_preference_stay_unique_in_db(self):
-
-        site_pref1 = site_preferences_registry.get("TestSitePref1", "test")
-        site_pref1.to_model(instance=self.test_site, value="new value")
-
-        duplicate = SitePreferenceModel(section="test", name="TestSitePref1", instance=self.test_site)
-
-        with self.assertRaises(IntegrityError):
-            duplicate.save()
-
-    def test_user_preference_stay_unique_in_db(self):
+    def test_per_instance_preference_stay_unique_in_db(self):
 
         user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
         user_pref1.to_model(instance=self.test_user, value="new value")
@@ -150,12 +128,15 @@ class TestDynamicPreferences(LiveServerTestCase):
         instance = UserPreferenceModel.objects.get(section="test", name="TestUserPref1", instance=self.test_user)
         self.assertEqual(pref.default, instance.value)
 
-        pref = site_preferences_registry.get("TestSitePref1", "test")
-        pref.to_model(instance=self.test_site)
+    def test_preference_model_manager_to_dict(self):
+        call_command('checkpreferences', verbosity=1, interactive=False)
+        expected = {u'test': {u'TestGlobal1': u'default value', u'TestGlobal2': False, u'TestGlobal3': False}, None: {u'no_section': False}, u'user': {u'max_users': 100, u'items_per_page': 25, u'registration_allowed': False, u'favorite_vegetable': u'C'}}
+        self.assertEqual(global_preferences.to_dict(), expected)
 
-        instance = SitePreferenceModel.objects.get(section="test", name="TestSitePref1", instance=self.test_site)
-        self.assertEqual(pref.default, instance.value)
-
+    def test_user_preference_model_manager_to_dict(self):
+        user = self.test_user
+        expected = {u'misc': {u'favourite_colour': u'Green', u'is_zombie': True}, u'test': {u'SUserStringPref': u'Hello world!', u'SiteBooleanPref': False, u'TestUserPref1': u'default value', u'TestUserPref2': u''}}
+        self.assertEqual(user_preferences.to_dict(instance=user), expected)
 
 class TestPreferenceObjects(LiveServerTestCase):
 
@@ -200,14 +181,6 @@ class TestRegistry(LiveServerTestCase):
         autodiscover()
         self.assertEqual(len(global_preferences_registry.preferences()), 8)
         self.assertEqual(len(user_preferences_registry.preferences()), 6)
-
-    def test_can_autodiscover_site_preferences(self):
-        clear()
-        with self.assertRaises(KeyError):
-            site_preferences_registry.preferences(section='test')
-        autodiscover(force_reload=True)
-
-        self.assertEqual(len(site_preferences_registry.preferences(section='test')), 4)
 
     def test_can_autodiscover_user_preferences(self):
 
@@ -386,26 +359,12 @@ class TestViews(LiveServerTestCase):
         self.assertEqual(self.henri.preferences.get(section="misc", name='favourite_colour').value, 'Purple')
         self.assertEqual(self.henri.preferences.get(section="misc", name='is_zombie').value, False)
 
-    def test_preference_model_manager_to_dict(self):
-        call_command('checkpreferences', verbosity=1, interactive=False)
-        expected = {u'test': {u'TestGlobal1': u'default value', u'TestGlobal2': False, u'TestGlobal3': False}, None: {u'no_section': False}, u'user': {u'max_users': 100, u'items_per_page': 25, u'registration_allowed': False, u'favorite_vegetable': u'C'}}
-        self.assertEqual(global_preferences.to_dict(), expected)
-
-    def test_user_preference_model_manager_to_dict(self):
-        call_command('checkpreferences', verbosity=1, interactive=False)
-        user = User.objects.get(pk=self.henri.pk)
-        expected = {u'misc': {u'favourite_colour': u'Green', u'is_zombie': True}, u'test': {u'SUserStringPref': u'Hello world!', u'SiteBooleanPref': False, u'TestUserPref1': u'default value', u'TestUserPref2': u''}}
-        self.assertEqual(user_preferences.to_dict(instance=user), expected)
-
-
     def test_template_gets_global_preferences_via_template_processor(self):
-        call_command('checkpreferences', verbosity=1, interactive=False)
         url = reverse("dynamic_preferences.test.templateview")
         response = self.client.get(url)
         self.assertEqual(response.context['global_preferences'], global_preferences.to_dict())
 
     def test_template_gets_user_preferences_via_template_processor(self):
-        call_command('checkpreferences', verbosity=1, interactive=False)
         user = User.objects.get(pk=self.henri.pk)
         self.client.login(username=user.username, password="test")
         url = reverse("dynamic_preferences.test.templateview")

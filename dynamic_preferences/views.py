@@ -8,6 +8,7 @@ class RegularTemplateView(TemplateView):
     """Used for testing context"""
     template_name = "dynamic_preferences/testcontext.html" 
 
+
 class PreferenceFormView(FormView):
     """Display a form for updating preferences of the given section provided via URL arg.
     If no section is provided, will dispaly a form for all fields of a given registry.

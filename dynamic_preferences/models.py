@@ -3,13 +3,11 @@ Preference models, queryset and managers that handle the logic for persisting pr
 """
 
 from django.db import models
-from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 from django.db.models.query import QuerySet
 from .utils import update
 from django.conf import settings
 from django.utils.functional import cached_property
-from dynamic_preferences.registries import user_preferences_registry, site_preferences_registry, global_preferences_registry, per_instance_preferences
+from dynamic_preferences.registries import user_preferences_registry, global_preferences_registry, per_instance_preferences
 
 
 
@@ -138,44 +136,32 @@ class UserPreferenceModel(PerInstancePreferenceModel):
         self.instance = value
     
 
-class SitePreferenceModel(BasePreferenceModel):
-
-    instance = models.ForeignKey(Site, related_name="preferences")
-    registry = site_preferences_registry
-
-    class Meta(PerInstancePreferenceModel.Meta):
-        app_label = 'dynamic_preferences'
-        verbose_name = "site preference"
-        verbose_name_plural = "site preferences"
-
-
-    @property
-    def site(self):
-        return self.instance
-    @site.setter
-    def site(self, value):
-        self.instance = value
-
 global_preferences = GlobalPreferenceModel.objects
-site_preferences = SitePreferenceModel.objects
 user_preferences = UserPreferenceModel.objects
 
 
 
 
 
-# Create default preferences for new users
-# Right now, only works if the model is django.contrib.auth.models.User
-# And if settings.CREATE_DEFAULT_PREFERENCES_FOR_NEW_USERS is set to True in settings
+# Create default preferences for new instances
 
 from django.db.models.signals import post_save
-from django.contrib.auth.models import User
 
 def create_default_per_instance_preferences(sender, created, instance, **kwargs): 
     """Create default preferences for PerInstancePreferenceModel"""
-    preference_class = per_instance_preferences.get(sender)
+    preference_class = None
+    try:
+        preference_class = per_instance_preferences[sender]
+    except KeyError:
+        # iterate through base classes, in case of inherited models
+        for parent_class in sender.__bases__:
+            try:
+                per_instance_preferences[parent_class]
+                break
+            except KeyError:
+                pass
+
     if created and preference_class:
         preference_class.registry.create_default_preferences(instance)
-
 
 post_save.connect(create_default_per_instance_preferences)

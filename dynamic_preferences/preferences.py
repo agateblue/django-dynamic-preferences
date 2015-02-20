@@ -8,8 +8,8 @@ which store the actual values.
 
 """
 from __future__ import unicode_literals
-from .registries import user_preferences_registry, site_preferences_registry, global_preferences_registry
-from .models import SitePreferenceModel, UserPreferenceModel, GlobalPreferenceModel
+from .registries import user_preferences_registry, global_preferences_registry
+from .models import UserPreferenceModel, GlobalPreferenceModel
 
 
 class BasePreference(object):
@@ -17,7 +17,7 @@ class BasePreference(object):
     A base class that handle common logic  for preferences
     """
 
-    #: The registry in which preference will be registered (:py:const:`registries.global_preferences`, :py:const:`registries.site_preferences` or :py:const:`registries.user_preferences`)
+    #: The registry in which preference will be registered (:py:const:`registries.global_preferences` or :py:const:`registries.user_preferences`)
     registry = None
 
     #: The section under which the preference will be registered
@@ -89,11 +89,3 @@ class UserPreference(BasePreference):
 
     registry = user_preferences_registry
     model = UserPreferenceModel
-
-
-class SitePreference(BasePreference):
-    """
-        Preference for each django.contrib.site
-    """
-    registry = site_preferences_registry
-    model = SitePreferenceModel

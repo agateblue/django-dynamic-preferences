@@ -1,5 +1,5 @@
 from django.contrib import admin
-from dynamic_preferences.models import GlobalPreferenceModel, UserPreferenceModel, SitePreferenceModel
+from dynamic_preferences.models import GlobalPreferenceModel, UserPreferenceModel
 from django import forms
 
 class PreferenceChangeListForm(forms.ModelForm):

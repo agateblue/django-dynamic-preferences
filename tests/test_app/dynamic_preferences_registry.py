@@ -1,4 +1,4 @@
-from dynamic_preferences.preferences import UserPreference, SitePreference, GlobalPreference
+from dynamic_preferences.preferences import UserPreference, GlobalPreference
 from dynamic_preferences.types import *
 from dynamic_preferences.registries import register
 
@@ -91,27 +91,6 @@ class UserBooleanPref(BooleanPreference, BaseTestPref, UserPreference):
 class UserStringPref(StringPreference, BaseTestPref, UserPreference):
     name = "SUserStringPref"
     default = "Hello world!"
-
-
-# Site Preferences
-@register
-class TestSitePref1(StringPreference, BaseTestPref, SitePreference):
-    name = "TestSitePref1"
-    default = "site default value"
-
-@register
-class TestSitePref2(StringPreference, BaseTestPref, SitePreference):
-    name = "TestSitePref2"
-
-@register
-class SiteBooleanPref(BooleanPreference, BaseTestPref, SitePreference):
-    name = "SiteBooleanPref"
-    default = False
-
-@register
-class SiteIntPref(IntPreference, BaseTestPref, SitePreference):
-    name = "SiteIntPref"
-    default = 2
 
 # Global
 @register

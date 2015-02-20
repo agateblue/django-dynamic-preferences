@@ -1,5 +1,5 @@
 from django import forms
-from .registries import global_preferences_registry, user_preferences_registry, site_preferences_registry
+from .registries import global_preferences_registry, user_preferences_registry
 from six import string_types
 
 def preference_form_builder(form_base_class, preferences=[], **kwargs):
@@ -53,11 +53,6 @@ def user_preference_form_builder(instance, preferences=[], **kwargs):
     """
     return preference_form_builder(UserPreferenceForm, preferences, model={'instance': instance}, **kwargs)
 
-def site_preference_form_builder(preferences=[], **kwargs):
-    """
-    A shortcut :py:func:`preference_form_builder(SitePreferenceForm, preferences, **kwargs)`
-    """
-    return preference_form_builder(SitePreferenceForm, preferences, **kwargs)
 
 class PreferenceForm(forms.Form):
 
@@ -75,7 +70,3 @@ class GlobalPreferenceForm(PreferenceForm):
 class UserPreferenceForm(PreferenceForm):
 
     registry = user_preferences_registry
-
-class SitePreferenceForm(PreferenceForm):
-
-    registry = site_preferences_registry
