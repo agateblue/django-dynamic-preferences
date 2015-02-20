@@ -31,6 +31,7 @@ This version breaks compatibility with 0.2.
 - Tests refactoring
 - Added database migrations
 - Deleted SitePreferenceModel in favor of a more generic solution (PerInstancePreferenceModel). UserPreferenceModel is still here because it will be commonly used.
+- Major API cleanup
 
 # License
 
