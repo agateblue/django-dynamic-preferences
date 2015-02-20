@@ -8,17 +8,12 @@ which store the actual values.
 
 """
 from __future__ import unicode_literals
-from .registries import user_preferences_registry, global_preferences_registry
-from .models import UserPreferenceModel, GlobalPreferenceModel
 
 
-class BasePreference(object):
+class Preference(object):
     """
     A base class that handle common logic  for preferences
     """
-
-    #: The registry in which preference will be registered (:py:const:`registries.global_preferences` or :py:const:`registries.user_preferences`)
-    registry = None
 
     #: The section under which the preference will be registered
     section = None
@@ -31,9 +26,6 @@ class BasePreference(object):
 
     #: The model corresponding to this preference type (:py:class:`SitePreference`, :py:class:`GlobalPreference` or :py:class:`UserPreference`)
     model = None
-
-    def register(self):
-        self.registry.register(name=self.name, section=self.section, preference=self)
 
     def to_model(self, **kwargs):
         """
@@ -72,20 +64,3 @@ class BasePreference(object):
         """
         section = self.section or ""
         return separator.join([section, self.name])
-
-class GlobalPreference(BasePreference):
-    """
-        A preference that apply to a whole django installation
-    """
-
-    registry = global_preferences_registry
-    model = GlobalPreferenceModel
-
-
-class UserPreference(BasePreference):
-    """
-    Preference that is tied to a :py:class:`django.contrib.auth.models.User` instance
-    """
-
-    registry = user_preferences_registry
-    model = UserPreferenceModel

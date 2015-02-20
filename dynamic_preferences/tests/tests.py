@@ -1,19 +1,20 @@
 from __future__ import unicode_literals
 from django.test import LiveServerTestCase, TestCase
-from dynamic_preferences.preferences import user_preferences_registry, global_preferences_registry, UserPreference
-from dynamic_preferences.models import UserPreferenceModel, global_preferences, user_preferences
-
-from django.contrib.auth.models import User
-from django.db import IntegrityError
-from dynamic_preferences.serializers import *
-from django.template import defaultfilters
-from dynamic_preferences.registries import autodiscover, clear
-from .types import *
-from .test_app.dynamic_preferences_registry import *
-from dynamic_preferences.forms import global_preference_form_builder, user_preference_form_builder
 from django.core.urlresolvers import reverse
 from django.core.management import call_command
 from django.test.utils import override_settings
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+from django.template import defaultfilters
+
+from dynamic_preferences.serializers import *
+from dynamic_preferences import user_preference_registry, global_preference_registry
+from dynamic_preferences.models import UserPreferenceModel, global_preferences, user_preferences
+from dynamic_preferences.registries import autodiscover, clear
+from dynamic_preferences.forms import global_preference_form_builder, user_preference_form_builder
+
+from .types import *
+from .test_app.dynamic_preferences_registry import *
 
 
 class TestTutorial(LiveServerTestCase):

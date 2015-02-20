@@ -18,14 +18,21 @@ except:
 logger = logging.getLogger(__name__)
 
 
-class PreferencesClassRegistry(dict):
-    """Store binding between app models and preferences class"""
-
-    def register(self, model, preference_class):
-        self[model] = preference_class
+#: The package where autodiscover will try to find preferences to register
+PREFERENCES_PACKAGE = "dynamic_preferences_registry"
 
 
-class PreferencesRegistry(dict):
+class PreferenceModelsRegistry(dict):
+    """Store beetween preferences model and preferences registry"""
+
+    def register(self, preference_model, preferences_registry):
+        self[preference_model] = preferences_registry
+
+
+preference_models = PreferenceModelsRegistry()
+
+
+class PreferenceRegistry(dict):
     """
     Registries are special dictionaries that are used by dynamic-preferences to register and access your preferences.
     dynamic-preferences has one registry per Preference type:
@@ -40,25 +47,19 @@ class PreferencesRegistry(dict):
 
     #: a name to identify the registry
     name = "preferences_registry"
-    def register(self, name, section, preference):
+    def register(self, preference_class):
         """
-        Store the given preference in the registry. Will also create the preference in database if it does not exist
+        Store the given preference class in the registry. 
 
-        This method is called by :py:class:`prefs.BasePreference`.
-        You should not have to call it manually.
-
-        :param section: The section name under which the preference should be registered
-        :type section: str.
-        :param name: The name of the preference
-        :type name: str.
-        :param preference: a :py:class:`prefs.BasePreference` instance
+        :param preference_class: a :py:class:`prefs.Preference` subclass
         """
+        preference = preference_class()
         try:
-            self[section][name] = preference
+            self[preference.section][preference.name] = preference
 
         except KeyError:
-            self[section] = {}
-            self[section][name] = preference
+            self[preference.section] = {}
+            self[preference.section][preference.name] = preference
 
     def get(self, name, section=None):
         """
@@ -128,16 +129,8 @@ class PreferencesRegistry(dict):
         """
         raise NotImplementedError
 
-#: The package where autodiscover will try to find preferences to register
-preferences_package = "dynamic_preferences_registry"
 
-class GlobalPreferencesRegistry(PreferencesRegistry):
-    def populate(self, **kwargs):
-        
-        return self.models(**kwargs)
-
-
-class PerInstancePreferencesRegistry(PreferencesRegistry):
+class PerInstancePreferenceRegistry(PreferenceRegistry):
     def create_default_preferences(self, instance):
         """
             Create default preferences models for a given instance
@@ -146,25 +139,12 @@ class PerInstancePreferencesRegistry(PreferencesRegistry):
             preference.to_model(instance=instance)
     
 
-class SitePreferencesRegistry(PerInstancePreferencesRegistry):
-    pass
-
-class UserPreferencesRegistry(PerInstancePreferencesRegistry):
-    pass
-
-per_instance_preferences = PreferencesClassRegistry()
-user_preferences_registry = UserPreferencesRegistry()
-site_preferences_registry = SitePreferencesRegistry()
-global_preferences_registry = GlobalPreferencesRegistry()
-
 def clear():
     """
     Remove all data from registries
     """
 
-    per_instance_preferences.clear()
     global_preferences_registry.clear()
-    site_preferences_registry.clear()
     user_preferences_registry.clear()
 
 def autodiscover(force_reload=False):
@@ -181,7 +161,7 @@ def autodiscover(force_reload=False):
 
     for app in settings.INSTALLED_APPS:
         # try to import self.package inside current app
-        package = '{0}.{1}'.format(app, preferences_package)
+        package = '{0}.{1}'.format(app, PREFERENCES_PACKAGE)
         try:
             #print('Dynamic-preferences: importing {0}...'.format(package))
             module = import_module(package)

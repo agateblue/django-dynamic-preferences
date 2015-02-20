@@ -7,7 +7,8 @@ from django.db.models.query import QuerySet
 from .utils import update
 from django.conf import settings
 from django.utils.functional import cached_property
-from dynamic_preferences.registries import user_preferences_registry, global_preferences_registry, per_instance_preferences
+from dynamic_preferences.dynamic_preferences_registry import user_preference_registry, global_preference_registry
+from dynamic_preferences.registries import preference_models
 
 
 
@@ -97,8 +98,6 @@ class BasePreferenceModel(models.Model):
 
 class GlobalPreferenceModel(BasePreferenceModel):
 
-    registry = global_preferences_registry
-
     class Meta:
         unique_together = ('section', 'name')
         app_label = 'dynamic_preferences'
@@ -121,7 +120,6 @@ class PerInstancePreferenceModel(BasePreferenceModel):
 class UserPreferenceModel(PerInstancePreferenceModel):
 
     instance = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="preferences")
-    registry = user_preferences_registry
 
     class Meta(PerInstancePreferenceModel.Meta):
         app_label = 'dynamic_preferences'
@@ -149,19 +147,14 @@ from django.db.models.signals import post_save
 
 def create_default_per_instance_preferences(sender, created, instance, **kwargs): 
     """Create default preferences for PerInstancePreferenceModel"""
-    preference_class = None
-    try:
-        preference_class = per_instance_preferences[sender]
-    except KeyError:
-        # iterate through base classes, in case of inherited models
-        for parent_class in sender.__bases__:
-            try:
-                per_instance_preferences[parent_class]
-                break
-            except KeyError:
-                pass
-
-    if created and preference_class:
-        preference_class.registry.create_default_preferences(instance)
+    
+    if created:
+        # we iterate throught registered preference models in order to get the instance class
+        # and check if instance is and instance of this class
+        for preference_model, registry in preference_models.items():
+            instance_class = preference_model._meta.get_field('instance').related
+            
+            if isinstance(instance, instance_class):
+                registry.create_default_preferences(instance)
 
 post_save.connect(create_default_per_instance_preferences)

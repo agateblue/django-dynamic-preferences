@@ -1,12 +1,12 @@
-from dynamic_preferences.preferences import UserPreference, GlobalPreference
+from dynamic_preferences.preferences import Preference
 from dynamic_preferences.types import *
-from dynamic_preferences.registries import register
+from dynamic_preferences import user_preference_registry, global_preference_registry
 
 
 # Tutorial preferences
 
-@register
-class RegistrationAllowed(BooleanPreference, GlobalPreference):
+@global_preference_registry.register
+class RegistrationAllowed(BooleanPreference, Preference):
     """
     Are new registrations allowed ?
     """
@@ -14,8 +14,8 @@ class RegistrationAllowed(BooleanPreference, GlobalPreference):
     name = "registration_allowed"
     default = False
 
-@register
-class MaxUsers(IntPreference, GlobalPreference):
+@global_preference_registry.register
+class MaxUsers(IntPreference, Preference):
     """
     Are new registrations allowed ?
     """
@@ -23,15 +23,15 @@ class MaxUsers(IntPreference, GlobalPreference):
     name = "max_users"
     default = 100
 
-@register
-class ItemsPerPage(IntPreference, GlobalPreference):
+@global_preference_registry.register
+class ItemsPerPage(IntPreference, Preference):
    
     section = "user"
     name = "items_per_page"
     default = 25
 
-@register
-class FavoriteVegetable(ChoicePreference, GlobalPreference):
+@user_preference_registry.register
+class FavoriteVegetable(ChoicePreference, Preference):
 
     choices = (
         ("C", "Carrot"),
@@ -42,8 +42,8 @@ class FavoriteVegetable(ChoicePreference, GlobalPreference):
     name = "favorite_vegetable"
     default = "C"
 
-@register
-class FavouriteColour(UserPreference, StringPreference):
+@user_preference_registry.register
+class FavouriteColour(Preference, StringPreference):
     """
     What's your favourite colour ?
     """
@@ -51,8 +51,8 @@ class FavouriteColour(UserPreference, StringPreference):
     name = "favourite_colour"
     default = "Green"
 
-@register
-class IsZombie(BooleanPreference, UserPreference):
+@user_preference_registry.register
+class IsZombie(BooleanPreference, Preference):
     """
     Are you a zombie ?
     """
@@ -65,48 +65,48 @@ class BaseTestPref(object):
 
 
 # No section pref
-@register
-class NoSection(BooleanPreference, GlobalPreference):
+@user_preference_registry.register
+class NoSection(BooleanPreference, Preference):
     name = "no_section"
     default = False
 
 
 
 # User preferences
-@register
-class TestUserPref1(StringPreference, BaseTestPref, UserPreference):
+@user_preference_registry.register
+class TestUserPref1(StringPreference, BaseTestPref, Preference):
     name = "TestUserPref1"
     default = "default value"
 
-@register
-class TestUserPref2(StringPreference, BaseTestPref, UserPreference):
+@user_preference_registry.register
+class TestUserPref2(StringPreference, BaseTestPref, Preference):
     name = "TestUserPref2"
 
-@register
-class UserBooleanPref(BooleanPreference, BaseTestPref, UserPreference):
+@user_preference_registry.register
+class UserBooleanPref(BooleanPreference, BaseTestPref, Preference):
     name = "SiteBooleanPref"
     default = False
 
-@register
-class UserStringPref(StringPreference, BaseTestPref, UserPreference):
+@user_preference_registry.register
+class UserStringPref(StringPreference, BaseTestPref, Preference):
     name = "SUserStringPref"
     default = "Hello world!"
 
 # Global
-@register
-class TestGlobal1(StringPreference, BaseTestPref, GlobalPreference):
+@global_preference_registry.register
+class TestGlobal1(StringPreference, BaseTestPref, Preference):
     name = "TestGlobal1"
     default = "default value"
 
 
-@register
-class TestGlobal2(BooleanPreference, BaseTestPref, GlobalPreference):
+@global_preference_registry.register
+class TestGlobal2(BooleanPreference, BaseTestPref, Preference):
     name = "TestGlobal2"
     default = False
 
 
-@register
-class TestGlobal3(BooleanPreference, BaseTestPref, GlobalPreference):
+@global_preference_registry.register
+class TestGlobal3(BooleanPreference, BaseTestPref, Preference):
     name = "TestGlobal3"
     default = False
 
