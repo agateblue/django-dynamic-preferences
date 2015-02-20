@@ -76,7 +76,7 @@ class PreferenceRegistry(dict):
             self[preference.section][preference.name] = preference
 
         return preference_class
-        
+
     def get(self, name, section=None):
         """
         Returns a previously registered preference
@@ -159,9 +159,10 @@ def clear():
     """
     Remove all data from registries
     """
-
-    global_preferences_registry.clear()
-    user_preferences_registry.clear()
+    from .dynamic_preferences_registry import global_preference_registry
+    global_preference_registry.clear()
+    for model, registry in preference_models.items():
+        registry.clear()
 
 def autodiscover(force_reload=False):
     """
@@ -189,13 +190,3 @@ def autodiscover(force_reload=False):
         except ImportError as e:
             pass
             #print('Dynamic-preferences: cannnot import {0}, {1}'.format(package, e))
-
-    
-
-def register(cls):
-    
-    instance = cls()
-
-    cls.registry.register(name=cls.name, section=cls.section, preference=instance)
-    
-    return cls

@@ -51,7 +51,7 @@ class TestTutorial(LiveServerTestCase):
 
 class TestModels(LiveServerTestCase):
     def test_can_save_and_retrieve_preference_with_section_none(self):
-        no_section_pref = global_preferences_registry.get(name="no_section")
+        no_section_pref = global_preference_registry.get(name="no_section")
         instance = no_section_pref.to_model()
         instance.save()
 
@@ -143,7 +143,7 @@ class TestDynamicPreferences(LiveServerTestCase):
 class TestPreferenceObjects(LiveServerTestCase):
 
     def test_can_get_to_string_notation(self):
-        pref = global_preferences_registry.get('user.registration_allowed')
+        pref = global_preference_registry.get('user.registration_allowed')
 
         self.assertEqual(pref.identifier(), 'user.registration_allowed')
         self.assertEqual(pref.identifier("__"), 'user__registration_allowed')
@@ -168,21 +168,21 @@ class TestPreferenceObjects(LiveServerTestCase):
 class TestRegistry(LiveServerTestCase):
 
     def test_can_retrieve_preference_using_dotted_notation(self):
-        registration_allowed = global_preferences_registry.get(name="registration_allowed", section="user")
-        dotted_result = global_preferences_registry.get("user.registration_allowed")
+        registration_allowed = global_preference_registry.get(name="registration_allowed", section="user")
+        dotted_result = global_preference_registry.get("user.registration_allowed")
         self.assertEqual(registration_allowed, dotted_result)
 
     def test_can_register_and_retrieve_preference_with_section_none(self):
-        no_section_pref = global_preferences_registry.get(name="no_section")
+        no_section_pref = global_preference_registry.get(name="no_section")
         self.assertEqual(no_section_pref.section, None)
 
     def test_can_autodiscover_multiple_times(self):
         autodiscover()
-        self.assertEqual(len(global_preferences_registry.preferences()), 8)
-        self.assertEqual(len(user_preference_registry.preferences()), 6)
+        self.assertEqual(len(global_preference_registry.preferences()), 7)
+        self.assertEqual(len(user_preference_registry.preferences()), 7)
         autodiscover()
-        self.assertEqual(len(global_preferences_registry.preferences()), 8)
-        self.assertEqual(len(user_preference_registry.preferences()), 6)
+        self.assertEqual(len(global_preference_registry.preferences()), 7)
+        self.assertEqual(len(user_preference_registry.preferences()), 7)
 
     def test_can_autodiscover_user_preferences(self):
 
@@ -332,23 +332,23 @@ class TestViews(LiveServerTestCase):
         url = reverse("dynamic_preferences.global")
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
-        self.assertEqual(len(response.context['form'].fields), 8)
-        self.assertEqual(response.context['registry'], global_preferences_registry)
+        self.assertEqual(len(response.context['form'].fields), 7)
+        self.assertEqual(response.context['registry'], global_preference_registry)
 
     def test_global_preference_filters_by_section(self):
         self.client.login(username='admin', password="test")
         url = reverse("dynamic_preferences.global.section", kwargs={"section": 'user'})
         response = self.client.get(url)
-        self.assertEqual(len(response.context['form'].fields), 4)
+        self.assertEqual(len(response.context['form'].fields), 3)
 
     def test_preference_are_updated_on_form_submission(self):
         self.client.login(username='admin', password="test")
         url = reverse("dynamic_preferences.global.section", kwargs={"section": 'user'})
         response = self.client.post(url, {'user.max_users': 95, 'user.registration_allowed': True,
-                                          'user.favorite_vegetable': "P", "user.items_per_page": 12})
+                                          "user.items_per_page": 12})
         self.assertEqual(global_preferences.get(section="user", name="max_users").value, 95)
         self.assertEqual(global_preferences.get(section="user", name="registration_allowed").value, True)
-        self.assertEqual(global_preferences.get(section="user", name="favorite_vegetable").value, 'P')
+        self.assertEqual(global_preferences.get(section="user", name="items_per_page").value, 12)
 
     def test_user_preference_form_is_bound_with_current_user(self):
         self.client.login(username='henri', password="test")
