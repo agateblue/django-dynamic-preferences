@@ -1,9 +1,6 @@
 Quickstart
 ==========
 
-Dependencies
-************
-Dynamic-preferences has een testedunder
 Installation
 ************
 
@@ -66,7 +63,7 @@ Let's declare a few preferences in this file::
         name = "favorite_colour"
         default = "Green"
 
-Note how we build our preferences object by inheriting from two base classes. :py:mod:`dynamic_preferences.preferences` classes such as :py:class:`GlobalPreference` and :py:class:`UserPreference` describe the level of your preference, i.e. if it apply to a user, a site, or globally. :py:mod:`dynamic_preferences.types` classes describe the data type you want to store in your preference (an integer, a boolean, a string...).
+Note how we build our preferences object by inheriting from two base classes. :py:mod:`dynamic_preferences.preferences` classes such as :py:class:`GlobalPreference` and :py:class:`UserPreference` describe the level of your preference, i.e. if it apply to a user or globally. :py:mod:`dynamic_preferences.types` classes describe the data type you want to store in your preference (an integer, a boolean, a string...).
 
 The :py:attr:`section` attribute is a convenient way to keep your preferences in different... well... sections. While you can totally forget this attribute, it is used in various places like admin or forms to filter and separate preferences. You'll probably find it useful if you have many different preferences.
 
@@ -102,7 +99,7 @@ Most of the time, you probably won't need to manipulate preferences by hand, and
 
     henri = User.objects.get(username="henri")
     favorite_colour_preference, created = user_preferences.get_or_create(section="misc", name="favorite_colour",
-    user=henri)
+    instance=henri)
 
     assert favorite_colour_preference.value == 'Green'
 
@@ -115,7 +112,7 @@ Most of the time, you probably won't need to manipulate preferences by hand, and
 
     assert henri.preferences.get(section="misc", name="favorite_colour").value == 'Blue'
 
-:py:obj:`global_preferences` and :py:obj:`user_preferences` are regular `Django managers <https://docs.djangoproject.com/en/dev/topics/db/managers/>`_, and they return standard models, so there is nothing new here.
+:py:obj:`global_preferences` and :py:obj:`user_preferences` are regular `Django managers <https://docs.djangoproject.com/en/dev/topics/db/managers/>`_, and they return standard model instances and queryset, so there is nothing new here.
 
 Admin integration
 *****************
@@ -125,7 +122,7 @@ Dynamic-preferences integrates with `django.contrib.admin` out of the box. You c
 Accessing preferences values within a template
 **********************************************
 
-Dynamic-preferences provide some context processors (remember to ad them to your settings, as described in "Installation") that will pass registries values to your templates context. You can access passed values as follows::
+Dynamic-preferences provide some context processors (remember to ad them to your settings, as described in "Installation") that will pass preferences values to your templates context. You can access passed values as follows::
 
     # in myapp/mytemplate.html
 
