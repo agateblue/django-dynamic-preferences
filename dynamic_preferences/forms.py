@@ -46,12 +46,12 @@ def global_preference_form_builder(preferences=[], **kwargs):
     """
     return preference_form_builder(GlobalPreferenceForm, preferences, **kwargs)
 
-def user_preference_form_builder(user, preferences=[], **kwargs):
+def user_preference_form_builder(instance, preferences=[], **kwargs):
     """
     A shortcut :py:func:`preference_form_builder(UserPreferenceForm, preferences, **kwargs)`
     :param user: a :py:class:`django.contrib.auth.models.User` instance
     """
-    return preference_form_builder(UserPreferenceForm, preferences, model={'user': user}, **kwargs)
+    return preference_form_builder(UserPreferenceForm, preferences, model={'instance': instance}, **kwargs)
 
 def site_preference_form_builder(preferences=[], **kwargs):
     """

@@ -50,5 +50,5 @@ class UserPreferenceFormView(PreferenceFormView):
     
     def get_form_class(self, *args, **kwargs):
         section = self.kwargs.get('section', None)
-        form_class = user_preference_form_builder(user=self.request.user, section=section)
+        form_class = user_preference_form_builder(instance=self.request.user, section=section)
         return form_class

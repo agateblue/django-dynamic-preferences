@@ -17,6 +17,14 @@ except:
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+
+class PreferencesClassRegistry(dict):
+    """Store binding between app models and preferences class"""
+
+    def register(self, model, preference_class):
+        self[model] = preference_class
+
+
 class PreferencesRegistry(dict):
     """
     Registries are special dictionaries that are used by dynamic-preferences to register and access your preferences.
@@ -128,18 +136,23 @@ class GlobalPreferencesRegistry(PreferencesRegistry):
         
         return self.models(**kwargs)
 
-class SitePreferencesRegistry(PreferencesRegistry):
-    pass
 
-class UserPreferencesRegistry(PreferencesRegistry):
-    
-    def create_default_preferences(self, user):
+class PerInstancePreferencesRegistry(PreferencesRegistry):
+    def create_default_preferences(self, instance):
         """
-            Create default preferences models for a given user
+            Create default preferences models for a given instance
         """
         for preference in self.preferences():
-            preference.to_model(user=user)
+            preference.to_model(instance=instance)
+    
 
+class SitePreferencesRegistry(PerInstancePreferencesRegistry):
+    pass
+
+class UserPreferencesRegistry(PerInstancePreferencesRegistry):
+    pass
+
+per_instance_preferences = PreferencesClassRegistry()
 user_preferences_registry = UserPreferencesRegistry()
 site_preferences_registry = SitePreferencesRegistry()
 global_preferences_registry = GlobalPreferencesRegistry()
@@ -149,6 +162,7 @@ def clear():
     Remove all data from registries
     """
 
+    per_instance_preferences.clear()
     global_preferences_registry.clear()
     site_preferences_registry.clear()
     user_preferences_registry.clear()

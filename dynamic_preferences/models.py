@@ -9,7 +9,7 @@ from django.db.models.query import QuerySet
 from .utils import update
 from django.conf import settings
 from django.utils.functional import cached_property
-from dynamic_preferences.registries import user_preferences_registry, site_preferences_registry, global_preferences_registry
+from dynamic_preferences.registries import user_preferences_registry, site_preferences_registry, global_preferences_registry, per_instance_preferences
 
 
 
@@ -62,8 +62,6 @@ class BasePreferenceModel(models.Model):
 
     def __init__(self, *args, **kwargs):
         # Check if the model is already saved in DB
-
-
         v = kwargs.pop("value", None)
         super(BasePreferenceModel, self).__init__(*args, **kwargs)
 
@@ -74,8 +72,6 @@ class BasePreferenceModel(models.Model):
                 self.value = v
             else:
                 self.value = self.preference.default
-
-
 
     @cached_property
     def preference(self):
@@ -95,8 +91,11 @@ class BasePreferenceModel(models.Model):
 
     value = property(get_value, set_value)
 
-    def __unicode__(self):
-        return self.preference.identifier()
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return '{0} - {1}/{2}: {3}'.format(self.__class__.__name__, self.section, self.name, self.value)
 
 class GlobalPreferenceModel(BasePreferenceModel):
 
@@ -110,32 +109,60 @@ class GlobalPreferenceModel(BasePreferenceModel):
         verbose_name_plural = "global preferences"
 
 
-class UserPreferenceModel(BasePreferenceModel):
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="preferences")
+class PerInstancePreferenceModel(BasePreferenceModel):
+    """For preferences that are tied to a specific model instance"""
+    #: the instance which is concerned by the preference
+    #: use a ForeignKey pointing to the model of your choice 
+    instance = None
+
+    class Meta(BasePreferenceModel.Meta):
+        unique_together = ('instance', 'section', 'name')
+        abstract = True
+
+class UserPreferenceModel(PerInstancePreferenceModel):
+
+    instance = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="preferences")
     registry = user_preferences_registry
 
-    class Meta:
-        unique_together = ('user', 'section', 'name')
+    class Meta(PerInstancePreferenceModel.Meta):
         app_label = 'dynamic_preferences'
         verbose_name = "user preference"
         verbose_name_plural = "user preferences"
 
+    @property
+    def user(self):
+        return self.instance
+    @user.setter
+    def user(self, value):
+        self.instance = value
+    
+
 class SitePreferenceModel(BasePreferenceModel):
 
-    site = models.ForeignKey(Site, related_name="preferences")
+    instance = models.ForeignKey(Site, related_name="preferences")
     registry = site_preferences_registry
 
-    class Meta:
-        unique_together = ('site', 'section', 'name')
+    class Meta(PerInstancePreferenceModel.Meta):
         app_label = 'dynamic_preferences'
         verbose_name = "site preference"
         verbose_name_plural = "site preferences"
 
 
+    @property
+    def site(self):
+        return self.instance
+    @site.setter
+    def site(self, value):
+        self.instance = value
+
 global_preferences = GlobalPreferenceModel.objects
 site_preferences = SitePreferenceModel.objects
 user_preferences = UserPreferenceModel.objects
+
+
+
+
 
 # Create default preferences for new users
 # Right now, only works if the model is django.contrib.auth.models.User
@@ -144,13 +171,11 @@ user_preferences = UserPreferenceModel.objects
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 
-def create_default_preferences(sender, **kwargs): 
-    create_default_preferencesfor_new_users = getattr(settings, 'CREATE_DEFAULT_PREFERENCES_FOR_NEW_USERS', True)
-    if create_default_preferencesfor_new_users and settings.AUTH_USER_MODEL == "auth.User":
-        # the object which is saved can be accessed via kwargs 'instance' key.
-        obj = kwargs['instance']
-        created = kwargs.get("created")
-        user_preferences_registry.create_default_preferences(obj)
+def create_default_per_instance_preferences(sender, created, instance, **kwargs): 
+    """Create default preferences for PerInstancePreferenceModel"""
+    preference_class = per_instance_preferences.get(sender)
+    if created and preference_class:
+        preference_class.registry.create_default_preferences(instance)
 
 
-post_save.connect(create_default_preferences, sender=User)
+post_save.connect(create_default_per_instance_preferences)

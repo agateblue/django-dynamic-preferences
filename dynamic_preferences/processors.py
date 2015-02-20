@@ -17,6 +17,6 @@ def user_preferences(request):
 
     user = request.user
     if user.is_authenticated():
-        return {'user_preferences': up.to_dict(user=user)}
+        return {'user_preferences': up.to_dict(instance=user)}
 
     return {}

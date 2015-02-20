@@ -64,7 +64,7 @@ class Command(BaseCommand):
 
         for user in users:
             for p in preferences:
-                p.to_model(user=user)
+                p.to_model(instance=user)
 
         print('Created/updated default preferences for {0} users'.format(len(users)))
 
@@ -80,7 +80,7 @@ class Command(BaseCommand):
 
         if site is not None:
             for p in preferences:
-                p.to_model(site=site)
+                p.to_model(instance=site)
 
             print('Created/updated default preferences for first site')
 
