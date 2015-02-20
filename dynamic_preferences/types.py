@@ -3,14 +3,16 @@
     preferences types (Bool, int, etc.) and rules according validation
 
 """
-from django.forms import CharField, IntegerField, BooleanField, ChoiceField, DateTimeField, TypedChoiceField
-from dynamic_preferences.serializers import *
-from django.utils.functional import cached_property
 import datetime
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.forms import CharField, IntegerField, BooleanField, ChoiceField, DateTimeField, TypedChoiceField
+from django.utils.functional import cached_property
 
-class BasePreferenceType(object):
+from .preferences import AbstractPreference
+from dynamic_preferences.serializers import *
+
+class BasePreferenceType(AbstractPreference):
 
     # A form field that will be used to display and edit the preference
     # use a class, not an instance

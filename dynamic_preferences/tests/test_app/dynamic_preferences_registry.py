@@ -1,4 +1,3 @@
-from dynamic_preferences.preferences import Preference
 from dynamic_preferences.types import *
 from dynamic_preferences import user_preference_registry, global_preference_registry
 
@@ -6,7 +5,7 @@ from dynamic_preferences import user_preference_registry, global_preference_regi
 # Tutorial preferences
 
 @global_preference_registry.register
-class RegistrationAllowed(BooleanPreference, Preference):
+class RegistrationAllowed(BooleanPreference):
     """
     Are new registrations allowed ?
     """
@@ -15,7 +14,7 @@ class RegistrationAllowed(BooleanPreference, Preference):
     default = False
 
 @global_preference_registry.register
-class MaxUsers(IntPreference, Preference):
+class MaxUsers(IntPreference):
     """
     Are new registrations allowed ?
     """
@@ -24,14 +23,14 @@ class MaxUsers(IntPreference, Preference):
     default = 100
 
 @global_preference_registry.register
-class ItemsPerPage(IntPreference, Preference):
+class ItemsPerPage(IntPreference):
    
     section = "user"
     name = "items_per_page"
     default = 25
 
 @user_preference_registry.register
-class FavoriteVegetable(ChoicePreference, Preference):
+class FavoriteVegetable(ChoicePreference):
 
     choices = (
         ("C", "Carrot"),
@@ -43,7 +42,7 @@ class FavoriteVegetable(ChoicePreference, Preference):
     default = "C"
 
 @user_preference_registry.register
-class FavouriteColour(Preference, StringPreference):
+class FavouriteColour(StringPreference):
     """
     What's your favourite colour ?
     """
@@ -52,7 +51,7 @@ class FavouriteColour(Preference, StringPreference):
     default = "Green"
 
 @user_preference_registry.register
-class IsZombie(BooleanPreference, Preference):
+class IsZombie(BooleanPreference):
     """
     Are you a zombie ?
     """
@@ -66,7 +65,7 @@ class BaseTestPref(object):
 
 # No section pref
 @global_preference_registry.register
-class NoSection(BooleanPreference, Preference):
+class NoSection(BooleanPreference):
     name = "no_section"
     default = False
 
@@ -74,39 +73,39 @@ class NoSection(BooleanPreference, Preference):
 
 # User preferences
 @user_preference_registry.register
-class TestUserPref1(StringPreference, BaseTestPref, Preference):
+class TestUserPref1(BaseTestPref, StringPreference):
     name = "TestUserPref1"
     default = "default value"
 
 @user_preference_registry.register
-class TestUserPref2(StringPreference, BaseTestPref, Preference):
+class TestUserPref2(BaseTestPref, StringPreference):
     name = "TestUserPref2"
 
 @user_preference_registry.register
-class UserBooleanPref(BooleanPreference, BaseTestPref, Preference):
+class UserBooleanPref(BaseTestPref, BooleanPreference):
     name = "SiteBooleanPref"
     default = False
 
 @user_preference_registry.register
-class UserStringPref(StringPreference, BaseTestPref, Preference):
+class UserStringPref(BaseTestPref, StringPreference):
     name = "SUserStringPref"
     default = "Hello world!"
 
 # Global
 @global_preference_registry.register
-class TestGlobal1(StringPreference, BaseTestPref, Preference):
+class TestGlobal1(BaseTestPref, StringPreference):
     name = "TestGlobal1"
     default = "default value"
 
 
 @global_preference_registry.register
-class TestGlobal2(BooleanPreference, BaseTestPref, Preference):
+class TestGlobal2(BaseTestPref, BooleanPreference):
     name = "TestGlobal2"
     default = False
 
 
 @global_preference_registry.register
-class TestGlobal3(BooleanPreference, BaseTestPref, Preference):
+class TestGlobal3(BaseTestPref, BooleanPreference):
     name = "TestGlobal3"
     default = False
 

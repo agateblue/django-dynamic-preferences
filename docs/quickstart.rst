@@ -33,16 +33,32 @@ Add this to :py:const:`settings.TEMPLATE_CONTEXT_PROCESSORS` if you want to acce
         'dynamic_preferences.processors.user_preferences',
     )
 
-Register preferences
-********************
 
-First, create a `dynamic_preferences_registry.py` file within one of your project app. The app must be listed in :py:const:`settings.INSTALLED_APPS`. You can of course have a `dynamic_preferences_registry.py` file in multiple apps.
+Glossary
+********
+
+.. glossary::
+
+    Preference
+        An object that deals with preference logic, such as serialization, deserialization, form display, default values, etc.
+        After being defined, preferences can be tied via registries to one ore many preference models, which will deal with database persistance. 
+
+    PreferenceModel
+        A model that store preferences values in database. A preference model may be tied to a particular instance, which is the case for UserPreferenceModel, or concern the whole project, as GlobalPreferenceModel.
+
+    PerInstancePreferenceModel
+        Used to store per instance preferences in database. Dynamic preferences is bundled with one kind of per-instance preference model, UserPreferenceModel, but you are free to create your own when needed.
+
+Create and register your own preferences
+****************************************
+
+In this example, we assume you are building a blog. Some preferences will apply to your whole project, while others will belong to specific users.
+
+First, create a `dynamic_preferences_registry.py` file within one of your project app. The app must be listed in :py:const:`settings.INSTALLED_APPS`.
 
 Let's declare a few preferences in this file::
 
-    from dynamic_preferences.preferences import UserPreference, GlobalPreference
     from dynamic_preferences.types import BooleanPreference, StringPreference
-    from dynamic_preferences.registries import register
 
     @register
     class RegistrationAllowed(BooleanPreference, GlobalPreference):

@@ -10,9 +10,9 @@ which store the actual values.
 from __future__ import unicode_literals
 
 
-class Preference(object):
+class AbstractPreference(object):
     """
-    A base class that handle common logic  for preferences
+    A base class that handle common logic for preferences
     """
 
     #: The section under which the preference will be registered
@@ -27,7 +27,7 @@ class Preference(object):
     #: The model corresponding to this preference type (:py:class:`SitePreference`, :py:class:`GlobalPreference` or :py:class:`UserPreference`)
     model = None
 
-    def __init__(self, registry):
+    def __init__(self, registry=None):
         self.registry = registry
         
     @property
