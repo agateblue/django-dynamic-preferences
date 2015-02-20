@@ -1,4 +1,4 @@
-from dynamic_preferences.preferences import UserPreference, SitePreference, GlobalPreference
+from dynamic_preferences.preferences import UserPreference, GlobalPreference
 from dynamic_preferences.types import *
 from dynamic_preferences.registries import register
 

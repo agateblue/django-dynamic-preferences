@@ -3,13 +3,13 @@ Preference models, queryset and managers that handle the logic for persisting pr
 """
 
 from django.db import models
-from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 from django.db.models.query import QuerySet
-from .utils import update
 from django.conf import settings
 from django.utils.functional import cached_property
-from dynamic_preferences.registries import user_preferences_registry, site_preferences_registry, global_preferences_registry
+
+from dynamic_preferences import user_preferences, global_preferences
+from dynamic_preferences.registries import preference_models
+from .utils import update
 
 
 
@@ -51,7 +51,6 @@ class BasePreferenceModel(models.Model):
 
     #: Keep a reference to the whole preference registry.
     #: In order to map the Preference Model Instance to the Preference object.
-    registry = None
 
     objects = PreferenceModelManager()
 
@@ -62,8 +61,6 @@ class BasePreferenceModel(models.Model):
 
     def __init__(self, *args, **kwargs):
         # Check if the model is already saved in DB
-
-
         v = kwargs.pop("value", None)
         super(BasePreferenceModel, self).__init__(*args, **kwargs)
 
@@ -75,11 +72,13 @@ class BasePreferenceModel(models.Model):
             else:
                 self.value = self.preference.default
 
-
-
     @cached_property
     def preference(self):
         return self.registry.get(section=self.section, name=self.name)
+        try:
+            pass
+        except AttributeError:
+            raise AttributeError('Cannot get a preference registry for this preference model. Have you registered it ?')
 
     def set_value(self, value):
         """
@@ -95,13 +94,16 @@ class BasePreferenceModel(models.Model):
 
     value = property(get_value, set_value)
 
-    def __unicode__(self):
-        return self.preference.identifier()
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return '{0} - {1}/{2}: {3}'.format(self.__class__.__name__, self.section, self.name, self.value)
+
 
 class GlobalPreferenceModel(BasePreferenceModel):
 
-    registry = global_preferences_registry
-
+    registry = global_preferences
     class Meta:
         unique_together = ('section', 'name')
         app_label = 'dynamic_preferences'
@@ -110,47 +112,61 @@ class GlobalPreferenceModel(BasePreferenceModel):
         verbose_name_plural = "global preferences"
 
 
-class UserPreferenceModel(BasePreferenceModel):
+class PerInstancePreferenceModel(BasePreferenceModel):
+    """For preferences that are tied to a specific model instance"""
+    #: the instance which is concerned by the preference
+    #: use a ForeignKey pointing to the model of your choice 
+    instance = None
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="preferences")
-    registry = user_preferences_registry
+    @classmethod 
+    def get_instance_model(cls):
+        return cls._meta.get_field('instance').rel.to
 
-    class Meta:
-        unique_together = ('user', 'section', 'name')
+    class Meta(BasePreferenceModel.Meta):
+        unique_together = ('instance', 'section', 'name')
+        abstract = True
+
+    @property
+    def registry(self):
+        return preference_models.get_by_instance(self.instance)
+
+
+class UserPreferenceModel(PerInstancePreferenceModel):
+
+    instance = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="preferences")
+
+    class Meta(PerInstancePreferenceModel.Meta):
         app_label = 'dynamic_preferences'
         verbose_name = "user preference"
         verbose_name_plural = "user preferences"
 
-class SitePreferenceModel(BasePreferenceModel):
-
-    site = models.ForeignKey(Site, related_name="preferences")
-    registry = site_preferences_registry
-
-    class Meta:
-        unique_together = ('site', 'section', 'name')
-        app_label = 'dynamic_preferences'
-        verbose_name = "site preference"
-        verbose_name_plural = "site preferences"
+    @property
+    def user(self):
+        return self.instance
+    @user.setter
+    def user(self, value):
+        self.instance = value
+    
 
 
-global_preferences = GlobalPreferenceModel.objects
-site_preferences = SitePreferenceModel.objects
-user_preferences = UserPreferenceModel.objects
 
-# Create default preferences for new users
-# Right now, only works if the model is django.contrib.auth.models.User
-# And if settings.CREATE_DEFAULT_PREFERENCES_FOR_NEW_USERS is set to True in settings
+preference_models.register(UserPreferenceModel, user_preferences)
+
+global_preferences.preference_model = GlobalPreferenceModel
+
+# Create default preferences for new instances
 
 from django.db.models.signals import post_save
-from django.contrib.auth.models import User
 
-def create_default_preferences(sender, **kwargs): 
-    create_default_preferencesfor_new_users = getattr(settings, 'CREATE_DEFAULT_PREFERENCES_FOR_NEW_USERS', True)
-    if create_default_preferencesfor_new_users and settings.AUTH_USER_MODEL == "auth.User":
-        # the object which is saved can be accessed via kwargs 'instance' key.
-        obj = kwargs['instance']
-        created = kwargs.get("created")
-        user_preferences_registry.create_default_preferences(obj)
+def create_default_per_instance_preferences(sender, created, instance, **kwargs): 
+    """Create default preferences for PerInstancePreferenceModel"""
+    
+    if created:
+        try:
+            registry = preference_models.get_by_instance(instance)
+            registry.create_default_preferences(instance)
+        except AttributeError:
+            pass
+            
 
-
-post_save.connect(create_default_preferences, sender=User)
+post_save.connect(create_default_per_instance_preferences)

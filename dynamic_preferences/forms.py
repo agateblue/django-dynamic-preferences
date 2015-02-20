@@ -1,5 +1,5 @@
 from django import forms
-from .registries import global_preferences_registry, user_preferences_registry, site_preferences_registry
+from . import global_preferences, user_preferences
 from six import string_types
 
 def preference_form_builder(form_base_class, preferences=[], **kwargs):
@@ -20,10 +20,14 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
                 preferences_obj.append(registry.get(name=pref[0], section=pref[1]))
             else:
                 raise NotImplementedError("The data you provide can't be converted to a Preference object")
-    else:
+    elif kwargs.get('section', None):
         # Try to use section param
         preferences_obj = registry.preferences(section=kwargs.get('section', None))
 
+    else:
+        # display all preferences in the form
+        preferences_obj = registry.preferences()
+        
     fields = {}
     instances = []
     for preference in preferences_obj:
@@ -46,18 +50,13 @@ def global_preference_form_builder(preferences=[], **kwargs):
     """
     return preference_form_builder(GlobalPreferenceForm, preferences, **kwargs)
 
-def user_preference_form_builder(user, preferences=[], **kwargs):
+def user_preference_form_builder(instance, preferences=[], **kwargs):
     """
     A shortcut :py:func:`preference_form_builder(UserPreferenceForm, preferences, **kwargs)`
     :param user: a :py:class:`django.contrib.auth.models.User` instance
     """
-    return preference_form_builder(UserPreferenceForm, preferences, model={'user': user}, **kwargs)
+    return preference_form_builder(UserPreferenceForm, preferences, model={'instance': instance}, **kwargs)
 
-def site_preference_form_builder(preferences=[], **kwargs):
-    """
-    A shortcut :py:func:`preference_form_builder(SitePreferenceForm, preferences, **kwargs)`
-    """
-    return preference_form_builder(SitePreferenceForm, preferences, **kwargs)
 
 class PreferenceForm(forms.Form):
 
@@ -70,12 +69,8 @@ class PreferenceForm(forms.Form):
 
 class GlobalPreferenceForm(PreferenceForm):
 
-    registry = global_preferences_registry
+    registry = global_preferences
 
 class UserPreferenceForm(PreferenceForm):
 
-    registry = user_preferences_registry
-
-class SitePreferenceForm(PreferenceForm):
-
-    registry = site_preferences_registry
+    registry = user_preferences
