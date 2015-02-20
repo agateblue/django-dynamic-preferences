@@ -1,8 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from dynamic_preferences.models import GlobalPreferenceModel, UserPreferenceModel
-from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
-from dynamic_preferences.registries import global_preferences_registry, per_instance_preferences
+from dynamic_preferences import global_preference_registry
+from dynamic_preferences.registries import preference_models
 
 
 def delete_preferences(queryset):
@@ -31,19 +30,19 @@ class Command(BaseCommand):
         # Create needed preferences
         # Global
         print('Creating missing global preferences...')        
-        preferences = global_preferences_registry.preferences()
+        preferences = global_preference_registry.preferences()
         for p in preferences:
             p.to_model()
 
         deleted = delete_preferences(GlobalPreferenceModel.objects.all())
         print("Deleted {0} global preferences".format(len(deleted)))
 
-        for model, preference_class in per_instance_preferences.items():
-            deleted = delete_preferences(preference_class.model.objects.all())
-            print("Deleted {0} {1} preferences".format(len(deleted), model.__class__.__name__))
-            print('Creating missing preferences for {0} model...'.format(model.__class__.__name__))
-            for instance in model.objects.all():
-                for p in preference_class.registry.preferences():
+        for preference_model, registry in preference_models.items():
+            deleted = delete_preferences(preference_model.objects.all())
+            print("Deleted {0} {1} preferences".format(len(deleted), preference_model.__class__.__name__))
+            print('Creating missing preferences for {0} model...'.format(preference_model.get_instance_model().__name__))
+            for instance in preference_model.get_instance_model().objects.all():
+                for p in registry.preferences():
                     pref = p.to_model(instance=instance)
                     if not pref.pk:
                         pref.save()

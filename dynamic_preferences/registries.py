@@ -25,9 +25,21 @@ PREFERENCES_PACKAGE = "dynamic_preferences_registry"
 class PreferenceModelsRegistry(dict):
     """Store beetween preferences model and preferences registry"""
 
-    def register(self, preference_model, preferences_registry):
-        self[preference_model] = preferences_registry
+    def register(self, preference_model, preference_registry):
+        self[preference_model] = preference_registry
+        preference_registry.preference_model = preference_model
 
+    def get_by_instance(self, instance):
+        """Return a preference registry using a model instance"""
+        # we iterate throught registered preference models in order to get the instance class
+        # and check if instance is and instance of this class
+        for model, registry in self.items():
+            instance_class = model._meta.get_field('instance').rel.to            
+            if isinstance(instance, instance_class):
+                return registry
+                break
+
+        return None
 
 preference_models = PreferenceModelsRegistry()
 
@@ -47,13 +59,15 @@ class PreferenceRegistry(dict):
 
     #: a name to identify the registry
     name = "preferences_registry"
+    preference_model = None
+
     def register(self, preference_class):
         """
         Store the given preference class in the registry. 
 
         :param preference_class: a :py:class:`prefs.Preference` subclass
         """
-        preference = preference_class()
+        preference = preference_class(registry=self)
         try:
             self[preference.section][preference.name] = preference
 
@@ -61,6 +75,8 @@ class PreferenceRegistry(dict):
             self[preference.section] = {}
             self[preference.section][preference.name] = preference
 
+        return preference_class
+        
     def get(self, name, section=None):
         """
         Returns a previously registered preference

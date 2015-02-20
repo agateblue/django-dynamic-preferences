@@ -50,7 +50,6 @@ class BasePreferenceModel(models.Model):
 
     #: Keep a reference to the whole preference registry.
     #: In order to map the Preference Model Instance to the Preference object.
-    registry = None
 
     objects = PreferenceModelManager()
 
@@ -75,6 +74,10 @@ class BasePreferenceModel(models.Model):
     @cached_property
     def preference(self):
         return self.registry.get(section=self.section, name=self.name)
+        try:
+            pass
+        except AttributeError:
+            raise AttributeError('Cannot get a preference registry for this preference model. Have you registered it ?')
 
     def set_value(self, value):
         """
@@ -96,8 +99,10 @@ class BasePreferenceModel(models.Model):
     def __repr__(self):
         return '{0} - {1}/{2}: {3}'.format(self.__class__.__name__, self.section, self.name, self.value)
 
+
 class GlobalPreferenceModel(BasePreferenceModel):
 
+    registry = global_preference_registry
     class Meta:
         unique_together = ('section', 'name')
         app_label = 'dynamic_preferences'
@@ -106,16 +111,24 @@ class GlobalPreferenceModel(BasePreferenceModel):
         verbose_name_plural = "global preferences"
 
 
-
 class PerInstancePreferenceModel(BasePreferenceModel):
     """For preferences that are tied to a specific model instance"""
     #: the instance which is concerned by the preference
     #: use a ForeignKey pointing to the model of your choice 
     instance = None
 
+    @classmethod 
+    def get_instance_model(cls):
+        return cls._meta.get_field('instance').rel.to
+
     class Meta(BasePreferenceModel.Meta):
         unique_together = ('instance', 'section', 'name')
         abstract = True
+
+    @property
+    def registry(self):
+        return preference_models.get_by_instance(self.instance)
+
 
 class UserPreferenceModel(PerInstancePreferenceModel):
 
@@ -138,8 +151,9 @@ global_preferences = GlobalPreferenceModel.objects
 user_preferences = UserPreferenceModel.objects
 
 
+preference_models.register(UserPreferenceModel, user_preference_registry)
 
-
+global_preference_registry.preference_model = GlobalPreferenceModel
 
 # Create default preferences for new instances
 
@@ -149,12 +163,11 @@ def create_default_per_instance_preferences(sender, created, instance, **kwargs)
     """Create default preferences for PerInstancePreferenceModel"""
     
     if created:
-        # we iterate throught registered preference models in order to get the instance class
-        # and check if instance is and instance of this class
-        for preference_model, registry in preference_models.items():
-            instance_class = preference_model._meta.get_field('instance').related
+        try:
+            registry = preference_models.get_by_instance(instance)
+            registry.create_default_preferences(instance)
+        except AttributeError:
+            pass
             
-            if isinstance(instance, instance_class):
-                registry.create_default_preferences(instance)
 
 post_save.connect(create_default_per_instance_preferences)

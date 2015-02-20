@@ -62,7 +62,7 @@ class TestModels(LiveServerTestCase):
         u = User(username="post_create")
         u.save()
 
-        self.assertEqual(u.preferences.count(), len(user_preferences_registry.preferences()))
+        self.assertEqual(u.preferences.count(), len(user_preference_registry.preferences()))
 
 class TestDynamicPreferences(LiveServerTestCase):
 
@@ -73,19 +73,20 @@ class TestDynamicPreferences(LiveServerTestCase):
 
     def test_can_get_preference_value_by_key(self):
 
-        user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
+        user_pref1 = user_preference_registry.get("TestUserPref1", "test")
+        print(user_preference_registry)
         self.assertEqual(user_pref1.default, TestUserPref1.default)
 
     def test_can_change_user_preference_value(self):
 
-        user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
+        user_pref1 = user_preference_registry.get("TestUserPref1", "test")
         user_pref1.value = "new value"
 
-        self.assertEqual(user_preferences_registry.get("TestUserPref1","test").value, "new value")
+        self.assertEqual(user_preference_registry.get("TestUserPref1","test").value, "new value")
 
     def test_preference_is_saved_to_database(self):
 
-        user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
+        user_pref1 = user_preference_registry.get("TestUserPref1", "test")
         p = user_pref1.to_model(instance=self.test_user)
         p.value = 'new test value'
         p.save()
@@ -100,7 +101,7 @@ class TestDynamicPreferences(LiveServerTestCase):
         user = User(username="hello")
         user.save()
 
-        user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
+        user_pref1 = user_preference_registry.get("TestUserPref1", "test")
         instance = user_pref1.to_model(instance=user)
         instance.value = "new user value"
         instance.save()
@@ -113,7 +114,7 @@ class TestDynamicPreferences(LiveServerTestCase):
 
     def test_per_instance_preference_stay_unique_in_db(self):
 
-        user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
+        user_pref1 = user_preference_registry.get("TestUserPref1", "test")
         user_pref1.to_model(instance=self.test_user, value="new value")
 
         duplicate = UserPreferenceModel(section="test", name="TestUserPref1", instance=self.test_user)
@@ -123,7 +124,7 @@ class TestDynamicPreferences(LiveServerTestCase):
 
     def test_preference_value_set_to_default(self):
 
-        pref = user_preferences_registry.get("TestUserPref1", "test")
+        pref = user_preference_registry.get("TestUserPref1", "test")
         pref.to_model(instance=self.test_user)
 
         instance = UserPreferenceModel.objects.get(section="test", name="TestUserPref1", instance=self.test_user)
@@ -131,12 +132,12 @@ class TestDynamicPreferences(LiveServerTestCase):
 
     def test_preference_model_manager_to_dict(self):
         call_command('checkpreferences', verbosity=1, interactive=False)
-        expected = {u'test': {u'TestGlobal1': u'default value', u'TestGlobal2': False, u'TestGlobal3': False}, None: {u'no_section': False}, u'user': {u'max_users': 100, u'items_per_page': 25, u'registration_allowed': False, u'favorite_vegetable': u'C'}}
-        self.assertEqual(global_preferences.to_dict(), expected)
+        expected = {u'test': {u'TestGlobal1': u'default value', u'TestGlobal2': False, u'TestGlobal3': False}, None: {u'no_section': False}, u'user': {u'max_users': 100, u'items_per_page': 25, u'registration_allowed': False}}
+        self.assertDictEqual(global_preferences.to_dict(), expected)
 
     def test_user_preference_model_manager_to_dict(self):
         user = self.test_user
-        expected = {u'misc': {u'favourite_colour': u'Green', u'is_zombie': True}, u'test': {u'SUserStringPref': u'Hello world!', u'SiteBooleanPref': False, u'TestUserPref1': u'default value', u'TestUserPref2': u''}}
+        expected = {u'misc': {u'favourite_colour': u'Green', u'is_zombie': True}, u'user': {u'favorite_vegetable': 'C'}, u'test': {u'SUserStringPref': u'Hello world!', u'SiteBooleanPref': False, u'TestUserPref1': u'default value', u'TestUserPref2': u''}}
         self.assertEqual(user_preferences.to_dict(instance=user), expected)
 
 class TestPreferenceObjects(LiveServerTestCase):
@@ -178,20 +179,20 @@ class TestRegistry(LiveServerTestCase):
     def test_can_autodiscover_multiple_times(self):
         autodiscover()
         self.assertEqual(len(global_preferences_registry.preferences()), 8)
-        self.assertEqual(len(user_preferences_registry.preferences()), 6)
+        self.assertEqual(len(user_preference_registry.preferences()), 6)
         autodiscover()
         self.assertEqual(len(global_preferences_registry.preferences()), 8)
-        self.assertEqual(len(user_preferences_registry.preferences()), 6)
+        self.assertEqual(len(user_preference_registry.preferences()), 6)
 
     def test_can_autodiscover_user_preferences(self):
 
         clear()
         with self.assertRaises(KeyError):
-            user_preferences_registry.preferences(section='test')
+            user_preference_registry.preferences(section='test')
 
         autodiscover(force_reload=True)
 
-        self.assertEqual(len(user_preferences_registry.preferences(section='test')), 4)
+        self.assertEqual(len(user_preference_registry.preferences(section='test')), 4)
 
 
 class TestSerializers(LiveServerTestCase):

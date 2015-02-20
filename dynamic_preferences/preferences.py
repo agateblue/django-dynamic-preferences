@@ -27,6 +27,13 @@ class Preference(object):
     #: The model corresponding to this preference type (:py:class:`SitePreference`, :py:class:`GlobalPreference` or :py:class:`UserPreference`)
     model = None
 
+    def __init__(self, registry):
+        self.registry = registry
+        
+    @property
+    def model(self):
+        return self.registry.preference_model
+
     def to_model(self, **kwargs):
         """
         Retrieve a model instance corresponding to the Preference in database.

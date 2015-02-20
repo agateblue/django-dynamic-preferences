@@ -65,7 +65,7 @@ class BaseTestPref(object):
 
 
 # No section pref
-@user_preference_registry.register
+@global_preference_registry.register
 class NoSection(BooleanPreference, Preference):
     name = "no_section"
     default = False
