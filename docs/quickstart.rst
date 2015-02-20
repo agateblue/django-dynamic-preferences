@@ -15,7 +15,6 @@ Add this to your :py:const:`settings.INSTALLED_APPS`::
 
     INSTALLED_APPS = (
         # ...
-        'django.contrib.sites',
         'django.contrib.auth',
         'dynamic_preferences',        
     )
@@ -56,30 +55,30 @@ In this example, we assume you are building a blog. Some preferences will apply 
 
 First, create a `dynamic_preferences_registry.py` file within one of your project app. The app must be listed in :py:const:`settings.INSTALLED_APPS`.
 
-Let's declare a few preferences in this file::
+Let's declare a few preferences in this file:
+
+.. code-block:: python
+
+    # blog/dynamic_preferences_registry.py
 
     from dynamic_preferences.types import BooleanPreference, StringPreference
+    from dynamic_preferences import user_preferences, global_preferences
 
-    @register
-    class RegistrationAllowed(BooleanPreference, GlobalPreference):
-        """
-        Are new registrations allowed ?
-        """
-        section = "auth"
-        name = "registration_allowed"
-        default = False
+    # We start with a global preference
+    @global_preferences.register
+    class SiteTitle(StringPreference):
+        section = 'general'
+        name = 'title'
+        default = 'My site'
 
+    # now we declare a per-user preference
+    @user_preferences.register
+    class CommentNotificationsEnabled(BooleanPreference):
+        """Do you want to be notified on comment publication ?"""
+        section = 'discussion'
+        name = 'comment_notifications_enabled'
+        default = True
 
-    @register
-    class FavoriteColour(StringPreference, UserPreference):
-        """
-        What's your favorite colour ?
-        """
-        section = "misc"
-        name = "favorite_colour"
-        default = "Green"
-
-Note how we build our preferences object by inheriting from two base classes. :py:mod:`dynamic_preferences.preferences` classes such as :py:class:`GlobalPreference` and :py:class:`UserPreference` describe the level of your preference, i.e. if it apply to a user or globally. :py:mod:`dynamic_preferences.types` classes describe the data type you want to store in your preference (an integer, a boolean, a string...).
 
 The :py:attr:`section` attribute is a convenient way to keep your preferences in different... well... sections. While you can totally forget this attribute, it is used in various places like admin or forms to filter and separate preferences. You'll probably find it useful if you have many different preferences.
 
@@ -88,81 +87,109 @@ The :py:attr:`name` attribute is a unique identifier for your preference. Howeve
 Retrieve and update preferences
 *******************************
 
-Most of the time, you probably won't need to manipulate preferences by hand, and prefer to rely on forms and admin interface. Just in case, here is a quick overview of how you can interact with preferences::
+Most of the time, you probably won't need to manipulate preferences by hand, and prefer to rely on forms and admin interface. Just in case, here is a quick overview of how you can interact with preferences. Preferences are (almost) regular django models::
 
-    from dynamic_preferences.models import global_preferences, user_preferences
+    from dynamic_preferences.models import GlobalPreferenceModel, UserPreferenceModel
 
     # let's start with our global preference
     # Retrieve the model object corresponding to our preference
     # we use django's regular get_or_create method to create the preference if it does not exist
-
-    registration_allowed_preference, created = global_preferences.get_or_create(section="auth",
-    name="registration_allowed")
-
-    # get the value (Should be False, since RegistrationAllowed.default is False)
-
-    registration_is_allowed = registration_allowed_preference.value
-    assert registration_is_allowed == False
+    site_title, created = GlobalPreferenceModel.objects.get_or_create(section='general', name='title')
+    assert site_title == 'My site'
 
     # preferences are regular models, and can be updated the same way
-
-    registration_allowed_preference.value = True
-    registration_allowed_preference.save()
+    site_title.value = 'My awesome site'
+    site_title.save()
 
     # dealing with user preferences is quite similar, except you need to provide the corresponding User instance
-
     from django.contrib.auth.models import User
-
     henri = User.objects.get(username="henri")
-    favorite_colour_preference, created = user_preferences.get_or_create(section="misc", name="favorite_colour",
-    instance=henri)
+    comment_notifications_enabled, created = user_preferences.get_or_create(section='discussion', name='comment_notifications_enabled', instance=henri)
 
-    assert favorite_colour_preference.value == 'Green'
+    assert comment_notifications_enabled.value == True
 
     # Update the value
-
-    favorite_colour_preference.value = 'Blue'
-    favorite_colour_preference.save()
+    comment_notifications_enabled.value = False
+    comment_notifications_enabled.save()
 
     # Note that you can also access preferences directly from a User instance
+    assert henri.preferences.get(section="misc", name="favorite_colour").value == False
 
-    assert henri.preferences.get(section="misc", name="favorite_colour").value == 'Blue'
 
-:py:obj:`global_preferences` and :py:obj:`user_preferences` are regular `Django managers <https://docs.djangoproject.com/en/dev/topics/db/managers/>`_, and they return standard model instances and queryset, so there is nothing new here.
+About serialization
+*******************
+
+Each preference value is serialized into the ``raw_value`` field of a preference model instance before being saved, and deserialized when you access the ``value`` attribute of a preference model intance. Dynamic preferences handle this for you, using your preference type (BooleanPreference, StringPreference, IntPreference, etc.). It's totally possible to create your own preferences types and serializers, have a look at ``types.py`` and ``serializers.py`` to get started.
+
 
 Admin integration
 *****************
 
-Dynamic-preferences integrates with `django.contrib.admin` out of the box. You can therefore use the admin interface to edit preferences values, which is particularly convenient for global and per-site preferences.
+Dynamic-preferences integrates with `django.contrib.admin` out of the box. You can therefore use the admin interface to edit preferences values, which is particularly convenient for global preferences.
+
+Forms
+*****
+
+A form builder is provided if you want to create and update preferences in custom views.
+
+.. code-block:: python
+
+    from dynamic_preferences.forms import global_preference_form_builder
+
+    # get a form for all global preferences
+    form_class = global_preference_form_builder()
+
+    # get a form for global preferences of the 'general' section
+    form_class = global_preference_form_builder(section='general')
+
+    # get a form for a specific set of preferences
+    # You can use the dotted notation (section.name) as follow
+    form_class = global_preference_form_builder(preferences=['general.title'])
+
+    # or pass explicitly the section and names as an iterable of tuples
+    form_class = global_preference_form_builder(preferences=[('general', 'title'), ('another_section', 'another_name')])
+
+
+Getting a form for a specific user preferences works similarly, except that you need to provide the user instance:
+
+.. code-block:: python
+
+    from dynamic_preferences.forms import user_preference_form_builder
+
+    form_class = global_preference_form_builder(instance=request.user)
+    form_class = global_preference_form_builder(instance=request.user, section='discussion')
+    # etc.    
+
 
 Accessing preferences values within a template
 **********************************************
 
-Dynamic-preferences provide some context processors (remember to ad them to your settings, as described in "Installation") that will pass preferences values to your templates context. You can access passed values as follows::
+Dynamic-preferences provide some context processors (remember to add them to your settings, as described in "Installation") that will pass preferences values to your templates context. You can access passed values as follows:
 
-    # in myapp/mytemplate.html
+.. code-block:: html+django
 
-    {% if global_preferences.auth.registration_allowed %}
-        You can register an account on the website
+    # myapp/templates/mytemplate.html
+
+    <title>{{ global_preferences.general.title }}</title>
+
+    {% if user_preferences.discussion.comment_notifications_enabled %}
+        You will receive an email each time a comment is published
     {% else %}
-        Registrations are closed now
+        <a href='/subscribe'>Subscribe to comments notifications</a>
     {% endif %}
 
-    # accessing user preferences requires an authenticated user
 
-    {% if request.user.is_authenticated %}
-        Hello {{ request.user.username }}, your favorite colour is {{ user_preferences.misc.favorite_colour }}.
-    {% endif %}
+Bundled views and urls
+**********************
 
-Display preferences forms
-*************************
+Example views and urls are bundled for global and per-user preferences updating. Include this in your URLconf:
 
-When you want your preferences to be editable by users who do not have access to admin interface (which should be the case for user preferences), you can use bundled URLs and views. All you need is to include dynamic-preferences' urls into your application::
+.. code-block:: python
 
-    urlpatterns = patterns('',    
-        # ...
+    urlpatterns = [   
+        # your project urls here
         url(r'^preferences/', include('dynamic_preferences.urls')),
-    )
+    ]
 
 Then, in your code::
 
@@ -171,28 +198,25 @@ Then, in your code::
     # URL to a page that display a form to edit all global preferences
     url = reverse("dynamic_preferences.global")
 
-    # URL to a page that display a form to edit global preferences listed in section 'auth'
-    url = reverse("dynamic_preferences.global.section", kwargs={'section': 'auth'})
+    # URL to a page that display a form to edit global preferences of the general section
+    url = reverse("dynamic_preferences.global.section", kwargs={'section': 'general'})
 
     # URL to a page that display a form to edit all preferences of the user making the request
     url = reverse("dynamic_preferences.user")
 
-    # URL to a page that display a form to edit preferences listed under section 'misc' of the user making the request
-    url = reverse("dynamic_preferences.user.section", kwargs={'section': 'misc'})
+    # URL to a page that display a form to edit preferences listed under section 'discussion' of the user making the request
+    url = reverse("dynamic_preferences.user.section", kwargs={'section': 'discussion'})
+
 
 Keep registries in sync with you database
 *****************************************
 
-If you add or remove preferences from your `dynamic_preferences_registry.py`, you may encounter `KeyError` exceptions when you try to display preferences related forms or admin pages. This happens because you have preferences instances in your database that does not correspond to any registered preference object in your registries. 
+Dynamic preferences does not create default global preferences in database.
+In case of per-instance preferences (such as user preferences), each time a model instance with registered preferences is created, it will get default preferences. However, if you declare another preference, already created instances will miss the new preference.
 
-To solve this, you can run ``python manage.py checkpreferences`` inside your project. This command will check every preference in database, and remove/create needed ones. Please note this can take some time if you have many users.
+The ``checkpreferences`` command to deal with that. It will:
 
-A few settings
-**************
+- Delete useless preferences from your database
+- Create missing global and per instance preferences
 
-Dynamic-preferences has a few settings you can modify in your `settings.py`.
-
-- :py:const:`CREATE_DEFAULT_PREFERENCES_FOR_NEW_USERS` : will create default preferences objects in database each time a new user is added (default is True). At the moment, this setting will only work with :py:class:`django.contrib.auth.models.User`.
-
-
-
+Run it with ``python manage.py checkpreferences``.

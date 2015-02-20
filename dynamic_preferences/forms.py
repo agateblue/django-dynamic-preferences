@@ -20,10 +20,14 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
                 preferences_obj.append(registry.get(name=pref[0], section=pref[1]))
             else:
                 raise NotImplementedError("The data you provide can't be converted to a Preference object")
-    else:
+    elif kwargs.get('section', None):
         # Try to use section param
         preferences_obj = registry.preferences(section=kwargs.get('section', None))
 
+    else:
+        # display all preferences in the form
+        preferences_obj = registry.preferences()
+        
     fields = {}
     instances = []
     for preference in preferences_obj:
