@@ -29,9 +29,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.admin',
     'dynamic_preferences',
-    'tests.test_app'
+    'dynamic_preferences.tests.test_app'
 )
-ROOT_URLCONF = 'tests.urls'
+ROOT_URLCONF = 'dynamic_preferences.tests.urls'
 SITE_ID = 1   
 STATIC_URL = "/static/"
 TEMPLATE_LOADERS = (

@@ -5,7 +5,7 @@ import sys
 from django.conf import settings
 import django
 
-from tests import settings as test_settings
+from dynamic_preferences.tests import settings as test_settings
 
 
 

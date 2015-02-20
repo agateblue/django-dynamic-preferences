@@ -12,7 +12,3 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^preferences/', include('dynamic_preferences.urls')),
 )
-
-
-from dynamic_preferences.registries import autodiscover
-autodiscover(True)

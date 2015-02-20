@@ -1,6 +1,9 @@
 Quickstart
 ==========
 
+Dependencies
+************
+Dynamic-preferences has een testedunder
 Installation
 ************
 
@@ -32,14 +35,6 @@ Add this to :py:const:`settings.TEMPLATE_CONTEXT_PROCESSORS` if you want to acce
         'dynamic_preferences.processors.global_preferences',
         'dynamic_preferences.processors.user_preferences',
     )
-
-Activate autodiscovering of registered preferences by appending the following to your `urls.py`::
-
-    from dynamic_preferences.registries import autodiscover
-    autodiscover()
-
-By calling :py:func:`autodiscover`, dynamic-preferences will iterate through each app registered in
-:py:const:`settings.INSTALLED_APPS`, trying to import :py:mod:`dynamic_preferences_registry` package.
 
 Register preferences
 ********************
