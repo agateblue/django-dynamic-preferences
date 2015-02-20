@@ -1,10 +1,10 @@
 from dynamic_preferences.types import *
-from dynamic_preferences import user_preference_registry, global_preference_registry
+from dynamic_preferences import user_preferences, global_preferences
 
 
 # Tutorial preferences
 
-@global_preference_registry.register
+@global_preferences.register
 class RegistrationAllowed(BooleanPreference):
     """
     Are new registrations allowed ?
@@ -13,7 +13,7 @@ class RegistrationAllowed(BooleanPreference):
     name = "registration_allowed"
     default = False
 
-@global_preference_registry.register
+@global_preferences.register
 class MaxUsers(IntPreference):
     """
     Are new registrations allowed ?
@@ -22,14 +22,14 @@ class MaxUsers(IntPreference):
     name = "max_users"
     default = 100
 
-@global_preference_registry.register
+@global_preferences.register
 class ItemsPerPage(IntPreference):
    
     section = "user"
     name = "items_per_page"
     default = 25
 
-@user_preference_registry.register
+@user_preferences.register
 class FavoriteVegetable(ChoicePreference):
 
     choices = (
@@ -41,7 +41,7 @@ class FavoriteVegetable(ChoicePreference):
     name = "favorite_vegetable"
     default = "C"
 
-@user_preference_registry.register
+@user_preferences.register
 class FavouriteColour(StringPreference):
     """
     What's your favourite colour ?
@@ -50,7 +50,7 @@ class FavouriteColour(StringPreference):
     name = "favourite_colour"
     default = "Green"
 
-@user_preference_registry.register
+@user_preferences.register
 class IsZombie(BooleanPreference):
     """
     Are you a zombie ?
@@ -64,7 +64,7 @@ class BaseTestPref(object):
 
 
 # No section pref
-@global_preference_registry.register
+@global_preferences.register
 class NoSection(BooleanPreference):
     name = "no_section"
     default = False
@@ -72,39 +72,39 @@ class NoSection(BooleanPreference):
 
 
 # User preferences
-@user_preference_registry.register
+@user_preferences.register
 class TestUserPref1(BaseTestPref, StringPreference):
     name = "TestUserPref1"
     default = "default value"
 
-@user_preference_registry.register
+@user_preferences.register
 class TestUserPref2(BaseTestPref, StringPreference):
     name = "TestUserPref2"
 
-@user_preference_registry.register
+@user_preferences.register
 class UserBooleanPref(BaseTestPref, BooleanPreference):
     name = "SiteBooleanPref"
     default = False
 
-@user_preference_registry.register
+@user_preferences.register
 class UserStringPref(BaseTestPref, StringPreference):
     name = "SUserStringPref"
     default = "Hello world!"
 
 # Global
-@global_preference_registry.register
+@global_preferences.register
 class TestGlobal1(BaseTestPref, StringPreference):
     name = "TestGlobal1"
     default = "default value"
 
 
-@global_preference_registry.register
+@global_preferences.register
 class TestGlobal2(BaseTestPref, BooleanPreference):
     name = "TestGlobal2"
     default = False
 
 
-@global_preference_registry.register
+@global_preferences.register
 class TestGlobal3(BaseTestPref, BooleanPreference):
     name = "TestGlobal3"
     default = False

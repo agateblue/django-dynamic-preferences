@@ -4,11 +4,12 @@ Preference models, queryset and managers that handle the logic for persisting pr
 
 from django.db import models
 from django.db.models.query import QuerySet
-from .utils import update
 from django.conf import settings
 from django.utils.functional import cached_property
-from dynamic_preferences.dynamic_preferences_registry import user_preference_registry, global_preference_registry
+
+from dynamic_preferences import user_preferences, global_preferences
 from dynamic_preferences.registries import preference_models
+from .utils import update
 
 
 
@@ -102,7 +103,7 @@ class BasePreferenceModel(models.Model):
 
 class GlobalPreferenceModel(BasePreferenceModel):
 
-    registry = global_preference_registry
+    registry = global_preferences
     class Meta:
         unique_together = ('section', 'name')
         app_label = 'dynamic_preferences'
@@ -147,13 +148,11 @@ class UserPreferenceModel(PerInstancePreferenceModel):
         self.instance = value
     
 
-global_preferences = GlobalPreferenceModel.objects
-user_preferences = UserPreferenceModel.objects
 
 
-preference_models.register(UserPreferenceModel, user_preference_registry)
+preference_models.register(UserPreferenceModel, user_preferences)
 
-global_preference_registry.preference_model = GlobalPreferenceModel
+global_preferences.preference_model = GlobalPreferenceModel
 
 # Create default preferences for new instances
 

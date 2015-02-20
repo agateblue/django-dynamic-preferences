@@ -1,5 +1,5 @@
 from django import forms
-from . import global_preference_registry, user_preference_registry
+from . import global_preferences, user_preferences
 from six import string_types
 
 def preference_form_builder(form_base_class, preferences=[], **kwargs):
@@ -65,8 +65,8 @@ class PreferenceForm(forms.Form):
 
 class GlobalPreferenceForm(PreferenceForm):
 
-    registry = global_preference_registry
+    registry = global_preferences
 
 class UserPreferenceForm(PreferenceForm):
 
-    registry = user_preference_registry
+    registry = user_preferences

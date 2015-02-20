@@ -9,5 +9,5 @@ class UserPreferenceRegistry(PerInstancePreferenceRegistry):
     pass
 
 
-user_preference_registry = UserPreferenceRegistry()
-global_preference_registry = GlobalPreferenceRegistry()
+user_preferences = UserPreferenceRegistry()
+global_preferences = GlobalPreferenceRegistry()

@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from dynamic_preferences.models import GlobalPreferenceModel, UserPreferenceModel
-from dynamic_preferences import global_preference_registry
+from dynamic_preferences import global_preferences
 from dynamic_preferences.registries import preference_models
 
 
@@ -30,7 +30,7 @@ class Command(BaseCommand):
         # Create needed preferences
         # Global
         print('Creating missing global preferences...')        
-        preferences = global_preference_registry.preferences()
+        preferences = global_preferences.preferences()
         for p in preferences:
             p.to_model()
 
