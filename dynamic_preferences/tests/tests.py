@@ -405,6 +405,7 @@ class TestViews(LiveServerTestCase):
         self.assertEqual(self.henri.preferences.get(section="misc", name='is_zombie').value, False)
 
     def test_template_gets_global_preferences_via_template_processor(self):
+        global_preferences.models()
         url = reverse("dynamic_preferences.test.templateview")
         response = self.client.get(url)
         self.assertEqual(response.context['global_preferences'], GlobalPreferenceModel.objects.to_dict())
