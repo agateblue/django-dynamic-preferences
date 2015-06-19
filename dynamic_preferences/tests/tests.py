@@ -64,6 +64,17 @@ class TestModels(LiveServerTestCase):
 
         self.assertEqual(u.preferences.count(), len(user_preferences.preferences()))
 
+
+    def test_can_cache_preference(self):
+        no_section_pref = global_preferences.get(name="no_section")
+        instance = no_section_pref.to_model()
+        instance.save()
+
+        preference_getter = global_preferences.getter()
+        with self.assertNumQueries(1):
+            v = preference_getter.get('no_section')
+            v = preference_getter.get('no_section')
+
 class TestDynamicPreferences(LiveServerTestCase):
 
     def setUp(self):
@@ -277,7 +288,7 @@ class TestSerializers(LiveServerTestCase):
             defaultfilters.force_escape("<span>Please, I don't wanna disappear</span>")
         )
 
-   
+
 class TestViews(LiveServerTestCase):
 
     def setUp(self):

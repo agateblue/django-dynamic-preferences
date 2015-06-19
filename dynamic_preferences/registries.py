@@ -1,6 +1,8 @@
 
 
 from django.conf import settings
+
+
 from django.utils.importlib import import_module
 # import the logging library
 import logging
@@ -34,7 +36,7 @@ class PreferenceModelsRegistry(dict):
         # we iterate throught registered preference models in order to get the instance class
         # and check if instance is and instance of this class
         for model, registry in self.items():
-            instance_class = model._meta.get_field('instance').rel.to            
+            instance_class = model._meta.get_field('instance').rel.to
             if isinstance(instance, instance_class):
                 return registry
                 break
@@ -43,6 +45,38 @@ class PreferenceModelsRegistry(dict):
 
 preference_models = PreferenceModelsRegistry()
 
+class PreferenceGetter(object):
+    """Handle retrieving / caching of preferences"""
+    def __init__(self, model, registry, **kwargs):
+
+        from django.core.cache import caches
+        self.model = model
+
+        self.cache = caches['default']
+        self.registry = registry
+        self.queryset = self.model.objects.all()
+        if kwargs.get('instance'):
+            self.queryset = self.queryset.filter(instance=instance)
+
+    def __getitem__(self, key):
+        return self.get_section(key)
+
+    def get(self, key):
+        try:
+            section, name = key.split('.')
+        except ValueError:
+            name = key
+            section = None
+        cache_key = 'dynamic_preferences_{0}_{1}_{2}'.format(self.model.__name__, section, name)
+        cached_value = self.cache.get(cache_key)
+
+        if cached_value is not None:
+            return self.registry.get(key).serializer.deserialize(cached_value)
+
+        pref = self.queryset.get(section=section, name=name)
+        self.cache.set(cache_key, pref.raw_value, None)
+
+        return pref.value
 
 class PreferenceRegistry(dict):
     """
@@ -63,7 +97,7 @@ class PreferenceRegistry(dict):
 
     def register(self, preference_class):
         """
-        Store the given preference class in the registry. 
+        Store the given preference class in the registry.
 
         :param preference_class: a :py:class:`prefs.Preference` subclass
         """
@@ -91,7 +125,7 @@ class PreferenceRegistry(dict):
         try:
             section, name = name.split('.')
             return self[section][name]
-            
+
         except ValueError:
             pass
 
@@ -99,9 +133,13 @@ class PreferenceRegistry(dict):
         try:
             return self[section][name]
 
-        except:    
+        except:
             raise KeyError("No such preference in {0} with section={1} and name={2}".format(
                 self.__class__.__name__, section, name))
+
+    def getter(self, **kwargs):
+        """Return a preference getter that can be used to retrieve preference values"""
+        return PreferenceGetter(registry=self, model=self.preference_model, **kwargs)
 
     def sections(self):
         """
@@ -153,7 +191,7 @@ class PerInstancePreferenceRegistry(PreferenceRegistry):
         """
         for preference in self.preferences():
             preference.to_model(instance=instance)
-    
+
 
 def clear():
     """

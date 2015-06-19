@@ -2,7 +2,7 @@ from .registries import PreferenceRegistry, PerInstancePreferenceRegistry
 
 
 class GlobalPreferenceRegistry(PreferenceRegistry):
-    def populate(self, **kwargs):        
+    def populate(self, **kwargs):
         return self.models(**kwargs)
 
 class UserPreferenceRegistry(PerInstancePreferenceRegistry):
