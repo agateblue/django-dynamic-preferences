@@ -45,6 +45,9 @@ class PreferenceModelsRegistry(dict):
 
 preference_models = PreferenceModelsRegistry()
 
+class NotFound(Exception):
+    pass
+
 class PreferenceGetter(object):
     """Handle retrieving / caching of preferences"""
     def __init__(self, model, registry, **kwargs):
@@ -55,11 +58,28 @@ class PreferenceGetter(object):
         self.cache = caches['default']
         self.registry = registry
         self.queryset = self.model.objects.all()
-        if kwargs.get('instance'):
-            self.queryset = self.queryset.filter(instance=instance)
+        self.instance = kwargs.get('instance')
+        if self.instance:
+            self.queryset = self.queryset.filter(instance=self.instance)
 
     def __getitem__(self, key):
-        return self.get_section(key)
+        return self.get(key)
+
+    # def all(self):
+        # for ==
+
+    def get_cache_key(self, section, name):
+        return 'dynamic_preferences_{0}_{1}_{2}'.format(self.model.__name__, section, name)
+
+    def from_cache(self, section, name):
+        cached_value = self.cache.get(self.get_cache_key(section, name), NotFound)
+
+        if cached_value is NotFound:
+            raise NotFound
+        return self.registry.get(section=section, name=name).serializer.deserialize(cached_value)
+
+    def to_cache(self, pref):
+        self.cache.set(self.get_cache_key(pref.section, pref.name), pref.raw_value, None)
 
     def get(self, key):
         try:
@@ -67,16 +87,34 @@ class PreferenceGetter(object):
         except ValueError:
             name = key
             section = None
-        cache_key = 'dynamic_preferences_{0}_{1}_{2}'.format(self.model.__name__, section, name)
-        cached_value = self.cache.get(cache_key)
 
-        if cached_value is not None:
-            return self.registry.get(key).serializer.deserialize(cached_value)
+        try:
+            return self.from_cache(section, name)
+        except NotFound:
+            pass
 
         pref = self.queryset.get(section=section, name=name)
-        self.cache.set(cache_key, pref.raw_value, None)
-
+        self.to_cache(pref)
         return pref.value
+
+    def all(self):
+        a = {}
+        try:
+            for preference in self.registry.preferences():
+                section = a.setdefault(preference.section, {})
+                section[preference.name] = self.from_cache(preference.section, preference.name)
+        except NotFound:
+            return self.load_from_db()
+
+        return a
+        
+    def load_from_db(self):
+        a = {}
+        db_prefs = self.queryset
+        for p in db_prefs:
+            self.to_cache(p)
+            section = a.setdefault(p.section, {})
+            section[p.name] = self.from_cache(p.section, p.name)
 
 class PreferenceRegistry(dict):
     """

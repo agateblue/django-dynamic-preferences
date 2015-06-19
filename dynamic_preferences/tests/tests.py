@@ -65,15 +65,24 @@ class TestModels(LiveServerTestCase):
         self.assertEqual(u.preferences.count(), len(user_preferences.preferences()))
 
 
-    def test_can_cache_preference(self):
-        no_section_pref = global_preferences.get(name="no_section")
-        instance = no_section_pref.to_model()
-        instance.save()
+    def test_can_cache_single_preference(self):
+        global_preferences.models()
 
         preference_getter = global_preferences.getter()
         with self.assertNumQueries(1):
-            v = preference_getter.get('no_section')
-            v = preference_getter.get('no_section')
+            v = preference_getter['no_section']
+            v = preference_getter['no_section']
+            v = preference_getter['no_section']
+            v = preference_getter['no_section']
+
+    def test_can_cache_all_preferences(self):
+
+        preference_getter = global_preferences.getter()
+        with self.assertNumQueries(1):
+            preference_getter.all()
+            preference_getter.all()
+            preference_getter.all()
+            preference_getter.all()
 
 class TestDynamicPreferences(LiveServerTestCase):
 
