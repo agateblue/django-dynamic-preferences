@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.3.1 (10/06/2015)
+******************
+
+- Improved test setup
+- More precise data in setup.py classifiers
+
 0.2.4
 *****
 
