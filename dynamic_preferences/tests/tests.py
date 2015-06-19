@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.core.management import call_command
 from django.test.utils import override_settings
 from django.contrib.auth.models import User
+from django.core.cache import caches
 from django.db import IntegrityError
 from django.template import defaultfilters
 
@@ -16,8 +17,12 @@ from dynamic_preferences.forms import global_preference_form_builder, user_prefe
 from .types import *
 from .test_app.dynamic_preferences_registry import *
 
+class BaseTest(object):
 
-class TestTutorial(LiveServerTestCase):
+    def tearDown(self):
+        caches['default'].clear()
+
+class TestTutorial(BaseTest, LiveServerTestCase):
     """
     Test everything from the tutorial
     """
@@ -49,7 +54,7 @@ class TestTutorial(LiveServerTestCase):
 
         self.assertEqual(self.henri.preferences.get(section="misc", name="favourite_colour").value, 'Blue')
 
-class TestModels(LiveServerTestCase):
+class TestModels(BaseTest, LiveServerTestCase):
     def test_can_save_and_retrieve_preference_with_section_none(self):
         no_section_pref = global_preferences.get(name="no_section")
         instance = no_section_pref.to_model()
@@ -69,20 +74,38 @@ class TestModels(LiveServerTestCase):
         global_preferences.models()
 
         preference_getter = global_preferences.getter()
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(0):
             v = preference_getter['no_section']
             v = preference_getter['no_section']
             v = preference_getter['no_section']
             v = preference_getter['no_section']
 
     def test_can_cache_all_preferences(self):
+        global_preferences.models()
 
         preference_getter = global_preferences.getter()
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(0):
             preference_getter.all()
             preference_getter.all()
             preference_getter.all()
             preference_getter.all()
+
+    def test_cache_invalidate_on_save(self):
+        global_preferences.models()
+
+        preference_getter = global_preferences.getter()
+        model_instance = preference_getter.get('no_section', model=True)
+
+        with self.assertNumQueries(0):
+            assert not preference_getter['no_section']
+            preference_getter['no_section']
+
+        model_instance.value = True
+        model_instance.save()
+
+        with self.assertNumQueries(0):
+            assert preference_getter['no_section']
+            preference_getter['no_section']
 
 class TestDynamicPreferences(LiveServerTestCase):
 

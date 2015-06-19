@@ -16,13 +16,13 @@ from .utils import update
 class PreferenceModelManager(models.Manager):
 
     def to_dict(self, **kwargs):
-        """ 
+        """
             Return a dict of preference models values with the same structure as registries
             Used to access preferences value within templates
-        """ 
+        """
 
         preferences = self.get_queryset().all()
-        if kwargs: 
+        if kwargs:
             preferences = preferences.filter(**kwargs)
 
         d = {}
@@ -72,6 +72,12 @@ class BasePreferenceModel(models.Model):
             else:
                 self.value = self.preference.default
 
+    @property
+    def dotted_id(self):
+        if self.section:
+            return '{0}.{1}'.format(self.section, self.name)
+        return self.name
+
     @cached_property
     def preference(self):
         return self.registry.get(section=self.section, name=self.name)
@@ -115,10 +121,10 @@ class GlobalPreferenceModel(BasePreferenceModel):
 class PerInstancePreferenceModel(BasePreferenceModel):
     """For preferences that are tied to a specific model instance"""
     #: the instance which is concerned by the preference
-    #: use a ForeignKey pointing to the model of your choice 
+    #: use a ForeignKey pointing to the model of your choice
     instance = None
 
-    @classmethod 
+    @classmethod
     def get_instance_model(cls):
         return cls._meta.get_field('instance').rel.to
 
@@ -146,11 +152,12 @@ class UserPreferenceModel(PerInstancePreferenceModel):
     @user.setter
     def user(self, value):
         self.instance = value
-    
+
 
 
 
 preference_models.register(UserPreferenceModel, user_preferences)
+preference_models.register(GlobalPreferenceModel, global_preferences)
 
 global_preferences.preference_model = GlobalPreferenceModel
 
@@ -158,15 +165,28 @@ global_preferences.preference_model = GlobalPreferenceModel
 
 from django.db.models.signals import post_save
 
-def create_default_per_instance_preferences(sender, created, instance, **kwargs): 
+def create_default_per_instance_preferences(sender, created, instance, **kwargs):
     """Create default preferences for PerInstancePreferenceModel"""
-    
+
     if created:
         try:
             registry = preference_models.get_by_instance(instance)
             registry.create_default_preferences(instance)
         except AttributeError:
             pass
-            
+
+
+def invalidate_cache(sender, created, instance, **kwargs):
+    if not isinstance(instance, BasePreferenceModel):
+        return
+    registry = preference_models.get_by_preference(instance)
+    linked_instance = getattr(instance, 'instance', None)
+    kwargs = {}
+    if linked_instance:
+        kwargs['instance'] = linked_instance
+
+    getter = registry.getter(**kwargs)
+    getter.to_cache(instance)
 
 post_save.connect(create_default_per_instance_preferences)
+post_save.connect(invalidate_cache)

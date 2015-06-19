@@ -1,7 +1,7 @@
 
 
 from django.conf import settings
-
+from django.core.exceptions import FieldDoesNotExist
 
 from django.utils.importlib import import_module
 # import the logging library
@@ -25,22 +25,27 @@ PREFERENCES_PACKAGE = "dynamic_preferences_registry"
 
 
 class PreferenceModelsRegistry(dict):
-    """Store beetween preferences model and preferences registry"""
+    """Store relationships beetween preferences model and preferences registry"""
 
     def register(self, preference_model, preference_registry):
         self[preference_model] = preference_registry
         preference_registry.preference_model = preference_model
+
+    def get_by_preference(self, preference):
+        return self[preference.__class__]
 
     def get_by_instance(self, instance):
         """Return a preference registry using a model instance"""
         # we iterate throught registered preference models in order to get the instance class
         # and check if instance is and instance of this class
         for model, registry in self.items():
-            instance_class = model._meta.get_field('instance').rel.to
-            if isinstance(instance, instance_class):
-                return registry
-                break
-
+            try:
+                instance_class = model._meta.get_field('instance').rel.to
+                if isinstance(instance, instance_class):
+                    return registry
+                    break
+            except FieldDoesNotExist: # global preferences
+                pass
         return None
 
 preference_models = PreferenceModelsRegistry()
@@ -65,13 +70,14 @@ class PreferenceGetter(object):
     def __getitem__(self, key):
         return self.get(key)
 
-    # def all(self):
-        # for ==
-
     def get_cache_key(self, section, name):
-        return 'dynamic_preferences_{0}_{1}_{2}'.format(self.model.__name__, section, name)
+        """Return the cache key corresponding to a given preference"""
+        if not self.instance:
+            return 'dynamic_preferences_{0}_{1}_{2}'.format(self.model.__name__, section, name)
+        return 'dynamic_preferences_{0}_{1}_{2}_{3}'.format(self.model.__name__, section, name, self.instance.pk)
 
     def from_cache(self, section, name):
+        """Return a preference raw_value from cache"""
         cached_value = self.cache.get(self.get_cache_key(section, name), NotFound)
 
         if cached_value is NotFound:
@@ -79,15 +85,18 @@ class PreferenceGetter(object):
         return self.registry.get(section=section, name=name).serializer.deserialize(cached_value)
 
     def to_cache(self, pref):
+        """Update/create the cache value for the given preference model instance"""
         self.cache.set(self.get_cache_key(pref.section, pref.name), pref.raw_value, None)
 
-    def get(self, key):
+    def get(self, key, model=False):
+        """Return the value of a single preference using a dotted path key"""
         try:
             section, name = key.split('.')
         except ValueError:
             name = key
             section = None
-
+        if model:
+            return self.queryset.get(section=section, name=name)
         try:
             return self.from_cache(section, name)
         except NotFound:
@@ -98,6 +107,9 @@ class PreferenceGetter(object):
         return pref.value
 
     def all(self):
+        """Return a dictionnary containing all preferences by section
+        Loaded from cache or from db in case of cold cache
+        """
         a = {}
         try:
             for preference in self.registry.preferences():
@@ -107,8 +119,9 @@ class PreferenceGetter(object):
             return self.load_from_db()
 
         return a
-        
+
     def load_from_db(self):
+        """Return a dictionnary of preferences by section directly from DB"""
         a = {}
         db_prefs = self.queryset
         for p in db_prefs:
