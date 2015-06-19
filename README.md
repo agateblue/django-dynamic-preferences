@@ -25,7 +25,7 @@ Links:
 
 ## 0.3
 
-This version breaks compatibility with 0.2.
+This version breaks compatibility with 0.2.on 
 
 - Dropped support of django < 1.7
 - Tests refactoring
