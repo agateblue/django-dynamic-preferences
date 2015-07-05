@@ -9,6 +9,7 @@ which store the actual values.
 """
 from __future__ import unicode_literals
 
+from .settings import preferences_settings
 
 class AbstractPreference(object):
     """
@@ -29,45 +30,16 @@ class AbstractPreference(object):
 
     def __init__(self, registry=None):
         self.registry = registry
-        
+
     @property
     def model(self):
         return self.registry.preference_model
 
-    def to_model(self, **kwargs):
-        """
-        Retrieve a model instance corresponding to the Preference in database.
-        This method will create the model instance if needed.
-
-
-        :param kwargs: Keyword arguments that will be passed directly to queryset or new model
-        :return: a :py:class:`models.BasePreferenceModel` instance
-        """
-
-        value = kwargs.pop('value', None)
-
-        try:
-            preference = self.model.objects.get(
-                section=self.section,
-                name=self.name,
-                **kwargs
-            )
-
-        except self.model.DoesNotExist:
-            
-            preference = self.model(
-                section=self.section,
-                name=self.name,
-                value=value,
-                **kwargs
-            )
-            preference.save()
-
-        return preference
-
-    def identifier(self, separator="."):
+    def identifier(self):
         """
         Return the name and the section of the Preference joined with a separator, with the form `section<separator>name`
         """
-        section = self.section or ""
-        return separator.join([section, self.name])
+        section = self.section or ''
+        if not section:
+            return self.name
+        return preferences_settings.SECTION_KEY_SEPARATOR.join([section, self.name])

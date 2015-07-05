@@ -1,12 +1,12 @@
 from django.views.generic import TemplateView, FormView
 from .forms import preference_form_builder, user_preference_form_builder
-from . import user_preferences
+from . import user_preferences_registry
 
 
 """Todo : remove these views and use only context processors"""
 class RegularTemplateView(TemplateView):
     """Used for testing context"""
-    template_name = "dynamic_preferences/testcontext.html" 
+    template_name = "dynamic_preferences/testcontext.html"
 
 
 class PreferenceFormView(FormView):
@@ -39,7 +39,7 @@ class PreferenceFormView(FormView):
         return self.request.path
 
     def form_valid(self, form):
-        
+
         form.update_preferences()
         return super(PreferenceFormView, self).form_valid(form)
 
@@ -47,8 +47,8 @@ class UserPreferenceFormView(PreferenceFormView):
     """
     Will pass `request.user` to form_builder
     """
-    registry = user_preferences
-    
+    registry = user_preferences_registry
+
     def get_form_class(self, *args, **kwargs):
         section = self.kwargs.get('section', None)
         form_class = user_preference_form_builder(instance=self.request.user, section=section)
