@@ -1,8 +1,11 @@
+import collections
+
 from .settings import preferences_settings
 from .exceptions import CachedValueNotFound, DoesNotExist
 
-class PreferencesManager(object):
+class PreferencesManager(collections.Mapping):
     """Handle retrieving / caching of preferences"""
+
     def __init__(self, model, registry, **kwargs):
 
         self.model = model
@@ -21,6 +24,16 @@ class PreferencesManager(object):
     def __getitem__(self, key):
         return self.get(key)
 
+    def __setitem__(self, key, value):
+        section, name = self.parse_lookup(key)
+        self.update_db_pref(section=section, name=name, value=value)
+
+    def __iter__(self):
+
+        pass
+
+    def __len__(self):
+        pass
     def get_cache_key(self, section, name):
         """Return the cache key corresponding to a given preference"""
         if not self.instance:
@@ -39,13 +52,21 @@ class PreferencesManager(object):
         """Update/create the cache value for the given preference model instance"""
         self.cache.set(self.get_cache_key(pref.section, pref.name), pref.raw_value, None)
 
+    def pref_obj(self, section, name):
+        return self.registry.get(section=section, name=name)
+
+    def parse_lookup(self, lookup):
+        try:
+            section, name = lookup.split(preferences_settings.SECTION_KEY_SEPARATOR)
+        except ValueError:
+            name = lookup
+            section = None
+        return section, name
+
     def get(self, key, model=False):
         """Return the value of a single preference using a dotted path key"""
-        try:
-            section, name = key.split(preferences_settings.SECTION_KEY_SEPARATOR)
-        except ValueError:
-            name = key
-            section = None
+        section, name = self.parse_lookup(key)
+
         if model:
             return self.queryset.get(section=section, name=name)
         try:
@@ -56,10 +77,32 @@ class PreferencesManager(object):
         try:
             pref = self.queryset.get(section=section, name=name)
         except self.model.DoesNotExist:
-            pref_obj = self.registry.get(section=section, name=name)
-            pref = self.model.objects.create(section=section, name=name, raw_value=pref_obj.default)
+            pref_obj = self.pref_obj(section=section, name=name)
+            pref = self.create_db_pref(section=section, name=name, value=pref_obj.default)
+
         self.to_cache(pref)
         return pref.value
+
+    def update_db_pref(self, section, name, value):
+        try:
+            db_pref = self.queryset.get(section=section, name=name)
+            db_pref.value = value
+            db_pref.save()
+        except self.model.DoesNotExist:
+            return self.create_db_pref(section, name, value)
+
+        return db_pref
+
+    def create_db_pref(self, section, name, value):
+        if self.instance:
+            db_pref = self.model(section=section, name=name, instance=self.instance)
+        else:
+            db_pref = self.model(section=section, name=name)
+        db_pref.value = value
+        db_pref.save()
+
+        return db_pref
+
 
     def all(self):
         """Return a dictionnary containing all preferences by section
