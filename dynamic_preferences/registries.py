@@ -35,6 +35,20 @@ class PreferenceModelsRegistry(dict):
         self[preference_model] = preference_registry
         preference_registry.preference_model = preference_model
 
+        self.attach_manager(preference_model, preference_registry)
+
+    def attach_manager(self, model, registry):
+        if not hasattr(model, 'instance'):
+            return
+
+        def instance_getter(self):
+            return registry.manager(instance=self)
+
+        getter = property(instance_getter)
+        instance_class = model._meta.get_field('instance').rel.to
+        setattr(instance_class, preferences_settings.MANAGER_ATTRIBUTE, getter)
+
+
     def get_by_preference(self, preference):
         return self[preference.__class__]
 

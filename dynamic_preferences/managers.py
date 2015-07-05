@@ -114,8 +114,7 @@ class PreferencesManager(collections.Mapping):
         a = {}
         try:
             for preference in self.registry.preferences():
-                section = a.setdefault(preference.section, {})
-                section[preference.name] = self.from_cache(preference.section, preference.name)
+                a[preference.identifier()] = self.from_cache(preference.section, preference.name)
         except CachedValueNotFound:
             return self.load_from_db()
 
@@ -132,7 +131,6 @@ class PreferencesManager(collections.Mapping):
                 db_pref = self.create_db_pref(section=preference.section, name=preference.name, value=preference.default)
 
             self.to_cache(db_pref)
-            section = a.setdefault(preference.section, {})
-            section[preference.name] = self.from_cache(preference.section, preference.name)
+            a[preference.identifier()] = self.from_cache(preference.section, preference.name)
 
         return a

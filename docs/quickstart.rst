@@ -16,20 +16,19 @@ Add this to your :py:const:`settings.INSTALLED_APPS`::
     INSTALLED_APPS = (
         # ...
         'django.contrib.auth',
-        'dynamic_preferences',        
+        'dynamic_preferences',
     )
 
 Then, create missing tables in your database::
-    
+
     python manage.py syncdb
 
 
 Add this to :py:const:`settings.TEMPLATE_CONTEXT_PROCESSORS` if you want to access preferences from templates::
-    
+
     TEMPLATE_CONTEXT_PROCESSORS =  (
         'django.core.context_processors.request',
         'dynamic_preferences.processors.global_preferences',
-        'dynamic_preferences.processors.user_preferences',
     )
 
 
@@ -40,7 +39,7 @@ Glossary
 
     Preference
         An object that deals with preference logic, such as serialization, deserialization, form display, default values, etc.
-        After being defined, preferences can be tied via registries to one ore many preference models, which will deal with database persistance. 
+        After being defined, preferences can be tied via registries to one ore many preference models, which will deal with database persistance.
 
     PreferenceModel
         A model that store preferences values in database. A preference model may be tied to a particular instance, which is the case for UserPreferenceModel, or concern the whole project, as GlobalPreferenceModel.
@@ -158,7 +157,7 @@ Getting a form for a specific user preferences works similarly, except that you 
 
     form_class = global_preference_form_builder(instance=request.user)
     form_class = global_preference_form_builder(instance=request.user, section='discussion')
-    # etc.    
+    # etc.
 
 
 Accessing preferences values within a template
@@ -186,7 +185,7 @@ Example views and urls are bundled for global and per-user preferences updating.
 
 .. code-block:: python
 
-    urlpatterns = [   
+    urlpatterns = [
         # your project urls here
         url(r'^preferences/', include('dynamic_preferences.urls')),
     ]

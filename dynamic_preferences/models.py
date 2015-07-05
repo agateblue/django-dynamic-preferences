@@ -139,7 +139,7 @@ class PerInstancePreferenceModel(BasePreferenceModel):
 
 class UserPreferenceModel(PerInstancePreferenceModel):
 
-    instance = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="preferences")
+    instance = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     class Meta(PerInstancePreferenceModel.Meta):
         app_label = 'dynamic_preferences'

@@ -20,7 +20,6 @@ MIDDLEWARE_CLASSES = (
 TEMPLATE_CONTEXT_PROCESSORS = TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
     'dynamic_preferences.processors.global_preferences',
-    'dynamic_preferences.processors.user_preferences',
 )
 INSTALLED_APPS = (
     'django.contrib.auth',
