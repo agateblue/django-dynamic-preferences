@@ -74,7 +74,6 @@ class PreferencesManager(collections.Mapping):
     def get(self, key, model=False):
         """Return the value of a single preference using a dotted path key"""
         section, name = self.parse_lookup(key)
-
         if model:
             return self.get_db_pref(setion=section, name=name)
         try:
