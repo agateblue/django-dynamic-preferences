@@ -71,21 +71,25 @@ class PreferencesManager(collections.Mapping):
         section, name = self.parse_lookup(key)
 
         if model:
-            return self.queryset.get(section=section, name=name)
+            return self.get_from_db(setion=section, name=name)
         try:
             return self.from_cache(section, name)
         except CachedValueNotFound:
             pass
 
+        db_pref = self.get_db_pref(section=section, name=name)
+        self.to_cache(db_pref)
+        return db_pref.value
+
+    def get_db_pref(self, section, name):
         try:
             pref = self.queryset.get(section=section, name=name)
+
         except self.model.DoesNotExist:
             pref_obj = self.pref_obj(section=section, name=name)
             pref = self.create_db_pref(section=section, name=name, value=pref_obj.default)
 
-        self.to_cache(pref)
-        return pref.value
-
+        return pref
     def update_db_pref(self, section, name, value):
         try:
             db_pref = self.queryset.get(section=section, name=name)

@@ -30,10 +30,12 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
 
     fields = {}
     instances = []
+    model_kwargs = kwargs.get('model', {})
+    manager = registry.manager(**model_kwargs)
+
     for preference in preferences_obj:
         f = preference.field
-        model_kwargs = kwargs.get('model', {})
-        instance = preference.to_model(**model_kwargs)
+        instance = manager.get_db_pref(section=preference.section, name=preference.name)
         f.initial = instance.value
         fields[preference.identifier()] = f
         instances.append(instance)

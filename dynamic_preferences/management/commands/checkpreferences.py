@@ -30,9 +30,8 @@ class Command(BaseCommand):
         # Create needed preferences
         # Global
         print('Creating missing global preferences...')
-        preferences = global_preferences_registry.preferences()
-        for p in preferences:
-            p.to_model()
+        manager = global_preferences_registry.manager()
+        manager.all()
 
         deleted = delete_preferences(GlobalPreferenceModel.objects.all())
         print("Deleted {0} global preferences".format(len(deleted)))
@@ -45,7 +44,4 @@ class Command(BaseCommand):
 
             print('Creating missing preferences for {0} model...'.format(preference_model.get_instance_model().__name__))
             for instance in preference_model.get_instance_model().objects.all():
-                for p in registry.preferences():
-                    pref = p.to_model(instance=instance)
-                    if not pref.pk:
-                        pref.save()
+                instance.preferences.all()
