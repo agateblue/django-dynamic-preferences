@@ -1,40 +1,55 @@
-import os
-from setuptools import setup, find_packages
-import django
-import dynamic_preferences
-README = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-# allow setup.py to be run from any path
-os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
+import os
+import sys
+
+import dynamic_preferences
+
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
+
+version = dynamic_preferences.__version__
+
+if sys.argv[-1] == 'publish':
+    os.system('python setup.py sdist upload')
+    print("You probably want to also tag the version now:")
+    print("  git tag -a %s -m 'version %s'" % (version, version))
+    print("  git push --tags")
+    sys.exit()
+
+readme = open('README.rst').read()
+history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 setup(
     name='django-dynamic-preferences',
-    version=dynamic_preferences.__version__,
-    packages=find_packages(),
-    include_package_data=True,
-    license='BSD',  # example license
-    description='A django app for registering dynamic global, site and user preferences',
-    long_description=README,
-    url='http://code.eliotberriot.com/eliotberriot/django-dynamic-preferences',
+    version=version,
+    description="""Dynamic global and instance settings for your django project""",
+    long_description=readme + '\n\n' + history,
     author='Eliot Berriot',
     author_email='contact@eliotberriot.com',
+    url='https://github.com/EliotBerriot/django-dynamic-preferences',
+    packages=[
+        'dynamic_preferences',
+    ],
+    include_package_data=True,
+    install_requires=[
+    ],
+    license="BSD",
     zip_safe=False,
+    keywords='django-dynamic-preferences',
     classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Environment :: Web Environment',
+        'Development Status :: 2 - Pre-Alpha',
         'Framework :: Django',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        # Replace these appropriately if you are stuck on Python 2.
+        'Natural Language :: English',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4',
-        'Topic :: Internet :: WWW/HTTP',
-        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-    ],
-    install_requires=[
-        "django<1.9",
-        "six",
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
     ],
 )
