@@ -10,4 +10,4 @@ Development Lead
 Contributors
 ------------
 
-None yet. Why not be the first?
+* Ryan Anguiano, via `prefs-n-perms package <https://github.com/revpoint/prefs-n-perms>`_
