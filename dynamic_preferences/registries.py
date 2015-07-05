@@ -1,6 +1,8 @@
 
 
 from django.conf import settings
+from django.db.models.fields import FieldDoesNotExist
+
 from django.utils.importlib import import_module
 # import the logging library
 import logging
@@ -19,32 +21,55 @@ logger = logging.getLogger(__name__)
 
 
 #: The package where autodiscover will try to find preferences to register
-PREFERENCES_PACKAGE = "dynamic_preferences_registry"
+
+
+from .managers import PreferencesManager
+from .settings import preferences_settings
 
 
 class PreferenceModelsRegistry(dict):
-    """Store beetween preferences model and preferences registry"""
+
+    """Store relationships beetween preferences model and preferences registry"""
 
     def register(self, preference_model, preference_registry):
         self[preference_model] = preference_registry
         preference_registry.preference_model = preference_model
+
+        self.attach_manager(preference_model, preference_registry)
+
+    def attach_manager(self, model, registry):
+        if not hasattr(model, 'instance'):
+            return
+
+        def instance_getter(self):
+            return registry.manager(instance=self)
+
+        getter = property(instance_getter)
+        instance_class = model._meta.get_field('instance').rel.to
+        setattr(instance_class, preferences_settings.MANAGER_ATTRIBUTE, getter)
+
+    def get_by_preference(self, preference):
+        return self[preference.__class__]
 
     def get_by_instance(self, instance):
         """Return a preference registry using a model instance"""
         # we iterate throught registered preference models in order to get the instance class
         # and check if instance is and instance of this class
         for model, registry in self.items():
-            instance_class = model._meta.get_field('instance').rel.to            
-            if isinstance(instance, instance_class):
-                return registry
-                break
-
+            try:
+                instance_class = model._meta.get_field('instance').rel.to
+                if isinstance(instance, instance_class):
+                    return registry
+                    break
+            except FieldDoesNotExist:  # global preferences
+                pass
         return None
 
 preference_models = PreferenceModelsRegistry()
 
 
 class PreferenceRegistry(dict):
+
     """
     Registries are special dictionaries that are used by dynamic-preferences to register and access your preferences.
     dynamic-preferences has one registry per Preference type:
@@ -63,7 +88,7 @@ class PreferenceRegistry(dict):
 
     def register(self, preference_class):
         """
-        Store the given preference class in the registry. 
+        Store the given preference class in the registry.
 
         :param preference_class: a :py:class:`prefs.Preference` subclass
         """
@@ -89,9 +114,10 @@ class PreferenceRegistry(dict):
         """
         # try dotted notation
         try:
-            section, name = name.split('.')
+            section, name = name.split(
+                preferences_settings.SECTION_KEY_SEPARATOR)
             return self[section][name]
-            
+
         except ValueError:
             pass
 
@@ -99,9 +125,13 @@ class PreferenceRegistry(dict):
         try:
             return self[section][name]
 
-        except:    
+        except:
             raise KeyError("No such preference in {0} with section={1} and name={2}".format(
                 self.__class__.__name__, section, name))
+
+    def manager(self, **kwargs):
+        """Return a preference manager that can be used to retrieve preference values"""
+        return PreferencesManager(registry=self, model=self.preference_model, **kwargs)
 
     def sections(self):
         """
@@ -126,43 +156,20 @@ class PreferenceRegistry(dict):
         else:
             return [self[section][name] for name in self[section]]
 
-    def models(self, section=None, **kwargs):
-        """
-        Return a list of model instances corresponding to registered preferences
-        This method calls :py:meth:`preferences.BasePreference.to_model`, see related documentation for more information
-
-        :param section: The section name under which the preferences are registered
-        :type section: str.
-        :param kwargs: Keyword arguments that will be passed directly to `to_model()`
-        :return: a list of :py:class:`models.BasePreferenceModel` instances
-        """
-
-        return [preference.to_model(**kwargs) for preference in self.preferences(section)]
-
-    def populate(self, **kwargs):
-        """
-        Populate database with registered preferences and default values
-        """
-        raise NotImplementedError
-
 
 class PerInstancePreferenceRegistry(PreferenceRegistry):
-    def create_default_preferences(self, instance):
-        """
-            Create default preferences models for a given instance
-        """
-        for preference in self.preferences():
-            preference.to_model(instance=instance)
-    
+    pass
+
 
 def clear():
     """
     Remove all data from registries
     """
-    from .dynamic_preferences_registry import global_preferences
-    global_preferences.clear()
+    from .dynamic_preferences_registry import global_preferences_registry
+    global_preferences_registry.clear()
     for model, registry in preference_models.items():
         registry.clear()
+
 
 def autodiscover(force_reload=False):
     """
@@ -175,10 +182,10 @@ def autodiscover(force_reload=False):
     if force_reload:
         clear()
 
-
     for app in settings.INSTALLED_APPS:
         # try to import self.package inside current app
-        package = '{0}.{1}'.format(app, PREFERENCES_PACKAGE)
+        package = '{0}.{1}'.format(
+            app, preferences_settings.REGISTRY_MODULE)
         try:
             #print('Dynamic-preferences: importing {0}...'.format(package))
             module = import_module(package)

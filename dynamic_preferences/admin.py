@@ -6,15 +6,15 @@ class PreferenceChangeListForm(forms.ModelForm):
     """
     A form that integrate dynamic-preferences into django.contrib.admin
     """
-    # Me must use an acutal model field, so we use raw_value. However, 
+    # Me must use an acutal model field, so we use raw_value. However,
     # instance.value will be displayed in form.
     raw_value = forms.CharField()
 
     def __init__(self, *args, **kwargs):
         self.instance = kwargs.get('instance')
         super(PreferenceChangeListForm, self).__init__(*args, **kwargs)
-        
-        self.fields['raw_value'] = self.instance.preference.setup_field()            
+
+        self.fields['raw_value'] = self.instance.preference.setup_field()
 
     def save(self, *args, **kwargs):
         self.cleaned_data['raw_value'] = self.instance.preference.serializer.serialize(self.cleaned_data['raw_value'])
@@ -37,7 +37,7 @@ class DynamicPreferenceAdmin(admin.ModelAdmin):
     list_editable = ('raw_value',)
     search_fields = ['name', 'section', 'raw_value']
     list_filter = ('section',)
-    
+
     def get_changelist_form(self, request, **kwargs):
         return self.changelist_form
 
@@ -45,15 +45,15 @@ class DynamicPreferenceAdmin(admin.ModelAdmin):
 class GlobalPreferenceAdmin(DynamicPreferenceAdmin):
     form = GlobalPreferenceChangeListForm
     changelist_form = GlobalPreferenceChangeListForm
-    
-        
+
+
 admin.site.register(GlobalPreferenceModel, GlobalPreferenceAdmin)
 
 
 class UserPreferenceAdmin(DynamicPreferenceAdmin):
     form = UserPreferenceChangeListForm
-    list_display = ('user',) + DynamicPreferenceAdmin.list_display
-    search_fields = ['user__username'] + DynamicPreferenceAdmin.search_fields
+    list_display = ('instance',) + DynamicPreferenceAdmin.list_display
+    search_fields = ['instance__username'] + DynamicPreferenceAdmin.search_fields
     changelist_form = UserPreferenceChangeListForm
-        
+
 admin.site.register(UserPreferenceModel, UserPreferenceAdmin)

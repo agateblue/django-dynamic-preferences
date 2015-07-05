@@ -1,5 +1,5 @@
 from django import forms
-from . import global_preferences, user_preferences
+from . import global_preferences_registry, user_preferences_registry
 from six import string_types
 
 def preference_form_builder(form_base_class, preferences=[], **kwargs):
@@ -12,7 +12,7 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
     registry = form_base_class.registry
     preferences_obj = []
     if len(preferences) > 0:
-        # Preferences have been selected explicitly 
+        # Preferences have been selected explicitly
         for pref in preferences:
             if isinstance(pref, string_types):
                 preferences_obj.append(registry.get(name=pref))
@@ -27,13 +27,15 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
     else:
         # display all preferences in the form
         preferences_obj = registry.preferences()
-        
+
     fields = {}
     instances = []
+    model_kwargs = kwargs.get('model', {})
+    manager = registry.manager(**model_kwargs)
+
     for preference in preferences_obj:
         f = preference.field
-        model_kwargs = kwargs.get('model', {})
-        instance = preference.to_model(**model_kwargs)
+        instance = manager.get_db_pref(section=preference.section, name=preference.name)
         f.initial = instance.value
         fields[preference.identifier()] = f
         instances.append(instance)
@@ -69,8 +71,8 @@ class PreferenceForm(forms.Form):
 
 class GlobalPreferenceForm(PreferenceForm):
 
-    registry = global_preferences
+    registry = global_preferences_registry
 
 class UserPreferenceForm(PreferenceForm):
 
-    registry = user_preferences
+    registry = user_preferences_registry
