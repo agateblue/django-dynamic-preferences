@@ -28,12 +28,15 @@ class PreferencesManager(collections.Mapping):
         section, name = self.parse_lookup(key)
         self.update_db_pref(section=section, name=name, value=value)
 
-    def __iter__(self):
+    def __repr__(self):
+        return repr(self.all())
 
-        pass
+    def __iter__(self):
+        return self.all().__iter__()
 
     def __len__(self):
-        pass
+        return len(self.all())
+
     def get_cache_key(self, section, name):
         """Return the cache key corresponding to a given preference"""
         if not self.instance:
@@ -121,8 +124,15 @@ class PreferencesManager(collections.Mapping):
     def load_from_db(self):
         """Return a dictionnary of preferences by section directly from DB"""
         a = {}
-        db_prefs = self.queryset
-        for p in db_prefs:
-            self.to_cache(p)
-            section = a.setdefault(p.section, {})
-            section[p.name] = self.from_cache(p.section, p.name)
+        db_prefs = {p.preference.identifier(): p for p in self.queryset}
+        for preference in self.registry.preferences():
+            try:
+                db_pref = db_prefs[preference.identifier()]
+            except KeyError:
+                db_pref = self.create_db_pref(section=preference.section, name=preference.name, value=preference.default)
+
+            self.to_cache(db_pref)
+            section = a.setdefault(preference.section, {})
+            section[preference.name] = self.from_cache(preference.section, preference.name)
+
+        return a

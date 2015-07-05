@@ -73,6 +73,7 @@ class TestModels(BaseTest, LiveServerTestCase):
         self.assertEqual(GlobalPreferenceModel.objects.filter(
             section=None, name="no_section").count(), 1)
 
+
     def test_adding_user_create_default_preferences(self):
 
         u = User(username="post_create")
