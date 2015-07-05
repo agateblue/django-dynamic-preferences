@@ -70,6 +70,11 @@ Let's declare a few preferences in this file:
         name = 'title'
         default = 'My site'
 
+    @global_preferences.register
+    class MaintenanceMode(BooleanPreference):
+        name = 'maintenance_mode'
+        default = False
+
     # now we declare a per-user preference
     @user_preferences.register
     class CommentNotificationsEnabled(BooleanPreference):
@@ -85,6 +90,41 @@ The :py:attr:`name` attribute is a unique identifier for your preference. Howeve
 
 Retrieve and update preferences
 *******************************
+
+You can get and update preferences via a ``Manager``. The logic is almost exactly the same for global preferences and per-instance preferences.
+
+.. code-block:: python
+
+    from dynamic_preferences import global_preferences_registry
+
+    # We instanciate a manager for our global preferences
+    global_preferences = global_preferences_registry.manager()
+
+    # now, we can use it to retrieve our preferences
+    # the lookup for a preference has the following form: <section>__<name>
+    assert global_preferences['general__title'] == 'My site'
+
+    # You can also access section-less preferences
+    assert global_preferences['maintenance_mode'] == False
+
+    # We can update our preferences values the same way
+    global_preferences['maintenance_mode'] = True
+
+For per instance preference it's even easier. You can access each instance preferences via the ``preferences`` attribute.
+
+.. code-block:: python
+
+    from django.contrib.auth import get_user_model
+
+    user = get_user_model().objects.get(username='eliot')
+
+    assert user.preferences['discussion__comment_notifications_enabled'] == True
+
+    # Disable the notification system
+    user.preferences['discussion__comment_notifications_enabled'] = False
+
+
+
 
 Most of the time, you probably won't need to manipulate preferences by hand, and prefer to rely on forms and admin interface. Just in case, here is a quick overview of how you can interact with preferences. Preferences are (almost) regular django models::
 
