@@ -155,33 +155,10 @@ class PreferenceRegistry(dict):
         else:
             return [self[section][name] for name in self[section]]
 
-    def models(self, section=None, **kwargs):
-        """
-        Return a list of model instances corresponding to registered preferences
-        This method calls :py:meth:`preferences.BasePreference.to_model`, see related documentation for more information
-
-        :param section: The section name under which the preferences are registered
-        :type section: str.
-        :param kwargs: Keyword arguments that will be passed directly to `to_model()`
-        :return: a list of :py:class:`models.BasePreferenceModel` instances
-        """
-
-        return [preference.to_model(**kwargs) for preference in self.preferences(section)]
-
-    def populate(self, **kwargs):
-        """
-        Populate database with registered preferences and default values
-        """
-        raise NotImplementedError
 
 
 class PerInstancePreferenceRegistry(PreferenceRegistry):
-    def create_default_preferences(self, instance):
-        """
-            Create default preferences models for a given instance
-        """
-        for preference in self.preferences():
-            preference.to_model(instance=instance)
+    pass
 
 
 def clear():

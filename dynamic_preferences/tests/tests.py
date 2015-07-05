@@ -88,41 +88,38 @@ class TestModels(BaseTest, LiveServerTestCase):
         self.assertEqual(global_preferences['no_section'], True)
 
     def test_can_cache_single_preference(self):
-        global_preferences_registry.models()
 
-        preference_getter = global_preferences_registry.manager()
+        manager = global_preferences_registry.manager()
+        v = manager['no_section']
         with self.assertNumQueries(0):
-            v = preference_getter['no_section']
-            v = preference_getter['no_section']
-            v = preference_getter['no_section']
-            v = preference_getter['no_section']
+            v = manager['no_section']
+            v = manager['no_section']
+            v = manager['no_section']
 
     def test_can_cache_all_preferences(self):
-        global_preferences_registry.models()
 
-        preference_getter = global_preferences_registry.manager()
+        manager = global_preferences_registry.manager()
+        manager.all()
         with self.assertNumQueries(0):
-            preference_getter.all()
-            preference_getter.all()
-            preference_getter.all()
-            preference_getter.all()
+            manager.all()
+            manager.all()
+            manager.all()
 
     def test_cache_invalidate_on_save(self):
-        global_preferences_registry.models()
 
-        preference_getter = global_preferences_registry.manager()
-        model_instance = preference_getter.get('no_section', model=True)
+        manager = global_preferences_registry.manager()
+        model_instance = manager.create_db_pref(section=None, name='no_section', value=False)
 
         with self.assertNumQueries(0):
-            assert not preference_getter['no_section']
-            preference_getter['no_section']
+            assert not manager['no_section']
+            manager['no_section']
 
         model_instance.value = True
         model_instance.save()
 
         with self.assertNumQueries(0):
-            assert preference_getter['no_section']
-            preference_getter['no_section']
+            assert manager['no_section']
+            manager['no_section']
 
 
 class TestDynamicPreferences(LiveServerTestCase):
@@ -194,10 +191,10 @@ class TestDynamicPreferences(LiveServerTestCase):
 
     def test_user_preference_model_manager_to_dict(self):
         user = self.test_user
-        expected = {u'misc': {u'favourite_colour': u'Green', u'is_zombie': True}, u'user': {u'favorite_vegetable': 'C'}, u'test': {
-            u'SUserStringPref': u'Hello world!', u'SiteBooleanPref': False, u'TestUserPref1': u'default value', u'TestUserPref2': u''}}
+        expected = {u'misc__favourite_colour': u'Green', u'misc__is_zombie': True, u'user__favorite_vegetable': 'C',
+            u'test__SUserStringPref': u'Hello world!', u'test__SiteBooleanPref': False, u'test__TestUserPref1': u'default value', u'test__TestUserPref2': u''}
         self.assertEqual(
-            UserPreferenceModel.objects.to_dict(instance=user), expected)
+            user.preferences.all(), expected)
 
 
 class TestPreferenceObjects(LiveServerTestCase):
