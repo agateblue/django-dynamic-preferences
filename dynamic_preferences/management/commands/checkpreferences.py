@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from dynamic_preferences.models import GlobalPreferenceModel, UserPreferenceModel
-from dynamic_preferences import global_preferences
+from dynamic_preferences import global_preferences_registry
 from dynamic_preferences.registries import preference_models
 
 
@@ -30,7 +30,7 @@ class Command(BaseCommand):
         # Create needed preferences
         # Global
         print('Creating missing global preferences...')
-        preferences = global_preferences.preferences()
+        preferences = global_preferences_registry.preferences()
         for p in preferences:
             p.to_model()
 
@@ -42,7 +42,7 @@ class Command(BaseCommand):
             print("Deleted {0} {1} preferences".format(len(deleted), preference_model.__class__.__name__))
             if not hasattr(preference_model, 'get_instance_model'):
                 continue
-                
+
             print('Creating missing preferences for {0} model...'.format(preference_model.get_instance_model().__name__))
             for instance in preference_model.get_instance_model().objects.all():
                 for p in registry.preferences():

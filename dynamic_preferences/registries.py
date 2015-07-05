@@ -248,8 +248,8 @@ def clear():
     """
     Remove all data from registries
     """
-    from .dynamic_preferences_registry import global_preferences
-    global_preferences.clear()
+    from .dynamic_preferences_registry import global_preferences_registry
+    global_preferences_registry.clear()
     for model, registry in preference_models.items():
         registry.clear()
 

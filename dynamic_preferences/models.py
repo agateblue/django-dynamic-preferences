@@ -7,7 +7,7 @@ from django.db.models.query import QuerySet
 from django.conf import settings
 from django.utils.functional import cached_property
 
-from dynamic_preferences import user_preferences, global_preferences
+from dynamic_preferences import user_preferences_registry, global_preferences_registry
 from dynamic_preferences.registries import preference_models
 from .utils import update
 
@@ -109,7 +109,7 @@ class BasePreferenceModel(models.Model):
 
 class GlobalPreferenceModel(BasePreferenceModel):
 
-    registry = global_preferences
+    registry = global_preferences_registry
     class Meta:
         unique_together = ('section', 'name')
         app_label = 'dynamic_preferences'
@@ -156,10 +156,10 @@ class UserPreferenceModel(PerInstancePreferenceModel):
 
 
 
-preference_models.register(UserPreferenceModel, user_preferences)
-preference_models.register(GlobalPreferenceModel, global_preferences)
+preference_models.register(UserPreferenceModel, user_preferences_registry)
+preference_models.register(GlobalPreferenceModel, global_preferences_registry)
 
-global_preferences.preference_model = GlobalPreferenceModel
+global_preferences_registry.preference_model = GlobalPreferenceModel
 
 # Create default preferences for new instances
 

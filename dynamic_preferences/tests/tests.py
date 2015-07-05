@@ -9,7 +9,7 @@ from django.db import IntegrityError
 from django.template import defaultfilters
 
 from dynamic_preferences.serializers import *
-from dynamic_preferences import user_preferences, global_preferences
+from dynamic_preferences import user_preferences_registry, global_preferences_registry
 from dynamic_preferences.models import UserPreferenceModel, GlobalPreferenceModel
 from dynamic_preferences.registries import autodiscover, clear
 from dynamic_preferences.forms import global_preference_form_builder, user_preference_form_builder
@@ -56,7 +56,7 @@ class TestTutorial(BaseTest, LiveServerTestCase):
 
 class TestModels(BaseTest, LiveServerTestCase):
     def test_can_save_and_retrieve_preference_with_section_none(self):
-        no_section_pref = global_preferences.get(name="no_section")
+        no_section_pref = global_preferences_registry.get(name="no_section")
         instance = no_section_pref.to_model()
         instance.save()
 
@@ -67,13 +67,13 @@ class TestModels(BaseTest, LiveServerTestCase):
         u = User(username="post_create")
         u.save()
 
-        self.assertEqual(u.preferences.count(), len(user_preferences.preferences()))
+        self.assertEqual(u.preferences.count(), len(user_preferences_registry.preferences()))
 
 
     def test_can_cache_single_preference(self):
-        global_preferences.models()
+        global_preferences_registry.models()
 
-        preference_getter = global_preferences.getter()
+        preference_getter = global_preferences_registry.getter()
         with self.assertNumQueries(0):
             v = preference_getter['no_section']
             v = preference_getter['no_section']
@@ -81,9 +81,9 @@ class TestModels(BaseTest, LiveServerTestCase):
             v = preference_getter['no_section']
 
     def test_can_cache_all_preferences(self):
-        global_preferences.models()
+        global_preferences_registry.models()
 
-        preference_getter = global_preferences.getter()
+        preference_getter = global_preferences_registry.getter()
         with self.assertNumQueries(0):
             preference_getter.all()
             preference_getter.all()
@@ -91,9 +91,9 @@ class TestModels(BaseTest, LiveServerTestCase):
             preference_getter.all()
 
     def test_cache_invalidate_on_save(self):
-        global_preferences.models()
+        global_preferences_registry.models()
 
-        preference_getter = global_preferences.getter()
+        preference_getter = global_preferences_registry.getter()
         model_instance = preference_getter.get('no_section', model=True)
 
         with self.assertNumQueries(0):
@@ -116,20 +116,20 @@ class TestDynamicPreferences(LiveServerTestCase):
 
     def test_can_get_preference_value_by_key(self):
 
-        user_pref1 = user_preferences.get("TestUserPref1", "test")
-        print(user_preferences)
+        user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
+        print(user_preferences_registry)
         self.assertEqual(user_pref1.default, TestUserPref1.default)
 
     def test_can_change_user_preference_value(self):
 
-        user_pref1 = user_preferences.get("TestUserPref1", "test")
+        user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
         user_pref1.value = "new value"
 
-        self.assertEqual(user_preferences.get("TestUserPref1","test").value, "new value")
+        self.assertEqual(user_preferences_registry.get("TestUserPref1","test").value, "new value")
 
     def test_preference_is_saved_to_database(self):
 
-        user_pref1 = user_preferences.get("TestUserPref1", "test")
+        user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
         p = user_pref1.to_model(instance=self.test_user)
         p.value = 'new test value'
         p.save()
@@ -144,7 +144,7 @@ class TestDynamicPreferences(LiveServerTestCase):
         user = User(username="hello")
         user.save()
 
-        user_pref1 = user_preferences.get("TestUserPref1", "test")
+        user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
         instance = user_pref1.to_model(instance=user)
         instance.value = "new user value"
         instance.save()
@@ -157,7 +157,7 @@ class TestDynamicPreferences(LiveServerTestCase):
 
     def test_per_instance_preference_stay_unique_in_db(self):
 
-        user_pref1 = user_preferences.get("TestUserPref1", "test")
+        user_pref1 = user_preferences_registry.get("TestUserPref1", "test")
         user_pref1.to_model(instance=self.test_user, value="new value")
 
         duplicate = UserPreferenceModel(section="test", name="TestUserPref1", instance=self.test_user)
@@ -167,7 +167,7 @@ class TestDynamicPreferences(LiveServerTestCase):
 
     def test_preference_value_set_to_default(self):
 
-        pref = user_preferences.get("TestUserPref1", "test")
+        pref = user_preferences_registry.get("TestUserPref1", "test")
         pref.to_model(instance=self.test_user)
 
         instance = UserPreferenceModel.objects.get(section="test", name="TestUserPref1", instance=self.test_user)
@@ -186,7 +186,7 @@ class TestDynamicPreferences(LiveServerTestCase):
 class TestPreferenceObjects(LiveServerTestCase):
 
     def test_can_get_to_string_notation(self):
-        pref = global_preferences.get('user.registration_allowed')
+        pref = global_preferences_registry.get('user.registration_allowed')
 
         self.assertEqual(pref.identifier(), 'user.registration_allowed')
         self.assertEqual(pref.identifier("__"), 'user__registration_allowed')
@@ -211,31 +211,31 @@ class TestPreferenceObjects(LiveServerTestCase):
 class TestRegistry(LiveServerTestCase):
 
     def test_can_retrieve_preference_using_dotted_notation(self):
-        registration_allowed = global_preferences.get(name="registration_allowed", section="user")
-        dotted_result = global_preferences.get("user.registration_allowed")
+        registration_allowed = global_preferences_registry.get(name="registration_allowed", section="user")
+        dotted_result = global_preferences_registry.get("user.registration_allowed")
         self.assertEqual(registration_allowed, dotted_result)
 
     def test_can_register_and_retrieve_preference_with_section_none(self):
-        no_section_pref = global_preferences.get(name="no_section")
+        no_section_pref = global_preferences_registry.get(name="no_section")
         self.assertEqual(no_section_pref.section, None)
 
     def test_can_autodiscover_multiple_times(self):
         autodiscover()
-        self.assertEqual(len(global_preferences.preferences()), 7)
-        self.assertEqual(len(user_preferences.preferences()), 7)
+        self.assertEqual(len(global_preferences_registry.preferences()), 7)
+        self.assertEqual(len(user_preferences_registry.preferences()), 7)
         autodiscover()
-        self.assertEqual(len(global_preferences.preferences()), 7)
-        self.assertEqual(len(user_preferences.preferences()), 7)
+        self.assertEqual(len(global_preferences_registry.preferences()), 7)
+        self.assertEqual(len(user_preferences_registry.preferences()), 7)
 
     def test_can_autodiscover_user_preferences(self):
 
         clear()
         with self.assertRaises(KeyError):
-            user_preferences.preferences(section='test')
+            user_preferences_registry.preferences(section='test')
 
         autodiscover(force_reload=True)
 
-        self.assertEqual(len(user_preferences.preferences(section='test')), 4)
+        self.assertEqual(len(user_preferences_registry.preferences(section='test')), 4)
 
 
 class TestSerializers(LiveServerTestCase):
@@ -376,7 +376,7 @@ class TestViews(LiveServerTestCase):
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
         self.assertEqual(len(response.context['form'].fields), 7)
-        self.assertEqual(response.context['registry'], global_preferences)
+        self.assertEqual(response.context['registry'], global_preferences_registry)
 
     def test_global_preference_filters_by_section(self):
         self.client.login(username='admin', password="test")
@@ -405,7 +405,7 @@ class TestViews(LiveServerTestCase):
         self.assertEqual(self.henri.preferences.get(section="misc", name='is_zombie').value, False)
 
     def test_template_gets_global_preferences_via_template_processor(self):
-        global_preferences.models()
+        global_preferences_registry.models()
         url = reverse("dynamic_preferences.test.templateview")
         response = self.client.get(url)
         self.assertEqual(response.context['global_preferences'], GlobalPreferenceModel.objects.to_dict())
