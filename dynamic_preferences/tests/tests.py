@@ -55,12 +55,15 @@ class TestTutorial(BaseTest, LiveServerTestCase):
         self.assertEqual(self.henri.preferences.get(section="misc", name="favourite_colour").value, 'Blue')
 
 class TestModels(BaseTest, LiveServerTestCase):
+
+
     def test_can_save_and_retrieve_preference_with_section_none(self):
         no_section_pref = global_preferences_registry.get(name="no_section")
         instance = no_section_pref.to_model()
         instance.save()
 
         self.assertEqual(GlobalPreferenceModel.objects.filter(section=None, name="no_section").count(), 1)
+
 
     def test_adding_user_create_default_preferences(self):
 
@@ -70,10 +73,14 @@ class TestModels(BaseTest, LiveServerTestCase):
         self.assertEqual(u.preferences.count(), len(user_preferences_registry.preferences()))
 
 
+    def test_global_preferences_manager_get(self):
+        global_preferences = global_preferences_registry.manager()
+        self.assertEqual(global_preferences['no_section'], False)
+
     def test_can_cache_single_preference(self):
         global_preferences_registry.models()
 
-        preference_getter = global_preferences_registry.getter()
+        preference_getter = global_preferences_registry.manager()
         with self.assertNumQueries(0):
             v = preference_getter['no_section']
             v = preference_getter['no_section']
@@ -83,7 +90,7 @@ class TestModels(BaseTest, LiveServerTestCase):
     def test_can_cache_all_preferences(self):
         global_preferences_registry.models()
 
-        preference_getter = global_preferences_registry.getter()
+        preference_getter = global_preferences_registry.manager()
         with self.assertNumQueries(0):
             preference_getter.all()
             preference_getter.all()
@@ -93,7 +100,7 @@ class TestModels(BaseTest, LiveServerTestCase):
     def test_cache_invalidate_on_save(self):
         global_preferences_registry.models()
 
-        preference_getter = global_preferences_registry.getter()
+        preference_getter = global_preferences_registry.manager()
         model_instance = preference_getter.get('no_section', model=True)
 
         with self.assertNumQueries(0):
@@ -186,10 +193,9 @@ class TestDynamicPreferences(LiveServerTestCase):
 class TestPreferenceObjects(LiveServerTestCase):
 
     def test_can_get_to_string_notation(self):
-        pref = global_preferences_registry.get('user.registration_allowed')
+        pref = global_preferences_registry.get('user__registration_allowed')
 
-        self.assertEqual(pref.identifier(), 'user.registration_allowed')
-        self.assertEqual(pref.identifier("__"), 'user__registration_allowed')
+        self.assertEqual(pref.identifier(), 'user__registration_allowed')
 
     def test_boolean_field_class_instantiation(self):
 
@@ -212,7 +218,7 @@ class TestRegistry(LiveServerTestCase):
 
     def test_can_retrieve_preference_using_dotted_notation(self):
         registration_allowed = global_preferences_registry.get(name="registration_allowed", section="user")
-        dotted_result = global_preferences_registry.get("user.registration_allowed")
+        dotted_result = global_preferences_registry.get("user__registration_allowed")
         self.assertEqual(registration_allowed, dotted_result)
 
     def test_can_register_and_retrieve_preference_with_section_none(self):
@@ -334,10 +340,10 @@ class TestViews(LiveServerTestCase):
     def test_can_build_global_preference_form(self):
         # We want to display a form with two global preferences
         # RegistrationAllowed and MaxUsers
-        form = global_preference_form_builder(preferences=['user.registration_allowed', "user.max_users"])()
+        form = global_preference_form_builder(preferences=['user__registration_allowed', "user__max_users"])()
 
         self.assertEqual(len(form.fields), 2)
-        self.assertEqual(form.fields['user.registration_allowed'].initial, False)
+        self.assertEqual(form.fields['user__registration_allowed'].initial, False)
 
     def test_can_build_preference_form_from_sections(self):
         form = global_preference_form_builder(section='test')()
@@ -387,7 +393,7 @@ class TestViews(LiveServerTestCase):
     def test_preference_are_updated_on_form_submission(self):
         self.client.login(username='admin', password="test")
         url = reverse("dynamic_preferences.global.section", kwargs={"section": 'user'})
-        response = self.client.post(url, {'user.max_users': 95, 'user.registration_allowed': True,
+        response = self.client.post(url, {'user.max_users': 95, 'user__registration_allowed': True,
                                           "user.items_per_page": 12})
         self.assertEqual(GlobalPreferenceModel.objects.get(section="user", name="max_users").value, 95)
         self.assertEqual(GlobalPreferenceModel.objects.get(section="user", name="registration_allowed").value, True)

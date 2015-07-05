@@ -5,8 +5,8 @@ def global_preferences(request):
         Pass the values of global preferences to template context.
         You can then access value with `global_preferences.<section>.<name>`
     """
-    getter = gpr.getter()
-    return {'global_preferences': getter.all()}
+    manager = gpr.manager()
+    return {'global_preferences': manager.all()}
 
 
 def user_preferences(request):
@@ -18,7 +18,7 @@ def user_preferences(request):
 
     user = request.user
     if user.is_authenticated():
-        getter = upr.getter(instance=user)
-        return {'user_preferences': getter.all()}
+        manager = upr.manager(instance=user)
+        return {'user_preferences': manager.all()}
 
     return {}

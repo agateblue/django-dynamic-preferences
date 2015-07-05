@@ -9,6 +9,7 @@ which store the actual values.
 """
 from __future__ import unicode_literals
 
+from .settings import preferences_settings
 
 class AbstractPreference(object):
     """
@@ -29,7 +30,7 @@ class AbstractPreference(object):
 
     def __init__(self, registry=None):
         self.registry = registry
-        
+
     @property
     def model(self):
         return self.registry.preference_model
@@ -54,7 +55,7 @@ class AbstractPreference(object):
             )
 
         except self.model.DoesNotExist:
-            
+
             preference = self.model(
                 section=self.section,
                 name=self.name,
@@ -65,9 +66,9 @@ class AbstractPreference(object):
 
         return preference
 
-    def identifier(self, separator="."):
+    def identifier(self):
         """
         Return the name and the section of the Preference joined with a separator, with the form `section<separator>name`
         """
         section = self.section or ""
-        return separator.join([section, self.name])
+        return preferences_settings.SECTION_KEY_SEPARATOR.join([section, self.name])

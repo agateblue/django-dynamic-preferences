@@ -21,7 +21,11 @@ logger = logging.getLogger(__name__)
 
 
 #: The package where autodiscover will try to find preferences to register
-PREFERENCES_PACKAGE = "dynamic_preferences_registry"
+
+
+from .managers import PreferencesManager
+from .settings import preferences_settings
+
 
 
 class PreferenceModelsRegistry(dict):
@@ -50,84 +54,6 @@ class PreferenceModelsRegistry(dict):
 
 preference_models = PreferenceModelsRegistry()
 
-class NotFound(Exception):
-    pass
-
-class PreferenceGetter(object):
-    """Handle retrieving / caching of preferences"""
-    def __init__(self, model, registry, **kwargs):
-
-        from django.core.cache import caches
-        self.model = model
-
-        self.cache = caches['default']
-        self.registry = registry
-        self.queryset = self.model.objects.all()
-        self.instance = kwargs.get('instance')
-        if self.instance:
-            self.queryset = self.queryset.filter(instance=self.instance)
-
-    def __getitem__(self, key):
-        return self.get(key)
-
-    def get_cache_key(self, section, name):
-        """Return the cache key corresponding to a given preference"""
-        if not self.instance:
-            return 'dynamic_preferences_{0}_{1}_{2}'.format(self.model.__name__, section, name)
-        return 'dynamic_preferences_{0}_{1}_{2}_{3}'.format(self.model.__name__, section, name, self.instance.pk)
-
-    def from_cache(self, section, name):
-        """Return a preference raw_value from cache"""
-        cached_value = self.cache.get(self.get_cache_key(section, name), NotFound)
-
-        if cached_value is NotFound:
-            raise NotFound
-        return self.registry.get(section=section, name=name).serializer.deserialize(cached_value)
-
-    def to_cache(self, pref):
-        """Update/create the cache value for the given preference model instance"""
-        self.cache.set(self.get_cache_key(pref.section, pref.name), pref.raw_value, None)
-
-    def get(self, key, model=False):
-        """Return the value of a single preference using a dotted path key"""
-        try:
-            section, name = key.split('.')
-        except ValueError:
-            name = key
-            section = None
-        if model:
-            return self.queryset.get(section=section, name=name)
-        try:
-            return self.from_cache(section, name)
-        except NotFound:
-            pass
-
-        pref = self.queryset.get(section=section, name=name)
-        self.to_cache(pref)
-        return pref.value
-
-    def all(self):
-        """Return a dictionnary containing all preferences by section
-        Loaded from cache or from db in case of cold cache
-        """
-        a = {}
-        try:
-            for preference in self.registry.preferences():
-                section = a.setdefault(preference.section, {})
-                section[preference.name] = self.from_cache(preference.section, preference.name)
-        except NotFound:
-            return self.load_from_db()
-
-        return a
-
-    def load_from_db(self):
-        """Return a dictionnary of preferences by section directly from DB"""
-        a = {}
-        db_prefs = self.queryset
-        for p in db_prefs:
-            self.to_cache(p)
-            section = a.setdefault(p.section, {})
-            section[p.name] = self.from_cache(p.section, p.name)
 
 class PreferenceRegistry(dict):
     """
@@ -174,7 +100,7 @@ class PreferenceRegistry(dict):
         """
         # try dotted notation
         try:
-            section, name = name.split('.')
+            section, name = name.split(preferences_settings.SECTION_KEY_SEPARATOR)
             return self[section][name]
 
         except ValueError:
@@ -188,9 +114,9 @@ class PreferenceRegistry(dict):
             raise KeyError("No such preference in {0} with section={1} and name={2}".format(
                 self.__class__.__name__, section, name))
 
-    def getter(self, **kwargs):
-        """Return a preference getter that can be used to retrieve preference values"""
-        return PreferenceGetter(registry=self, model=self.preference_model, **kwargs)
+    def manager(self, **kwargs):
+        """Return a preference manager that can be used to retrieve preference values"""
+        return PreferencesManager(registry=self, model=self.preference_model, **kwargs)
 
     def sections(self):
         """
@@ -267,7 +193,7 @@ def autodiscover(force_reload=False):
 
     for app in settings.INSTALLED_APPS:
         # try to import self.package inside current app
-        package = '{0}.{1}'.format(app, PREFERENCES_PACKAGE)
+        package = '{0}.{1}'.format(app, preferences_settings.AUTODISCOVER_PACKAGE)
         try:
             #print('Dynamic-preferences: importing {0}...'.format(package))
             module = import_module(package)

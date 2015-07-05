@@ -185,8 +185,8 @@ def invalidate_cache(sender, created, instance, **kwargs):
     if linked_instance:
         kwargs['instance'] = linked_instance
 
-    getter = registry.getter(**kwargs)
-    getter.to_cache(instance)
+    manager = registry.manager(**kwargs)
+    manager.to_cache(instance)
 
 post_save.connect(create_default_per_instance_preferences)
 post_save.connect(invalidate_cache)
