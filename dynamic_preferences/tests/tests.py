@@ -337,6 +337,7 @@ class TestViews(LiveServerTestCase):
         self.admin = User(username="admin", email="admin@admin.com", is_superuser=True, is_staff=True)
         self.admin.set_password('test')
         self.admin.save()
+
     def test_can_build_global_preference_form(self):
         # We want to display a form with two global preferences
         # RegistrationAllowed and MaxUsers
@@ -393,8 +394,8 @@ class TestViews(LiveServerTestCase):
     def test_preference_are_updated_on_form_submission(self):
         self.client.login(username='admin', password="test")
         url = reverse("dynamic_preferences.global.section", kwargs={"section": 'user'})
-        response = self.client.post(url, {'user.max_users': 95, 'user__registration_allowed': True,
-                                          "user.items_per_page": 12})
+        response = self.client.post(url, {'user__max_users': 95, 'user__registration_allowed': True,
+                                          "user__items_per_page": 12})
         self.assertEqual(GlobalPreferenceModel.objects.get(section="user", name="max_users").value, 95)
         self.assertEqual(GlobalPreferenceModel.objects.get(section="user", name="registration_allowed").value, True)
         self.assertEqual(GlobalPreferenceModel.objects.get(section="user", name="items_per_page").value, 12)
@@ -405,7 +406,7 @@ class TestViews(LiveServerTestCase):
         self.assertEqual(UserPreferenceModel.objects.get_or_create(instance=self.henri, section="misc", name='is_zombie')[0].value, True)
 
         url = reverse("dynamic_preferences.user.section", kwargs={'section': 'misc'})
-        response = self.client.post(url, {'misc.favourite_colour': 'Purple', 'misc.is_zombie': False})
+        response = self.client.post(url, {'misc__favourite_colour': 'Purple', 'misc__is_zombie': False})
 
         self.assertEqual(self.henri.preferences.get(section="misc", name='favourite_colour').value, 'Purple')
         self.assertEqual(self.henri.preferences.get(section="misc", name='is_zombie').value, False)
