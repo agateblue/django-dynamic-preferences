@@ -185,7 +185,7 @@ def autodiscover(force_reload=False):
     for app in settings.INSTALLED_APPS:
         # try to import self.package inside current app
         package = '{0}.{1}'.format(
-            app, preferences_settings.AUTODISCOVER_PACKAGE)
+            app, preferences_settings.REGISTRY_MODULE)
         try:
             #print('Dynamic-preferences: importing {0}...'.format(package))
             module = import_module(package)

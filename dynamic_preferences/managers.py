@@ -3,7 +3,9 @@ import collections
 from .settings import preferences_settings
 from .exceptions import CachedValueNotFound, DoesNotExist
 
+
 class PreferencesManager(collections.Mapping):
+
     """Handle retrieving / caching of preferences"""
 
     def __init__(self, model, registry, **kwargs):
@@ -45,7 +47,8 @@ class PreferencesManager(collections.Mapping):
 
     def from_cache(self, section, name):
         """Return a preference raw_value from cache"""
-        cached_value = self.cache.get(self.get_cache_key(section, name), CachedValueNotFound)
+        cached_value = self.cache.get(
+            self.get_cache_key(section, name), CachedValueNotFound)
 
         if cached_value is CachedValueNotFound:
             raise CachedValueNotFound
@@ -53,14 +56,16 @@ class PreferencesManager(collections.Mapping):
 
     def to_cache(self, pref):
         """Update/create the cache value for the given preference model instance"""
-        self.cache.set(self.get_cache_key(pref.section, pref.name), pref.raw_value, None)
+        self.cache.set(
+            self.get_cache_key(pref.section, pref.name), pref.raw_value, None)
 
     def pref_obj(self, section, name):
         return self.registry.get(section=section, name=name)
 
     def parse_lookup(self, lookup):
         try:
-            section, name = lookup.split(preferences_settings.SECTION_KEY_SEPARATOR)
+            section, name = lookup.split(
+                preferences_settings.SECTION_KEY_SEPARATOR)
         except ValueError:
             name = lookup
             section = None
@@ -71,7 +76,7 @@ class PreferencesManager(collections.Mapping):
         section, name = self.parse_lookup(key)
 
         if model:
-            return self.get_from_db(setion=section, name=name)
+            return self.get_db_pref(setion=section, name=name)
         try:
             return self.from_cache(section, name)
         except CachedValueNotFound:
@@ -87,9 +92,11 @@ class PreferencesManager(collections.Mapping):
 
         except self.model.DoesNotExist:
             pref_obj = self.pref_obj(section=section, name=name)
-            pref = self.create_db_pref(section=section, name=name, value=pref_obj.default)
+            pref = self.create_db_pref(
+                section=section, name=name, value=pref_obj.default)
 
         return pref
+
     def update_db_pref(self, section, name, value):
         try:
             db_pref = self.queryset.get(section=section, name=name)
@@ -102,14 +109,14 @@ class PreferencesManager(collections.Mapping):
 
     def create_db_pref(self, section, name, value):
         if self.instance:
-            db_pref = self.model(section=section, name=name, instance=self.instance)
+            db_pref = self.model(
+                section=section, name=name, instance=self.instance)
         else:
             db_pref = self.model(section=section, name=name)
         db_pref.value = value
         db_pref.save()
 
         return db_pref
-
 
     def all(self):
         """Return a dictionnary containing all preferences by section
@@ -118,7 +125,8 @@ class PreferencesManager(collections.Mapping):
         a = {}
         try:
             for preference in self.registry.preferences():
-                a[preference.identifier()] = self.from_cache(preference.section, preference.name)
+                a[preference.identifier()] = self.from_cache(
+                    preference.section, preference.name)
         except CachedValueNotFound:
             return self.load_from_db()
 
@@ -132,9 +140,11 @@ class PreferencesManager(collections.Mapping):
             try:
                 db_pref = db_prefs[preference.identifier()]
             except KeyError:
-                db_pref = self.create_db_pref(section=preference.section, name=preference.name, value=preference.default)
+                db_pref = self.create_db_pref(
+                    section=preference.section, name=preference.name, value=preference.default)
 
             self.to_cache(db_pref)
-            a[preference.identifier()] = self.from_cache(preference.section, preference.name)
+            a[preference.identifier()] = self.from_cache(
+                preference.section, preference.name)
 
         return a

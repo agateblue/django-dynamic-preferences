@@ -91,7 +91,7 @@ The :py:attr:`name` attribute is a unique identifier for your preference. Howeve
 Retrieve and update preferences
 *******************************
 
-You can get and update preferences via a ``Manager``. The logic is almost exactly the same for global preferences and per-instance preferences.
+You can get and update preferences via a ``Manager``, a dictionary-like object. The logic is almost exactly the same for global preferences and per-instance preferences.
 
 .. code-block:: python
 
@@ -110,7 +110,7 @@ You can get and update preferences via a ``Manager``. The logic is almost exactl
     # We can update our preferences values the same way
     global_preferences['maintenance_mode'] = True
 
-For per instance preference it's even easier. You can access each instance preferences via the ``preferences`` attribute.
+For per-instance preferences it's even easier. You can access each instance preferences via the ``preferences`` attribute.
 
 .. code-block:: python
 
@@ -123,42 +123,32 @@ For per instance preference it's even easier. You can access each instance prefe
     # Disable the notification system
     user.preferences['discussion__comment_notifications_enabled'] = False
 
+Under the hood
+--------------
 
+When you access a preference value (e.g. via ``global_preferences['maintenance_mode']``), dynamic-preferences follows these steps:
 
+1. It checks for the cached value (using classic django cache mechanisms)
+2. If no cache key is found, it queries the database for the value
+3. If the value does not exists in database, a new row is added with the default preference value, and the value is returned. The cache is updated to avoid another database query the nex time you want to retrieve the value.
 
-Most of the time, you probably won't need to manipulate preferences by hand, and prefer to rely on forms and admin interface. Just in case, here is a quick overview of how you can interact with preferences. Preferences are (almost) regular django models::
+Therefore, in the worst-case scenario, accessing a single preference value can trigger up to two database queries. Most of the time, however, dynamic-preferences will only hit the cache.
 
-    from dynamic_preferences.models import GlobalPreferenceModel, UserPreferenceModel
+When you set a preference value (e.g. via``global_preferences['maintenance_mode'] = True``), dynamic-preferences follows these steps:
 
-    # let's start with our global preference
-    # Retrieve the model object corresponding to our preference
-    # we use django's regular get_or_create method to create the preference if it does not exist
-    site_title, created = GlobalPreferenceModel.objects.get_or_create(section='general', name='title')
-    assert site_title == 'My site'
+1. The corresponding row is queried from the database (1 query)
+2. The new value is set and persisted in db (1 query)
+3. The cache is updated.
 
-    # preferences are regular models, and can be updated the same way
-    site_title.value = 'My awesome site'
-    site_title.save()
-
-    # dealing with user preferences is quite similar, except you need to provide the corresponding User instance
-    from django.contrib.auth.models import User
-    henri = User.objects.get(username="henri")
-    comment_notifications_enabled, created = user_preferences.get_or_create(section='discussion', name='comment_notifications_enabled', instance=henri)
-
-    assert comment_notifications_enabled.value == True
-
-    # Update the value
-    comment_notifications_enabled.value = False
-    comment_notifications_enabled.save()
-
-    # Note that you can also access preferences directly from a User instance
-    assert henri.preferences.get(section="misc", name="favorite_colour").value == False
+Updating a preference value will always trigger two database queries.
 
 
 About serialization
 *******************
 
-Each preference value is serialized into the ``raw_value`` field of a preference model instance before being saved, and deserialized when you access the ``value`` attribute of a preference model intance. Dynamic preferences handle this for you, using your preference type (BooleanPreference, StringPreference, IntPreference, etc.). It's totally possible to create your own preferences types and serializers, have a look at ``types.py`` and ``serializers.py`` to get started.
+When you get or set preferences values, you interact with Python values. On the database/cache side, values are serialized before storage.
+
+Dynamic preferences handle this for you, using each preference type (BooleanPreference, StringPreference, IntPreference, etc.). It's totally possible to create your own preferences types and serializers, have a look at ``types.py`` and ``serializers.py`` to get started.
 
 
 Admin integration
@@ -182,36 +172,35 @@ A form builder is provided if you want to create and update preferences in custo
     form_class = global_preference_form_builder(section='general')
 
     # get a form for a specific set of preferences
-    # You can use the dotted notation (section.name) as follow
-    form_class = global_preference_form_builder(preferences=['general.title'])
+    # You can use the lookup notation (section__name) as follow
+    form_class = global_preference_form_builder(preferences=['general__title'])
 
     # or pass explicitly the section and names as an iterable of tuples
     form_class = global_preference_form_builder(preferences=[('general', 'title'), ('another_section', 'another_name')])
 
 
-Getting a form for a specific user preferences works similarly, except that you need to provide the user instance:
+Getting a form for a specific instance preferences works similarly, except that you need to provide the user instance:
 
 .. code-block:: python
 
     from dynamic_preferences.forms import user_preference_form_builder
 
-    form_class = global_preference_form_builder(instance=request.user)
-    form_class = global_preference_form_builder(instance=request.user, section='discussion')
-    # etc.
+    form_class = user_preference_form_builder(instance=request.user)
+    form_class = user_preference_form_builder(instance=request.user, section='discussion')
 
 
-Accessing preferences values within a template
+Accessing global preferences within a template
 **********************************************
 
-Dynamic-preferences provide some context processors (remember to add them to your settings, as described in "Installation") that will pass preferences values to your templates context. You can access passed values as follows:
+Dynamic-preferences provide a context processors (remember to add them to your settings, as described in "Installation") that will pass global preferences values to your templates:
 
 .. code-block:: html+django
 
     # myapp/templates/mytemplate.html
 
-    <title>{{ global_preferences.general.title }}</title>
+    <title>{{ global_preferences.general__title }}</title>
 
-    {% if user_preferences.discussion.comment_notifications_enabled %}
+    {% if request.user.preferences.discussion__comment_notifications_enabled %}
         You will receive an email each time a comment is published
     {% else %}
         <a href='/subscribe'>Subscribe to comments notifications</a>
@@ -245,17 +234,3 @@ Then, in your code::
 
     # URL to a page that display a form to edit preferences listed under section 'discussion' of the user making the request
     url = reverse("dynamic_preferences.user.section", kwargs={'section': 'discussion'})
-
-
-Keep registries in sync with you database
-*****************************************
-
-Dynamic preferences does not create default global preferences in database.
-In case of per-instance preferences (such as user preferences), each time a model instance with registered preferences is created, it will get default preferences. However, if you declare another preference, already created instances will miss the new preference.
-
-The ``checkpreferences`` command to deal with that. It will:
-
-- Delete useless preferences from your database
-- Create missing global and per instance preferences
-
-Run it with ``python manage.py checkpreferences``.

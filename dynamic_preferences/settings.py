@@ -23,7 +23,7 @@ DEFAULTS = {
     # 'PERMISSIONS_PREFIX': 'permissions',
     'MANAGER_ATTRIBUTE': 'preferences',
     'SECTION_KEY_SEPARATOR': '__',
-    'AUTODISCOVER_PACKAGE': 'dynamic_preferences_registry',
+    'REGISTRY_MODULE': 'dynamic_preferences_registry',
 }
 
 
