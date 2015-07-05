@@ -12,36 +12,15 @@ from dynamic_preferences.registries import preference_models
 from .utils import update
 
 
-
-class PreferenceModelManager(models.Manager):
-
-    def to_dict(self, **kwargs):
-        """
-            Return a dict of preference models values with the same structure as registries
-            Used to access preferences value within templates
-        """
-
-        preferences = self.get_queryset().all()
-        if kwargs:
-            preferences = preferences.filter(**kwargs)
-
-        d = {}
-        for p in preferences:
-            try:
-                d[p.section][p.name] = p.value
-            except KeyError:
-                d[p.section] = {}
-                d[p.section][p.name] = p.value
-
-        return d
-
 class BasePreferenceModel(models.Model):
+
     """
     A base model with common logic for all preferences models.
     """
 
     #: The section under which the preference is declared
-    section = models.TextField(max_length=255, db_index=True, blank=True, null=True, default=None)
+    section = models.TextField(
+        max_length=255, db_index=True, blank=True, null=True, default=None)
 
     #: a name for the preference
     name = models.TextField(max_length=255, db_index=True)
@@ -49,15 +28,9 @@ class BasePreferenceModel(models.Model):
     #: a value, serialized to a string. This field should not be accessed directly, use :py:attr:`BasePreferenceModel.value` instead
     raw_value = models.TextField(null=True, blank=True)
 
-    #: Keep a reference to the whole preference registry.
-    #: In order to map the Preference Model Instance to the Preference object.
-
-    objects = PreferenceModelManager()
-
     class Meta:
         abstract = True
         app_label = 'dynamic_preferences'
-
 
     def __init__(self, *args, **kwargs):
         # Check if the model is already saved in DB
@@ -72,19 +45,14 @@ class BasePreferenceModel(models.Model):
             else:
                 self.value = self.preference.default
 
-    @property
-    def dotted_id(self):
-        if self.section:
-            return '{0}.{1}'.format(self.section, self.name)
-        return self.name
-
     @cached_property
     def preference(self):
         return self.registry.get(section=self.section, name=self.name)
         try:
             pass
         except AttributeError:
-            raise AttributeError('Cannot get a preference registry for this preference model. Have you registered it ?')
+            raise AttributeError(
+                'Cannot get a preference registry for this preference model. Have you registered it ?')
 
     def set_value(self, value):
         """
@@ -110,6 +78,7 @@ class BasePreferenceModel(models.Model):
 class GlobalPreferenceModel(BasePreferenceModel):
 
     registry = global_preferences_registry
+
     class Meta:
         unique_together = ('section', 'name')
         app_label = 'dynamic_preferences'
@@ -119,18 +88,19 @@ class GlobalPreferenceModel(BasePreferenceModel):
 
 
 class PerInstancePreferenceModel(BasePreferenceModel):
+
     """For preferences that are tied to a specific model instance"""
     #: the instance which is concerned by the preference
     #: use a ForeignKey pointing to the model of your choice
     instance = None
 
-    @classmethod
-    def get_instance_model(cls):
-        return cls._meta.get_field('instance').rel.to
-
     class Meta(BasePreferenceModel.Meta):
         unique_together = ('instance', 'section', 'name')
         abstract = True
+
+    @classmethod
+    def get_instance_model(cls):
+        return cls._meta.get_field('instance').rel.to
 
     @property
     def registry(self):
@@ -146,15 +116,6 @@ class UserPreferenceModel(PerInstancePreferenceModel):
         verbose_name = "user preference"
         verbose_name_plural = "user preferences"
 
-    @property
-    def user(self):
-        return self.instance
-    @user.setter
-    def user(self, value):
-        self.instance = value
-
-
-
 
 preference_models.register(UserPreferenceModel, user_preferences_registry)
 preference_models.register(GlobalPreferenceModel, global_preferences_registry)
@@ -164,6 +125,7 @@ global_preferences_registry.preference_model = GlobalPreferenceModel
 # Create default preferences for new instances
 
 from django.db.models.signals import post_save
+
 
 def create_default_per_instance_preferences(sender, created, instance, **kwargs):
     """Create default preferences for PerInstancePreferenceModel"""

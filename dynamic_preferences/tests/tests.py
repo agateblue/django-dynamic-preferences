@@ -154,10 +154,11 @@ class TestDynamicPreferences(LiveServerTestCase):
         self.assertEqual(pref.default, value)
 
     def test_preference_model_manager_to_dict(self):
+        manager = global_preferences_registry.manager()
         call_command('checkpreferences', verbosity=1, interactive=False)
-        expected = {u'test': {u'TestGlobal1': u'default value', u'TestGlobal2': False, u'TestGlobal3': False}, None: {
-            u'no_section': False}, u'user': {u'max_users': 100, u'items_per_page': 25, u'registration_allowed': False}}
-        self.assertDictEqual(GlobalPreferenceModel.objects.to_dict(), expected)
+        expected = {u'test__TestGlobal1': u'default value', u'test__TestGlobal2': False, u'test__TestGlobal3': False,
+            u'no_section': False, u'user__max_users': 100, u'user__items_per_page': 25, u'user__registration_allowed': False}
+        self.assertDictEqual(manager.all(), expected)
 
     def test_user_preference_model_manager_to_dict(self):
         user = self.test_user

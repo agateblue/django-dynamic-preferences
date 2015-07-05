@@ -27,8 +27,8 @@ from .managers import PreferencesManager
 from .settings import preferences_settings
 
 
-
 class PreferenceModelsRegistry(dict):
+
     """Store relationships beetween preferences model and preferences registry"""
 
     def register(self, preference_model, preference_registry):
@@ -48,7 +48,6 @@ class PreferenceModelsRegistry(dict):
         instance_class = model._meta.get_field('instance').rel.to
         setattr(instance_class, preferences_settings.MANAGER_ATTRIBUTE, getter)
 
-
     def get_by_preference(self, preference):
         return self[preference.__class__]
 
@@ -62,7 +61,7 @@ class PreferenceModelsRegistry(dict):
                 if isinstance(instance, instance_class):
                     return registry
                     break
-            except FieldDoesNotExist: # global preferences
+            except FieldDoesNotExist:  # global preferences
                 pass
         return None
 
@@ -70,6 +69,7 @@ preference_models = PreferenceModelsRegistry()
 
 
 class PreferenceRegistry(dict):
+
     """
     Registries are special dictionaries that are used by dynamic-preferences to register and access your preferences.
     dynamic-preferences has one registry per Preference type:
@@ -114,7 +114,8 @@ class PreferenceRegistry(dict):
         """
         # try dotted notation
         try:
-            section, name = name.split(preferences_settings.SECTION_KEY_SEPARATOR)
+            section, name = name.split(
+                preferences_settings.SECTION_KEY_SEPARATOR)
             return self[section][name]
 
         except ValueError:
@@ -156,7 +157,6 @@ class PreferenceRegistry(dict):
             return [self[section][name] for name in self[section]]
 
 
-
 class PerInstancePreferenceRegistry(PreferenceRegistry):
     pass
 
@@ -170,6 +170,7 @@ def clear():
     for model, registry in preference_models.items():
         registry.clear()
 
+
 def autodiscover(force_reload=False):
     """
     Populate the registry by iterating through every section declared in :py:const:`settings.INSTALLED_APPS`.
@@ -181,10 +182,10 @@ def autodiscover(force_reload=False):
     if force_reload:
         clear()
 
-
     for app in settings.INSTALLED_APPS:
         # try to import self.package inside current app
-        package = '{0}.{1}'.format(app, preferences_settings.AUTODISCOVER_PACKAGE)
+        package = '{0}.{1}'.format(
+            app, preferences_settings.AUTODISCOVER_PACKAGE)
         try:
             #print('Dynamic-preferences: importing {0}...'.format(package))
             module = import_module(package)
