@@ -6,9 +6,6 @@
 Django-dynamic-preferences documentation
 ========================================
 
-What is dynamic-preferences ?
-*****************************
-
 Dynamic-preferences is a Django app, BSD-licensed, designed to manage your project settings. While most of the time,
 a `settings.py` file is sufficient, there are some situations where you need something more flexible,
 such as per-user settings and per-site settings.
@@ -30,10 +27,7 @@ Contents:
 
    quickstart
    settings
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   contributing
+   authors
+   history
+   readme

@@ -1,4 +1,0 @@
-django<1.9
-nose
-django-nose
-six

@@ -1,29 +1,42 @@
-*.pyc
-# Project settings and static files
-.idea/*
-.sublime*
-.idea
-
-fab_settings.py
-# OS generated files #
-######################
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-*.sql
 *.py[cod]
-*~
 
-docs/_*
-*.sq3
-*.sqlite*
-*.sb
+# C extensions
+*.so
 
-
-*egg-info
+# Packages
+*.egg
+*.egg-info
 dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# Complexity
+output/*.html
+output/*/index.html
+
+# Sphinx
+docs/_build

@@ -25,7 +25,7 @@ class BaseTest(object):
         caches['default'].clear()
 
 
-class TestTutorial(BaseTest, LiveServerTestCase):
+class TestTutorial(BaseTest, TestCase):
 
     """
     Test everything from the tutorial
@@ -59,7 +59,7 @@ class TestTutorial(BaseTest, LiveServerTestCase):
 
 
 
-class TestModels(BaseTest, LiveServerTestCase):
+class TestModels(BaseTest, TestCase):
 
     def test_adding_user_create_default_preferences(self):
 
@@ -113,7 +113,7 @@ class TestModels(BaseTest, LiveServerTestCase):
             manager['no_section']
 
 
-class TestDynamicPreferences(LiveServerTestCase):
+class TestDynamicPreferences(BaseTest, TestCase):
 
     def setUp(self):
 
@@ -148,10 +148,9 @@ class TestDynamicPreferences(LiveServerTestCase):
         pref = user_preferences_registry.get("TestUserPref1", "test")
 
         value = self.test_user.preferences['test__TestUserPref1']
-
+        self.assertEqual(pref.default, value)
         instance = UserPreferenceModel.objects.get(
             section="test", name="TestUserPref1", instance=self.test_user)
-        self.assertEqual(pref.default, value)
 
     def test_preference_model_manager_to_dict(self):
         manager = global_preferences_registry.manager()
@@ -168,7 +167,7 @@ class TestDynamicPreferences(LiveServerTestCase):
             user.preferences.all(), expected)
 
 
-class TestPreferenceObjects(LiveServerTestCase):
+class TestPreferenceObjects(BaseTest, TestCase):
 
     def test_can_get_to_string_notation(self):
         pref = global_preferences_registry.get('user__registration_allowed')
@@ -193,7 +192,7 @@ class TestPreferenceObjects(LiveServerTestCase):
         #self.assertEqual(preference.field.initial, "FR")
 
 
-class TestRegistry(LiveServerTestCase):
+class TestRegistry(BaseTest, TestCase):
 
     def test_can_retrieve_preference_using_dotted_notation(self):
         registration_allowed = global_preferences_registry.get(
@@ -226,7 +225,7 @@ class TestRegistry(LiveServerTestCase):
             len(user_preferences_registry.preferences(section='test')), 4)
 
 
-class TestSerializers(LiveServerTestCase):
+class TestSerializers(BaseTest, TestCase):
 
     def test_boolean_serialization(self):
         s = BooleanSerializer
@@ -314,7 +313,7 @@ class TestSerializers(LiveServerTestCase):
         )
 
 
-class TestViews(LiveServerTestCase):
+class TestViews(BaseTest, LiveServerTestCase):
 
     def setUp(self):
         self.henri = User(

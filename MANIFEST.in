@@ -1,7 +1,6 @@
-include COPYING
-include CHANGES
-include README.md
-include runtests.py
-recursive-include docs
-recursive-include dynamic_preferences/templates *
-recursive-include dynamic_preferences/static *
+include AUTHORS.rst
+include CONTRIBUTING.rst
+include HISTORY.rst
+include LICENSE
+include README.rst
+recursive-include dynamic_preferences *.html *.png *.gif *js *.css *jpg *jpeg *svg *py

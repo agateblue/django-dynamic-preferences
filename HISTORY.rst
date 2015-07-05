@@ -3,6 +3,11 @@
 Changelog
 =========
 
+0.4.1 (05-07-2015)
+******************
+
+* The cookiecutter part was not fully merged
+
 0.4 (05-07-2015)
 ****************
 
