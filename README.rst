@@ -2,8 +2,8 @@
 django-dynamic-preferences
 =============================
 
-.. image:: https://badge.fury.io/py/{{ cookiecutter.repo_name }}.png
-    :target: https://badge.fury.io/py/{{ cookiecutter.repo_name }}
+.. image:: https://badge.fury.io/py/django-dynamic-preferences.png
+    :target: https://badge.fury.io/py/django-dynamic-preferences
 
 .. image:: https://readthedocs.org/projects/django-dynamic-preferences/badge/?version=latest
     :target: http://django-dynamic-preferences.readthedocs.org/en/latest/
