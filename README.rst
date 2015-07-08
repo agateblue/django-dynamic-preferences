@@ -2,12 +2,18 @@
 django-dynamic-preferences
 =============================
 
+.. image:: https://badge.fury.io/py/{{ cookiecutter.repo_name }}.png
+    :target: https://badge.fury.io/py/{{ cookiecutter.repo_name }}
+
+.. image:: https://readthedocs.org/projects/django-dynamic-preferences/badge/?version=latest
+    :target: http://django-dynamic-preferences.readthedocs.org/en/latest/
+
 .. image:: https://travis-ci.org/EliotBerriot/django-dynamic-preferences.svg?branch=master
     :target: https://travis-ci.org/EliotBerriot/django-dynamic-preferences
 
 .. image:: https://travis-ci.org/EliotBerriot/django-dynamic-preferences.svg?branch=develop
     :target: https://travis-ci.org/EliotBerriot/django-dynamic-preferences
-    
+
 Dynamic-preferences is a Django app, BSD-licensed, designed to help you manage your project settings. While most of the time,
 a `settings.py` file is sufficient, there are some situations where you need something more flexible such as:
 
