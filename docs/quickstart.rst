@@ -61,22 +61,22 @@ Let's declare a few preferences in this file:
     # blog/dynamic_preferences_registry.py
 
     from dynamic_preferences.types import BooleanPreference, StringPreference
-    from dynamic_preferences import user_preferences, global_preferences
+    from dynamic_preferences import user_preferences_registry, global_preferences_registry
 
     # We start with a global preference
-    @global_preferences.register
+    @global_preferences_registry.register
     class SiteTitle(StringPreference):
         section = 'general'
         name = 'title'
         default = 'My site'
 
-    @global_preferences.register
+    @global_preferences_registry.register
     class MaintenanceMode(BooleanPreference):
         name = 'maintenance_mode'
         default = False
 
     # now we declare a per-user preference
-    @user_preferences.register
+    @user_preferences_registry.register
     class CommentNotificationsEnabled(BooleanPreference):
         """Do you want to be notified on comment publication ?"""
         section = 'discussion'

@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 from .managers import PreferencesManager
 from .settings import preferences_settings
-
+from .exceptions import NotFoundInRegistry
 
 class PreferenceModelsRegistry(dict):
 
@@ -126,7 +126,7 @@ class PreferenceRegistry(dict):
             return self[section][name]
 
         except:
-            raise KeyError("No such preference in {0} with section={1} and name={2}".format(
+            raise NotFoundInRegistry("No such preference in {0} with section={1} and name={2}".format(
                 self.__class__.__name__, section, name))
 
     def manager(self, **kwargs):
@@ -187,7 +187,7 @@ def autodiscover(force_reload=False):
         package = '{0}.{1}'.format(
             app, preferences_settings.REGISTRY_MODULE)
         try:
-            #print('Dynamic-preferences: importing {0}...'.format(package))
+            # print('Dynamic-preferences: importing {0}...'.format(package))
             module = import_module(package)
 
             if force_reload:
@@ -196,4 +196,4 @@ def autodiscover(force_reload=False):
 
         except ImportError as e:
             pass
-            #print('Dynamic-preferences: cannnot import {0}, {1}'.format(package, e))
+            # print('Dynamic-preferences: cannnot import {0}, {1}'.format(package, e))

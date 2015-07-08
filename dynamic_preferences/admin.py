@@ -1,38 +1,12 @@
 from django.contrib import admin
-from dynamic_preferences.models import GlobalPreferenceModel, UserPreferenceModel
 from django import forms
 
-class PreferenceChangeListForm(forms.ModelForm):
-    """
-    A form that integrate dynamic-preferences into django.contrib.admin
-    """
-    # Me must use an acutal model field, so we use raw_value. However,
-    # instance.value will be displayed in form.
-    raw_value = forms.CharField()
+from . import global_preferences_registry
+from .models import GlobalPreferenceModel, UserPreferenceModel
+from .forms import GlobalSinglePreferenceForm, UserSinglePreferenceForm, SinglePerInstancePreferenceForm
 
-    def __init__(self, *args, **kwargs):
-        self.instance = kwargs.get('instance')
-        super(PreferenceChangeListForm, self).__init__(*args, **kwargs)
-
-        self.fields['raw_value'] = self.instance.preference.setup_field()
-
-    def save(self, *args, **kwargs):
-        self.cleaned_data['raw_value'] = self.instance.preference.serializer.serialize(self.cleaned_data['raw_value'])
-        return super(PreferenceChangeListForm, self).save(*args, **kwargs)
-
-class GlobalPreferenceChangeListForm(PreferenceChangeListForm):
-    class Meta:
-        model = GlobalPreferenceModel
-        fields = ('section', 'name', 'raw_value')
-
-class UserPreferenceChangeListForm(PreferenceChangeListForm):
-    class Meta:
-        model = UserPreferenceModel
-        fields = ('section', 'name', 'raw_value')
 
 class DynamicPreferenceAdmin(admin.ModelAdmin):
-    readonly_fields = ('name', 'section', 'value')
-    fields = ("raw_value",)
     list_display = ('name', 'section', 'raw_value')
     list_editable = ('raw_value',)
     search_fields = ['name', 'section', 'raw_value']
@@ -43,17 +17,26 @@ class DynamicPreferenceAdmin(admin.ModelAdmin):
 
 
 class GlobalPreferenceAdmin(DynamicPreferenceAdmin):
-    form = GlobalPreferenceChangeListForm
-    changelist_form = GlobalPreferenceChangeListForm
+    form = GlobalSinglePreferenceForm
+    changelist_form = GlobalSinglePreferenceForm
 
-
+    def get_queryset(self, *args, **kwargs):
+        # Instanciate default prefs
+        manager = global_preferences_registry.manager()
+        manager.all()
+        return super(GlobalPreferenceAdmin, self).get_queryset(*args, **kwargs)
+        
 admin.site.register(GlobalPreferenceModel, GlobalPreferenceAdmin)
 
 
-class UserPreferenceAdmin(DynamicPreferenceAdmin):
-    form = UserPreferenceChangeListForm
+class PerInstancePreferenceAdmin(DynamicPreferenceAdmin):
     list_display = ('instance',) + DynamicPreferenceAdmin.list_display
+    raw_id_fields = ('instance',)
+    form = SinglePerInstancePreferenceForm
+
+class UserPreferenceAdmin(PerInstancePreferenceAdmin):
     search_fields = ['instance__username'] + DynamicPreferenceAdmin.search_fields
-    changelist_form = UserPreferenceChangeListForm
+    form = UserSinglePreferenceForm
+    changelist_form = UserSinglePreferenceForm
 
 admin.site.register(UserPreferenceModel, UserPreferenceAdmin)

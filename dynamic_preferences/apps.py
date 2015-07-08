@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 
+from . import global_preferences_registry
 from .registries import autodiscover
 
 
@@ -9,3 +10,5 @@ class DynamicPreferencesConfig(AppConfig):
 
     def ready(self):
         autodiscover()
+
+        
