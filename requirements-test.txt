@@ -1,4 +1,4 @@
-django>=1.5.1
+-r requirements.txt
 coverage
 coveralls
 mock>=1.0.1
