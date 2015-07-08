@@ -32,27 +32,10 @@ class BasePreferenceModel(models.Model):
         abstract = True
         app_label = 'dynamic_preferences'
 
-    def __init__(self, *args, **kwargs):
-        # Check if the model is already saved in DB
-        v = kwargs.pop("value", None)
-        super(BasePreferenceModel, self).__init__(*args, **kwargs)
-
-        new = self.pk is None
-
-        if new:
-            if v is not None:
-                self.value = v
-            else:
-                self.value = self.preference.default
-
     @cached_property
     def preference(self):
         return self.registry.get(section=self.section, name=self.name)
-        try:
-            pass
-        except AttributeError:
-            raise AttributeError(
-                'Cannot get a preference registry for this preference model. Have you registered it ?')
+        
 
     def set_value(self, value):
         """
@@ -68,11 +51,18 @@ class BasePreferenceModel(models.Model):
 
     value = property(get_value, set_value)
 
+    def save(self, **kwargs):
+
+        if self.pk is None and not self.raw_value:
+
+                self.value = self.preference.default
+        super(BasePreferenceModel, self).save(**kwargs)
+
     def __str__(self):
         return self.__repr__()
 
     def __repr__(self):
-        return '{0} - {1}/{2}: {3}'.format(self.__class__.__name__, self.section, self.name, self.value)
+        return '{0} - {1}/{2}'.format(self.__class__.__name__, self.section, self.name)
 
 
 class GlobalPreferenceModel(BasePreferenceModel):

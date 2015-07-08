@@ -13,6 +13,9 @@ class DynamicPreferencesException(Exception):
         return self.detail
 
 
+class NotFoundInRegistry(DynamicPreferencesException, KeyError):
+    detail_default = 'Preference with this name/section not found in registry'
+
 class DoesNotExist(DynamicPreferencesException):
     detail_default = 'Cannot retrieve preference value, ensure the preference is correctly registered and database is synced'
 
