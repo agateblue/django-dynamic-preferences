@@ -3,6 +3,14 @@
 Changelog
 =========
 
+0.5 (12-07-2015)
+****************
+
+This release may involves some specific upgrade steps, please refer to the ``Upgrade`` section of the documentation.
+
+* Migration to CharField for section and name fields. This fix MySQL compatibility issue #2
+* Updated example project to the 0.4 API
+
 0.4.2 (05-07-2015)
 ******************
 

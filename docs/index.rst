@@ -40,6 +40,7 @@ Contents:
    installation
    quickstart
    settings
+   upgrade
    contributing
    authors
    history
