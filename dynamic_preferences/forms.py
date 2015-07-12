@@ -38,7 +38,7 @@ class AbstractSinglePreferenceForm(forms.ModelForm):
         return self.cleaned_data
 
     def save(self, *args, **kwargs):
-        self.instance.raw_value = self.instance.preference.serializer.serialize(self.cleaned_data['raw_value'])
+        self.instance.value = self.cleaned_data['raw_value']
         return super(AbstractSinglePreferenceForm, self).save(*args, **kwargs)
 
 class SinglePerInstancePreferenceForm(AbstractSinglePreferenceForm):

@@ -55,28 +55,32 @@ class BasePreferenceType(AbstractPreference):
     def field(self):
         return self.setup_field()
 
-    def setup_field(self):
+    def setup_field(self, **kwargs):
         """
             Create an actual instance of self.field
             Override this method if needed
         """
+        field_class = self.get('field_class')
+        field_kwargs = self.get_field_kwargs()
+        field_kwargs.update(kwargs)
+        return field_class(**field_kwargs)
 
-        return self.field_class(**self.get_field_kwargs())
-
+    def get_field_kwargs(self):
+        kwargs = {}
+        kwargs['label'] = self.get('verbose_name')
+        kwargs['widget'] = self.get('widget')
+        kwargs['initial'] = self.get('default')
+        return kwargs
 
 class BooleanPreference(BasePreferenceType):
 
-    BOOL_CHOICES = ((True, _('yes')), (False, _('no')))
-
-    _default_field_attributes = {
-        "choices": BOOL_CHOICES,
-        "widget": forms.RadioSelect,
-        "coerce": lambda x: x == 'True',
-    }
-    default = False
-    field_class = TypedChoiceField
+    field_class = BooleanField
     serializer = BooleanSerializer
 
+    def get_field_kwargs(self):
+        kwargs = super(BooleanPreference, self).get_field_kwargs()
+        kwargs['required'] = False
+        return kwargs
 
 class IntPreference(BasePreferenceType):
 
@@ -88,7 +92,6 @@ class StringPreference(BasePreferenceType):
 
     field_class = CharField
     serializer = StringSerializer
-    default = ""
 
 class LongStringPreference(StringPreference):
     _default_field_attributes = {

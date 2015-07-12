@@ -31,13 +31,16 @@ class AbstractPreference(object):
     #: A default value for the preference
     default = UNSET
 
-    #: The model corresponding to this preference type (:py:class:`SitePreference`, :py:class:`GlobalPreference` or :py:class:`UserPreference`)
-    model = None
-
     def __init__(self, registry=None):
         self.registry = registry
-        if self.get_default() == UNSET:
+        if self.get('default') == UNSET:
             raise MissingDefault
+
+    def get(self, attr, default=None):
+        getter = 'get_{0}'.format(attr)
+        if hasattr(self, getter):
+            return getattr(self, getter)()
+        return getattr(self, attr, default)
 
     def get_default(self):
         if hasattr(self.default, '__call__'):
