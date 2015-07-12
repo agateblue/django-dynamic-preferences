@@ -1,11 +1,8 @@
-from dynamic_preferences.preferences import UserPreference, GlobalPreference
 from dynamic_preferences.types import *
-from dynamic_preferences.registries import register
+from dynamic_preferences import global_preferences_registry, user_preferences_registry
 
-
-
-@register
-class RegistrationAllowed(BooleanPreference, GlobalPreference):
+@global_preferences_registry.register
+class RegistrationAllowed(BooleanPreference):
     """
     Are new registrations allowed ?
     """
@@ -13,8 +10,8 @@ class RegistrationAllowed(BooleanPreference, GlobalPreference):
     name = "registration_allowed"
     default = False
 
-@register
-class MaxUsers(IntPreference, GlobalPreference):
+@global_preferences_registry.register
+class MaxUsers(IntPreference):
     """
     Are new registrations allowed ?
     """
@@ -23,22 +20,22 @@ class MaxUsers(IntPreference, GlobalPreference):
     default = 100
 
 
-@register
-class Header(LongStringPreference, GlobalPreference):
-    
+@global_preferences_registry.register
+class Header(LongStringPreference):
+
     section = "general"
     name = "presentation"
     default = "You need a presentation"
 
-@register
-class ItemsPerPage(IntPreference, GlobalPreference):
+@user_preferences_registry.register
+class ItemsPerPage(IntPreference):
 
     section = "display"
     name = "items_per_page"
     default = 25
 
-@register
-class FavoriteVegetable(ChoicePreference, GlobalPreference):
+@user_preferences_registry.register
+class FavoriteVegetable(ChoicePreference):
 
     choices = (
         ("C", "Carrot"),
@@ -49,8 +46,8 @@ class FavoriteVegetable(ChoicePreference, GlobalPreference):
     name = "favorite_vegetable"
     default = "C"
 
-@register
-class FavouriteColour(UserPreference, StringPreference):
+@user_preferences_registry.register
+class FavouriteColour(StringPreference):
     """
     What's your favourite colour ?
     """
@@ -58,8 +55,8 @@ class FavouriteColour(UserPreference, StringPreference):
     name = "favourite_colour"
     default = "Green"
 
-@register
-class IsZombie(BooleanPreference, UserPreference):
+@user_preferences_registry.register
+class IsZombie(BooleanPreference):
     """
     Are you a zombie ?
     """
@@ -67,9 +64,9 @@ class IsZombie(BooleanPreference, UserPreference):
     name = "is_zombie"
     default = True
 
-@register
-class IsFanOfTokioHotel(BooleanPreference, UserPreference):
-    
+@user_preferences_registry.register
+class IsFanOfTokioHotel(BooleanPreference):
+
     section = "music"
     name = "is_fan_of_tokio_hotel"
     default = False
