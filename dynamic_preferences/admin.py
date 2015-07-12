@@ -34,6 +34,7 @@ class PerInstancePreferenceAdmin(DynamicPreferenceAdmin):
     list_display = ('instance',) + DynamicPreferenceAdmin.list_display
     raw_id_fields = ('instance',)
     form = SinglePerInstancePreferenceForm
+    list_select_related = True
 
 class UserPreferenceAdmin(PerInstancePreferenceAdmin):
     search_fields = ['instance__username'] + DynamicPreferenceAdmin.search_fields
