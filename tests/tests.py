@@ -230,12 +230,10 @@ class TestSerializers(BaseTest, TestCase):
     def test_boolean_serialization(self):
         s = BooleanSerializer
 
-        self.assertEqual(s.serialize(True), "1")
-        self.assertEqual(s.serialize("True"), "1")
-        self.assertEqual(s.serialize("Something"), "1")
-
-        self.assertEqual(s.serialize(False), "0")
-        self.assertEqual(s.serialize(""), "0")
+        self.assertEqual(s.serialize(True), "True")
+        self.assertEqual(s.serialize(False), "False")
+        with self.assertRaises(s.exception):
+            s.serialize('yolo')
 
     def test_boolean_deserialization(self):
 
