@@ -1,9 +1,18 @@
 
+try:
+    from django.conf import settings
+except ImportError:
+    pass
+try:
+    from django.db.models.fields import FieldDoesNotExist
+except ImportError:
+    pass
 
-from django.conf import settings
-from django.db.models.fields import FieldDoesNotExist
+try:
+    from django.utils.importlib import import_module
+except ImportError:
+    pass
 
-from django.utils.importlib import import_module
 # import the logging library
 import logging
 
