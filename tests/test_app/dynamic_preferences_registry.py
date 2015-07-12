@@ -22,6 +22,10 @@ class MaxUsers(IntPreference):
     name = "max_users"
     default = 100
 
+class NoDefault(IntPreference):
+    section = "user"
+    name = "no_default"
+    
 @global_preferences_registry.register
 class ItemsPerPage(IntPreference):
 

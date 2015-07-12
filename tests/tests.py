@@ -13,6 +13,7 @@ from dynamic_preferences import user_preferences_registry, global_preferences_re
 from dynamic_preferences.models import UserPreferenceModel, GlobalPreferenceModel
 from dynamic_preferences.registries import autodiscover, clear
 from dynamic_preferences.managers import PreferencesManager
+from dynamic_preferences import exceptions
 from dynamic_preferences.forms import global_preference_form_builder, user_preference_form_builder
 
 from .types import *
@@ -173,6 +174,10 @@ class TestPreferenceObjects(BaseTest, TestCase):
         pref = global_preferences_registry.get('user__registration_allowed')
 
         self.assertEqual(pref.identifier(), 'user__registration_allowed')
+        
+    def test_preference_requires_default_value(self):
+        with self.assertRaises(exceptions.MissingDefault):
+            preference = NoDefault()
 
     def test_boolean_field_class_instantiation(self):
 

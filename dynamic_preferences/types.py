@@ -31,10 +31,7 @@ class BasePreferenceType(AbstractPreference):
     # A serializer class (see dynamic_preferences.serializers)
     serializer = None
 
-    #: a default value or a callable that return a value to be used as default
-    default_value = None
-
-    _field = None        
+    _field = None
 
     def get_field_kwargs(self):
         field_kwargs = dict(self._default_field_attributes)
@@ -45,16 +42,6 @@ class BasePreferenceType(AbstractPreference):
             pass
         field_kwargs.update(self.field_attributes)
         return field_kwargs
-
-    @cached_property
-    def default(self):
-        """
-        :return: If default_value is a a callable, return the callable result, else, return default_value as is
-        """
-        if hasattr(self.default_value, '__call__'):
-            return self.default_value()
-        else:
-            return self.default_value
 
     @property
     def initial(self):
@@ -73,7 +60,7 @@ class BasePreferenceType(AbstractPreference):
             Create an actual instance of self.field
             Override this method if needed
         """
-        
+
         return self.field_class(**self.get_field_kwargs())
 
 
@@ -119,4 +106,3 @@ class ChoicePreference(BasePreferenceType):
 
         field_kwargs['choices'] = self.choices or self.field_attribute['initial']
         return field_kwargs
-
