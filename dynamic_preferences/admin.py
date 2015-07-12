@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django import forms
 
+from .settings import preferences_settings
 from . import global_preferences_registry
 from .models import GlobalPreferenceModel, UserPreferenceModel
 from .forms import GlobalSinglePreferenceForm, UserSinglePreferenceForm, SinglePerInstancePreferenceForm
@@ -39,5 +40,9 @@ class UserPreferenceAdmin(PerInstancePreferenceAdmin):
     form = UserSinglePreferenceForm
     changelist_form = UserSinglePreferenceForm
 
-    
+    def get_queryset(self, request, *args, **kwargs):
+        # Instanciate default prefs
+        getattr(request.user, preferences_settings.MANAGER_ATTRIBUTE).all()
+        return super(UserPreferenceAdmin, self).get_queryset(request, *args, **kwargs)
+
 admin.site.register(UserPreferenceModel, UserPreferenceAdmin)
