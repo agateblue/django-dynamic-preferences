@@ -7,7 +7,7 @@ from .forms import GlobalSinglePreferenceForm, UserSinglePreferenceForm, SingleP
 
 
 class DynamicPreferenceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'section', 'raw_value')
+    list_display = ('verbose_name', 'name', 'section', 'help_text', 'raw_value')
     list_editable = ('raw_value',)
     search_fields = ['name', 'section', 'raw_value']
     list_filter = ('section',)
@@ -25,7 +25,7 @@ class GlobalPreferenceAdmin(DynamicPreferenceAdmin):
         manager = global_preferences_registry.manager()
         manager.all()
         return super(GlobalPreferenceAdmin, self).get_queryset(*args, **kwargs)
-        
+
 admin.site.register(GlobalPreferenceModel, GlobalPreferenceAdmin)
 
 
@@ -39,4 +39,5 @@ class UserPreferenceAdmin(PerInstancePreferenceAdmin):
     form = UserSinglePreferenceForm
     changelist_form = UserSinglePreferenceForm
 
+    
 admin.site.register(UserPreferenceModel, UserPreferenceAdmin)

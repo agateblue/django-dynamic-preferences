@@ -79,7 +79,7 @@ class BooleanSerializer(BaseSerializer):
             raise cls.exception("Value {0} can't be deserialized to a Boolean".format(value))
 
 
-class IntSerializer(BaseSerializer):
+class IntegerSerializer(BaseSerializer):
 
     @classmethod
     def clean_to_db_value(cls, value):
@@ -93,6 +93,8 @@ class IntSerializer(BaseSerializer):
             return int(value)
         except:
             raise cls.exception("Value {0} cannot be converted to int")
+
+IntSerializer = IntegerSerializer
 
 from django.template import defaultfilters
 

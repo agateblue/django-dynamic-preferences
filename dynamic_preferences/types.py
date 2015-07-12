@@ -68,6 +68,7 @@ class BasePreferenceType(AbstractPreference):
     def get_field_kwargs(self):
         kwargs = {}
         kwargs['label'] = self.get('verbose_name')
+        kwargs['help_text'] = self.get('help_text')
         kwargs['widget'] = self.get('widget')
         kwargs['initial'] = self.get('default')
         return kwargs
@@ -82,11 +83,12 @@ class BooleanPreference(BasePreferenceType):
         kwargs['required'] = False
         return kwargs
 
-class IntPreference(BasePreferenceType):
+class IntegerPreference(BasePreferenceType):
 
     field_class = IntegerField
-    serializer = IntSerializer
+    serializer = IntegerSerializer
 
+IntPreference = IntegerPreference
 
 class StringPreference(BasePreferenceType):
 

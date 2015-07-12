@@ -6,6 +6,7 @@ class RegistrationAllowed(BooleanPreference):
     """
     Are new registrations allowed ?
     """
+    verbose_name = 'Allow new users to register'
     section = "auth"
     name = "registration_allowed"
     default = False
@@ -18,6 +19,7 @@ class MaxUsers(IntPreference):
     section = "auth"
     name = "max_users"
     default = 100
+    help_text = "Please fill in the form"
 
 
 @global_preferences_registry.register
