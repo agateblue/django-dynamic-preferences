@@ -18,30 +18,11 @@ class BasePreferenceType(AbstractPreference):
     # use a class, not an instance
     field_class = None
 
-    # these default will merged with ones from field_attributes
-    # then pass to class provided in field in order to instantiate the actual field
-
-    _default_field_attributes = {
-        "required": True,
-    }
-
     # Override this attribute to change field behaviour
     field_attributes = {}
 
     # A serializer class (see dynamic_preferences.serializers)
     serializer = None
-
-    _field = None
-
-    def get_field_kwargs(self):
-        field_kwargs = dict(self._default_field_attributes)
-
-        try:
-            field_kwargs['initial'] = self.initial
-        except AttributeError:
-            pass
-        field_kwargs.update(self.field_attributes)
-        return field_kwargs
 
     @property
     def initial(self):
