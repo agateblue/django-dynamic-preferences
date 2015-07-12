@@ -174,10 +174,17 @@ class TestPreferenceObjects(BaseTest, TestCase):
         pref = global_preferences_registry.get('user__registration_allowed')
 
         self.assertEqual(pref.identifier(), 'user__registration_allowed')
-        
+
     def test_preference_requires_default_value(self):
         with self.assertRaises(exceptions.MissingDefault):
             preference = NoDefault()
+
+    def test_default_accepts_callable(self):
+
+        class P(IntPreference):
+            default = lambda self: 4
+
+        self.assertEqual(P().get_default(), 4)
 
     def test_boolean_field_class_instantiation(self):
 
