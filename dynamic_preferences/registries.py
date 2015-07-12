@@ -1,5 +1,8 @@
 
 
+# import __future__ so that the django.conf.settings import will
+# not throw an error when installing
+from __future__ import absolute_import
 from django.conf import settings
 from django.db.models.fields import FieldDoesNotExist
 
