@@ -13,6 +13,7 @@ from dynamic_preferences import user_preferences_registry, global_preferences_re
 from dynamic_preferences.models import UserPreferenceModel, GlobalPreferenceModel
 from dynamic_preferences.registries import autodiscover, clear
 from dynamic_preferences.managers import PreferencesManager
+from dynamic_preferences import exceptions
 from dynamic_preferences.forms import global_preference_form_builder, user_preference_form_builder
 
 from .types import *
@@ -162,7 +163,7 @@ class TestDynamicPreferences(BaseTest, TestCase):
     def test_user_preference_model_manager_to_dict(self):
         user = self.test_user
         expected = {u'misc__favourite_colour': u'Green', u'misc__is_zombie': True, u'user__favorite_vegetable': 'C',
-            u'test__SUserStringPref': u'Hello world!', u'test__SiteBooleanPref': False, u'test__TestUserPref1': u'default value', u'test__TestUserPref2': u''}
+            u'test__SUserStringPref': u'Hello world!', u'test__SiteBooleanPref': False, u'test__TestUserPref1': u'default value', u'test__TestUserPref2': u'default value'}
         self.assertEqual(
             user.preferences.all(), expected)
 
@@ -174,15 +175,56 @@ class TestPreferenceObjects(BaseTest, TestCase):
 
         self.assertEqual(pref.identifier(), 'user__registration_allowed')
 
+    def test_preference_requires_default_value(self):
+        with self.assertRaises(exceptions.MissingDefault):
+            preference = NoDefault()
+
+    def test_default_accepts_callable(self):
+
+        class P(IntPreference):
+            default = lambda self: 4
+
+        self.assertEqual(P().get_default(), 4)
+
+    def test_getter(self):
+        class PNoGetter(IntPreference):
+            default = 1
+            help_text = 'Hello'
+
+        class PGetter(IntPreference):
+            def get_default(self):
+                return 1
+
+            def get_help_text(self):
+                return 'Hello'
+
+        p_no_getter = PNoGetter()
+        p_getter = PGetter()
+        for attribute, expected in [('default', 1), ('help_text', 'Hello')]:
+            self.assertEqual(p_no_getter.get(attribute), expected)
+            self.assertEqual(p_getter.get(attribute), expected)
+
+    def test_field(self):
+        class P(IntPreference):
+            default = 1
+            verbose_name = 'P'
+        p = P()
+
+        self.assertEqual(p.field.initial, 1)
+        self.assertEqual(p.field.label, 'P')
+        self.assertEqual(p.field.__class__, IntegerField)
+
     def test_boolean_field_class_instantiation(self):
 
-        preference = TestBooleanPreference()
-
+        class P(BooleanPreference):
+            default = False
+        preference = P()
         self.assertEqual(preference.field.initial, False)
 
     def test_char_field_class_instantiation(self):
-
-        preference = TestStringPreference()
+        class P(StringPreference):
+            default = "hello world!"
+        preference = P()
 
         self.assertEqual(preference.field.initial, "hello world!")
 
@@ -230,12 +272,10 @@ class TestSerializers(BaseTest, TestCase):
     def test_boolean_serialization(self):
         s = BooleanSerializer
 
-        self.assertEqual(s.serialize(True), "1")
-        self.assertEqual(s.serialize("True"), "1")
-        self.assertEqual(s.serialize("Something"), "1")
-
-        self.assertEqual(s.serialize(False), "0")
-        self.assertEqual(s.serialize(""), "0")
+        self.assertEqual(s.serialize(True), "True")
+        self.assertEqual(s.serialize(False), "False")
+        with self.assertRaises(s.exception):
+            s.serialize('yolo')
 
     def test_boolean_deserialization(self):
 

@@ -36,6 +36,13 @@ class BasePreferenceModel(models.Model):
     def preference(self):
         return self.registry.get(section=self.section, name=self.name)
 
+    @property
+    def verbose_name(self):
+        return self.preference.get('verbose_name', self.preference.identifier)
+
+    @property
+    def help_text(self):
+        return self.preference.get('help_text', '')
 
     def set_value(self, value):
         """

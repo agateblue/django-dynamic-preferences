@@ -47,6 +47,7 @@ class PreferenceModelsRegistry(dict):
         getter = property(instance_getter)
         instance_class = model._meta.get_field('instance').rel.to
         setattr(instance_class, preferences_settings.MANAGER_ATTRIBUTE, getter)
+        
 
     def get_by_preference(self, preference):
         return self[preference.__class__]

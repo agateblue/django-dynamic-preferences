@@ -22,6 +22,11 @@ class MaxUsers(IntPreference):
     name = "max_users"
     default = 100
 
+
+class NoDefault(IntPreference):
+    section = "user"
+    name = "no_default"
+
 @global_preferences_registry.register
 class ItemsPerPage(IntPreference):
 
@@ -80,6 +85,7 @@ class TestUserPref1(BaseTestPref, StringPreference):
 @user_preferences_registry.register
 class TestUserPref2(BaseTestPref, StringPreference):
     name = "TestUserPref2"
+    default = "default value"
 
 @user_preferences_registry.register
 class UserBooleanPref(BaseTestPref, BooleanPreference):

@@ -44,9 +44,6 @@ Glossary
     PreferenceModel
         A model that store preferences values in database. A preference model may be tied to a particular instance, which is the case for UserPreferenceModel, or concern the whole project, as GlobalPreferenceModel.
 
-    PerInstancePreferenceModel
-        Used to store per instance preferences in database. Dynamic preferences is bundled with one kind of per-instance preference model, UserPreferenceModel, but you are free to create your own when needed.
-
 Create and register your own preferences
 ****************************************
 
@@ -142,7 +139,6 @@ When you set a preference value (e.g. via``global_preferences['maintenance_mode'
 
 Updating a preference value will always trigger two database queries.
 
-
 About serialization
 *******************
 
@@ -188,6 +184,37 @@ Getting a form for a specific instance preferences works similarly, except that 
     form_class = user_preference_form_builder(instance=request.user)
     form_class = user_preference_form_builder(instance=request.user, section='discussion')
 
+Preferences attributes
+**********************
+
+You can customize a lof of preferences behaviour some class attributes / methods.
+
+For example, if you want to customize the ``verbose_name`` of a preference you can simply do:
+
+.. code-block:: python
+
+    class MyPreference(StringPreference):
+        verbose_name = "This is my preference"
+
+But if you need more customization, you can do:
+
+.. code-block:: python
+
+    import datetime
+
+    class MyPreference(StringPreference):
+
+        def get_verbose_name(self):
+            return "Verbose name instanciated on {0}".format(datetime.datetime.now())
+
+Both methods are perfectly valid. You can override the following attributes:
+
+* ``field_class``: the field class used to edit the preference value
+* ``field_kwargs``: kwargs that are passed to the field class upon instanciation. Ensure to call ``super()`` since some default are provided.
+* ``verbose_name``: used in admin and as a label for the field
+* ``help_text``: used in admin and in the field
+* ``default``: the default value for the preference, taht will also be used as initial data for the form field
+* ``widget``: the widget used for the form field
 
 Accessing global preferences within a template
 **********************************************

@@ -43,7 +43,7 @@ class PreferencesManager(collections.Mapping):
         """Return the cache key corresponding to a given preference"""
         if not self.instance:
             return 'dynamic_preferences_{0}_{1}_{2}'.format(self.model.__name__, section, name)
-        return 'dynamic_preferences_{0}_{1}_{2}_{3}'.format(self.model.__name__, section, name, self.instance.pk)
+        return 'dynamic_preferences_{0}_{1}_{2}_{3}'.format(self.model.__name__, self.instance.pk, section, name, self.instance.pk)
 
     def from_cache(self, section, name):
         """Return a preference raw_value from cache"""

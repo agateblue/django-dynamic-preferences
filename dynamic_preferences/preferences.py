@@ -10,6 +10,12 @@ which store the actual values.
 from __future__ import unicode_literals
 
 from .settings import preferences_settings
+from .exceptions import MissingDefault
+
+class UnsetValue(object):
+    pass
+
+UNSET = UnsetValue()
 
 class AbstractPreference(object):
     """
@@ -23,13 +29,23 @@ class AbstractPreference(object):
     name = ""
 
     #: A default value for the preference
-    default = None
-
-    #: The model corresponding to this preference type (:py:class:`SitePreference`, :py:class:`GlobalPreference` or :py:class:`UserPreference`)
-    model = None
+    default = UNSET
 
     def __init__(self, registry=None):
         self.registry = registry
+        if self.get('default') == UNSET:
+            raise MissingDefault
+
+    def get(self, attr, default=None):
+        getter = 'get_{0}'.format(attr)
+        if hasattr(self, getter):
+            return getattr(self, getter)()
+        return getattr(self, attr, default)
+
+    def get_default(self):
+        if hasattr(self.default, '__call__'):
+            return self.default()
+        return self.default
 
     @property
     def model(self):
