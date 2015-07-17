@@ -12,7 +12,9 @@ class DynamicPreferencesException(Exception):
     def __str__(self):
         return self.detail
 
-
+class MissingDefault(DynamicPreferencesException):
+    detail_default = 'You must provide a default value for all preferences'
+    
 class NotFoundInRegistry(DynamicPreferencesException, KeyError):
     detail_default = 'Preference with this name/section not found in registry'
 

@@ -3,6 +3,18 @@
 Changelog
 =========
 
+0.5.1 (17-07-2015)
+****************
+
+* Fixed pip install (#3), thanks @willseward
+* It's now easier to override preference form field attributes on a preference (please refer to `Preferences attributes <http://django-dynamic-preferences.readthedocs.org/en/latest/quickstart.html#preferences-attributes>`_  for more information)
+* Cleaner serializer api
+
+0.5 (12-07-2015)
+****************
+
+This release may involves some specific upgrade steps, please refer to the ``Upgrade`` section of the documentation.
+
 0.5 (12-07-2015)
 ****************
 

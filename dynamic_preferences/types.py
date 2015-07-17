@@ -18,43 +18,11 @@ class BasePreferenceType(AbstractPreference):
     # use a class, not an instance
     field_class = None
 
-    # these default will merged with ones from field_attributes
-    # then pass to class provided in field in order to instantiate the actual field
-
-    _default_field_attributes = {
-        "required": True,
-    }
-
     # Override this attribute to change field behaviour
     field_attributes = {}
 
     # A serializer class (see dynamic_preferences.serializers)
     serializer = None
-
-    #: a default value or a callable that return a value to be used as default
-    default_value = None
-
-    _field = None        
-
-    def get_field_kwargs(self):
-        field_kwargs = dict(self._default_field_attributes)
-
-        try:
-            field_kwargs['initial'] = self.initial
-        except AttributeError:
-            pass
-        field_kwargs.update(self.field_attributes)
-        return field_kwargs
-
-    @cached_property
-    def default(self):
-        """
-        :return: If default_value is a a callable, return the callable result, else, return default_value as is
-        """
-        if hasattr(self.default_value, '__call__'):
-            return self.default_value()
-        else:
-            return self.default_value
 
     @property
     def initial(self):
@@ -68,40 +36,45 @@ class BasePreferenceType(AbstractPreference):
     def field(self):
         return self.setup_field()
 
-    def setup_field(self):
+    def setup_field(self, **kwargs):
         """
             Create an actual instance of self.field
             Override this method if needed
         """
-        
-        return self.field_class(**self.get_field_kwargs())
+        field_class = self.get('field_class')
+        field_kwargs = self.get_field_kwargs()
+        field_kwargs.update(kwargs)
+        return field_class(**field_kwargs)
 
+    def get_field_kwargs(self):
+        kwargs = {}
+        kwargs['label'] = self.get('verbose_name')
+        kwargs['help_text'] = self.get('help_text')
+        kwargs['widget'] = self.get('widget')
+        kwargs['initial'] = self.get('default')
+        return kwargs
 
 class BooleanPreference(BasePreferenceType):
 
-    BOOL_CHOICES = ((True, _('yes')), (False, _('no')))
-
-    _default_field_attributes = {
-        "choices": BOOL_CHOICES,
-        "widget": forms.RadioSelect,
-        "coerce": lambda x: x == 'True',
-    }
-    default = False
-    field_class = TypedChoiceField
+    field_class = BooleanField
     serializer = BooleanSerializer
 
+    def get_field_kwargs(self):
+        kwargs = super(BooleanPreference, self).get_field_kwargs()
+        kwargs['required'] = False
+        return kwargs
 
-class IntPreference(BasePreferenceType):
+class IntegerPreference(BasePreferenceType):
 
     field_class = IntegerField
-    serializer = IntSerializer
+    serializer = IntegerSerializer
 
+IntPreference = IntegerPreference
 
 class StringPreference(BasePreferenceType):
 
     field_class = CharField
     serializer = StringSerializer
-    default = ""
 
 class LongStringPreference(StringPreference):
     _default_field_attributes = {
@@ -119,4 +92,3 @@ class ChoicePreference(BasePreferenceType):
 
         field_kwargs['choices'] = self.choices or self.field_attribute['initial']
         return field_kwargs
-
