@@ -114,9 +114,6 @@ class UserPreferenceModel(PerInstancePreferenceModel):
         verbose_name_plural = "user preferences"
 
 
-preference_models.register(UserPreferenceModel, user_preferences_registry)
-preference_models.register(GlobalPreferenceModel, global_preferences_registry)
-
 global_preferences_registry.preference_model = GlobalPreferenceModel
 
 # Create default preferences for new instances
