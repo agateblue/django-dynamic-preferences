@@ -1,15 +1,8 @@
-
 try:
     from django.conf import settings
-except ImportError:
-    pass
-try:
     from django.db.models.fields import FieldDoesNotExist
-except ImportError:
-    pass
-
-try:
     from django.utils.importlib import import_module
+    from django.apps import apps
 except ImportError:
     pass
 
@@ -56,7 +49,6 @@ class PreferenceModelsRegistry(dict):
         getter = property(instance_getter)
         instance_class = model._meta.get_field('instance').rel.to
         setattr(instance_class, preferences_settings.MANAGER_ATTRIBUTE, getter)
-        
 
     def get_by_preference(self, preference):
         return self[preference.__class__]
@@ -70,7 +62,7 @@ class PreferenceModelsRegistry(dict):
                 instance_class = model._meta.get_field('instance').rel.to
                 if isinstance(instance, instance_class):
                     return registry
-                    break
+                    
             except FieldDoesNotExist:  # global preferences
                 pass
         return None
