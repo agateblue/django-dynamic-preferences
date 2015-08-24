@@ -212,7 +212,7 @@ class TestPreferenceObjects(BaseTest, TestCase):
 
         self.assertEqual(p.field.initial, 1)
         self.assertEqual(p.field.label, 'P')
-        self.assertEqual(p.field.__class__, IntegerField)
+        self.assertEqual(p.field.__class__, forms.IntegerField)
 
     def test_boolean_field_class_instantiation(self):
 
@@ -227,6 +227,13 @@ class TestPreferenceObjects(BaseTest, TestCase):
         preference = P()
 
         self.assertEqual(preference.field.initial, "hello world!")
+
+    def test_longstring_preference_widget(self):
+        class P(LongStringPreference):
+            default = "hello world!"
+        preference = P()
+
+        self.assertTrue(isinstance(preference.field.widget, forms.Textarea))
 
     def test_choice_field(self):
         #preference = TestChoicePreference()

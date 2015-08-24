@@ -6,7 +6,6 @@
 import datetime
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from django.forms import CharField, IntegerField, BooleanField, ChoiceField, DateTimeField, TypedChoiceField
 from django.utils.functional import cached_property
 
 from .preferences import AbstractPreference
@@ -56,7 +55,7 @@ class BasePreferenceType(AbstractPreference):
 
 class BooleanPreference(BasePreferenceType):
 
-    field_class = BooleanField
+    field_class = forms.BooleanField
     serializer = BooleanSerializer
 
     def get_field_kwargs(self):
@@ -66,25 +65,23 @@ class BooleanPreference(BasePreferenceType):
 
 class IntegerPreference(BasePreferenceType):
 
-    field_class = IntegerField
+    field_class = forms.IntegerField
     serializer = IntegerSerializer
 
 IntPreference = IntegerPreference
 
 class StringPreference(BasePreferenceType):
 
-    field_class = CharField
+    field_class = forms.CharField
     serializer = StringSerializer
 
 class LongStringPreference(StringPreference):
-    _default_field_attributes = {
-        "widget": forms.Textarea,
-    }
+    widget = forms.Textarea
 
 class ChoicePreference(BasePreferenceType):
 
     choices = ()
-    field_class = ChoiceField
+    field_class = forms.ChoiceField
     serializer = StringSerializer
 
     def get_field_kwargs(self):
