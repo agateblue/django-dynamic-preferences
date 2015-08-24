@@ -3,13 +3,19 @@
 Changelog
 =========
 
+0.5.3 (24-08-2015)
+******************
+
+* Added switch for list_editable in admin and warning in documentation, fix #14
+* Now use Textarea for LongStringPreference, fix #15
+
 0.5.2 (22-07-2015)
-****************
+******************
 
 * Fixed models not loaded error
 
 0.5.1 (17-07-2015)
-****************
+******************
 
 * Fixed pip install (#3), thanks @willseward
 * It's now easier to override preference form field attributes on a preference (please refer to `Preferences attributes <http://django-dynamic-preferences.readthedocs.org/en/latest/quickstart.html#preferences-attributes>`_  for more information)
