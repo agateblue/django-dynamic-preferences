@@ -9,12 +9,14 @@ from .forms import GlobalSinglePreferenceForm, UserSinglePreferenceForm, SingleP
 
 class DynamicPreferenceAdmin(admin.ModelAdmin):
     list_display = ('verbose_name', 'name', 'section', 'help_text', 'raw_value')
-    list_editable = ('raw_value',)
+    if preferences_settings.ADMIN_ENABLE_CHANGELIST_FORM:
+        list_editable = ('raw_value',)
     search_fields = ['name', 'section', 'raw_value']
     list_filter = ('section',)
 
-    def get_changelist_form(self, request, **kwargs):
-        return self.changelist_form
+    if preferences_settings.ADMIN_ENABLE_CHANGELIST_FORM:
+        def get_changelist_form(self, request, **kwargs):
+            return self.changelist_form
 
 
 class GlobalPreferenceAdmin(DynamicPreferenceAdmin):
