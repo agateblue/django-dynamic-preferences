@@ -115,5 +115,8 @@ class StringSerializer(BaseSerializer):
         """String deserialisation just return the value as a string"""
         try:
             return str(value)
-        except:
-            raise cls.exception("Cannot deserialize value {0} tostring".format(value))
+        except: pass
+        try:
+            return value.encode('utf-8')
+        except: pass
+        raise cls.exception("Cannot deserialize value {0} tostring".format(value))
