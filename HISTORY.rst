@@ -3,6 +3,13 @@
 Changelog
 =========
 
+
+0.6 (24-10-2015)
+****************
+
+* Fixed #10 : added model choice preference
+* Fixed #19 : Sections are now plain python objects, the string notation is now deprecated
+
 0.5.4 (06-09-2015)
 ******************
 

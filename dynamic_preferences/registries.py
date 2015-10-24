@@ -62,7 +62,7 @@ class PreferenceModelsRegistry(dict):
                 instance_class = model._meta.get_field('instance').rel.to
                 if isinstance(instance, instance_class):
                     return registry
-                    
+
             except FieldDoesNotExist:  # global preferences
                 pass
         return None
@@ -96,11 +96,11 @@ class PreferenceRegistry(dict):
         """
         preference = preference_class(registry=self)
         try:
-            self[preference.section][preference.name] = preference
+            self[preference.section.name][preference.name] = preference
 
         except KeyError:
-            self[preference.section] = {}
-            self[preference.section][preference.name] = preference
+            self[preference.section.name] = {}
+            self[preference.section.name][preference.name] = preference
 
         return preference_class
 
@@ -116,9 +116,9 @@ class PreferenceRegistry(dict):
         """
         # try dotted notation
         try:
-            section, name = name.split(
+            _section, name = name.split(
                 preferences_settings.SECTION_KEY_SEPARATOR)
-            return self[section][name]
+            return self[_section][name]
 
         except ValueError:
             pass
@@ -127,7 +127,7 @@ class PreferenceRegistry(dict):
         try:
             return self[section][name]
 
-        except:
+        except KeyError:
             raise NotFoundInRegistry("No such preference in {0} with section={1} and name={2}".format(
                 self.__class__.__name__, section, name))
 
@@ -180,7 +180,7 @@ def autodiscover(force_reload=False):
     :param force_reload: if set to `True`, the method will reimport previously imported modules, if any
     :type force_reload: bool.
     """
-    print('Dynamic-preferences: autodiscovering preferences...')
+    logger.info('Dynamic-preferences: autodiscovering preferences...')
     if force_reload:
         clear()
 

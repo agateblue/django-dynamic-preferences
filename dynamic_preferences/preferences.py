@@ -8,14 +8,25 @@ which store the actual values.
 
 """
 from __future__ import unicode_literals
+import warnings
 
 from .settings import preferences_settings
 from .exceptions import MissingDefault
+from .serializers import UNSET
 
-class UnsetValue(object):
-    pass
+class Section(object):
 
-UNSET = UnsetValue()
+    def __init__(self, name, verbose_name=None):
+        self.name = name
+        self.verbose_name = verbose_name or name
+
+    def __str__(self):
+        if not self.name:
+            return ''
+        return str(self.name)
+
+EMPTY_SECTION = Section(None)
+
 
 class AbstractPreference(object):
     """
@@ -23,7 +34,7 @@ class AbstractPreference(object):
     """
 
     #: The section under which the preference will be registered
-    section = None
+    section = EMPTY_SECTION
 
     #: The preference name
     name = ""
@@ -32,8 +43,15 @@ class AbstractPreference(object):
     default = UNSET
 
     def __init__(self, registry=None):
+
+        if self.section and not hasattr(self.section, 'name'):
+            self.section = Section(name=self.section)
+            warnings.warn("Implicit section instanciation is deprecated and "
+                          "will be removed in future versions of django-dynamic-preferences",
+                          DeprecationWarning, stacklevel=2)
+
         self.registry = registry
-        if self.get('default') == UNSET:
+        if self.default == UNSET and not getattr(self, 'get_default', None):
             raise MissingDefault
 
     def get(self, attr, default=None):
@@ -41,11 +59,6 @@ class AbstractPreference(object):
         if hasattr(self, getter):
             return getattr(self, getter)()
         return getattr(self, attr, default)
-
-    def get_default(self):
-        if hasattr(self.default, '__call__'):
-            return self.default()
-        return self.default
 
     @property
     def model(self):
@@ -55,7 +68,7 @@ class AbstractPreference(object):
         """
         Return the name and the section of the Preference joined with a separator, with the form `section<separator>name`
         """
-        section = self.section or ''
-        if not section:
+
+        if not self.section.name:
             return self.name
-        return preferences_settings.SECTION_KEY_SEPARATOR.join([section, self.name])
+        return preferences_settings.SECTION_KEY_SEPARATOR.join([self.section.name, self.name])

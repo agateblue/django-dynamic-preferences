@@ -2,6 +2,10 @@ from __future__ import unicode_literals
 from six import string_types
 from django.utils import six
 
+class UnsetValue(object):
+    pass
+UNSET = UnsetValue()
+
 class SerializationError(Exception):
     pass
 
@@ -120,3 +124,24 @@ class StringSerializer(BaseSerializer):
             return value.encode('utf-8')
         except: pass
         raise cls.exception("Cannot deserialize value {0} tostring".format(value))
+
+
+def ModelSerializer(model):
+
+    class S(BaseSerializer):
+        @classmethod
+        def to_db(cls, value, **kwargs):
+            if value == UNSET:
+                return None
+            return str(value.pk)
+
+        @classmethod
+        def to_python(cls, value, **kwargs):
+            if value is None:
+                return
+            try:
+                pk = int(value)
+            except:
+                raise cls.exception("Value {0} cannot be converted to pk".format(value))
+            return model.objects.get(pk=value)
+    return S

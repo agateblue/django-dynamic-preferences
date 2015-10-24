@@ -20,6 +20,10 @@ except ImportError:
     traceback.print_exc()
     raise ImportError("To fix this error, run: pip install -r requirements-test.txt")
 
+import logging
+
+logging.disable(logging.WARNING)
+logging.captureWarnings(True)
 
 def run_tests(*test_args):
     if not test_args:

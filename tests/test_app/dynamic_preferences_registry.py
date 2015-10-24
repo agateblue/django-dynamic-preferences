@@ -1,6 +1,6 @@
 from dynamic_preferences.types import *
 from dynamic_preferences import user_preferences_registry, global_preferences_registry
-
+from .models import BlogEntry
 
 # Tutorial preferences
 
@@ -22,6 +22,15 @@ class MaxUsers(IntPreference):
     name = "max_users"
     default = 100
 
+
+@global_preferences_registry.register
+class FeaturedBlogEntry(ModelChoicePreference):
+    section = "blog"
+    name = "featured_entry"
+    queryset = BlogEntry.objects.all()
+
+    def get_default(self):
+        return self.queryset.first()
 
 class NoDefault(IntPreference):
     section = "user"
