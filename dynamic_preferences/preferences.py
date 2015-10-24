@@ -11,11 +11,8 @@ from __future__ import unicode_literals
 
 from .settings import preferences_settings
 from .exceptions import MissingDefault
+from .serializers import UNSET
 
-class UnsetValue(object):
-    pass
-
-UNSET = UnsetValue()
 
 class AbstractPreference(object):
     """
@@ -33,7 +30,7 @@ class AbstractPreference(object):
 
     def __init__(self, registry=None):
         self.registry = registry
-        if self.get('default') == UNSET:
+        if self.default == UNSET and not getattr(self, 'get_default', None):
             raise MissingDefault
 
     def get(self, attr, default=None):
@@ -41,11 +38,6 @@ class AbstractPreference(object):
         if hasattr(self, getter):
             return getattr(self, getter)()
         return getattr(self, attr, default)
-
-    def get_default(self):
-        if hasattr(self.default, '__call__'):
-            return self.default()
-        return self.default
 
     @property
     def model(self):

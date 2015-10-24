@@ -156,14 +156,28 @@ class TestDynamicPreferences(BaseTest, TestCase):
     def test_preference_model_manager_to_dict(self):
         manager = global_preferences_registry.manager()
         call_command('checkpreferences', verbosity=1, interactive=False)
-        expected = {u'test__TestGlobal1': u'default value', u'test__TestGlobal2': False, u'test__TestGlobal3': False,
-            u'no_section': False, u'user__max_users': 100, u'user__items_per_page': 25, u'user__registration_allowed': False}
+        expected = {
+            u'test__TestGlobal1': u'default value',
+            u'test__TestGlobal2': False,
+            u'test__TestGlobal3': False,
+            u'no_section': False,
+            u'user__max_users': 100,
+            u'user__items_per_page': 25,
+            u'blog__featured_entry': None,
+            u'user__registration_allowed': False}
         self.assertDictEqual(manager.all(), expected)
 
     def test_user_preference_model_manager_to_dict(self):
         user = self.test_user
-        expected = {u'misc__favourite_colour': u'Green', u'misc__is_zombie': True, u'user__favorite_vegetable': 'C',
-            u'test__SUserStringPref': u'Hello world!', u'test__SiteBooleanPref': False, u'test__TestUserPref1': u'default value', u'test__TestUserPref2': u'default value'}
+        expected = {
+            u'misc__favourite_colour': u'Green',
+            u'misc__is_zombie': True,
+            u'user__favorite_vegetable': 'C',
+            u'test__SUserStringPref': u'Hello world!',
+            u'test__SiteBooleanPref': False,
+            u'test__TestUserPref1': u'default value',
+            u'test__TestUserPref2': u'default value',
+        }
         self.assertEqual(
             user.preferences.all(), expected)
 
@@ -182,9 +196,10 @@ class TestPreferenceObjects(BaseTest, TestCase):
     def test_default_accepts_callable(self):
 
         class P(IntPreference):
-            default = lambda self: 4
+            def get_default(self):
+                return 4
 
-        self.assertEqual(P().get_default(), 4)
+        self.assertEqual(P().get('default'), 4)
 
     def test_getter(self):
         class PNoGetter(IntPreference):
@@ -256,10 +271,10 @@ class TestRegistry(BaseTest, TestCase):
 
     def test_can_autodiscover_multiple_times(self):
         autodiscover()
-        self.assertEqual(len(global_preferences_registry.preferences()), 7)
+        self.assertEqual(len(global_preferences_registry.preferences()), 8)
         self.assertEqual(len(user_preferences_registry.preferences()), 7)
         autodiscover()
-        self.assertEqual(len(global_preferences_registry.preferences()), 7)
+        self.assertEqual(len(global_preferences_registry.preferences()), 8)
         self.assertEqual(len(user_preferences_registry.preferences()), 7)
 
     def test_can_autodiscover_user_preferences(self):
@@ -420,7 +435,7 @@ class TestViews(BaseTest, LiveServerTestCase):
         url = reverse("dynamic_preferences.global")
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
-        self.assertEqual(len(response.context['form'].fields), 7)
+        self.assertEqual(len(response.context['form'].fields), 8)
         self.assertEqual(
             response.context['registry'], global_preferences_registry)
 
