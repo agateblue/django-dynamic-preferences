@@ -9,7 +9,7 @@ from django.db.models.signals import pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import cached_property
 
-from .preferences import AbstractPreference
+from .preferences import AbstractPreference, Section
 from dynamic_preferences.serializers import *
 
 class BasePreferenceType(AbstractPreference):
