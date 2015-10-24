@@ -112,7 +112,7 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
     for preference in preferences_obj:
         f = preference.field
         instance = manager.get_db_pref(
-            section=preference.section, name=preference.name)
+            section=preference.section.name, name=preference.name)
         f.initial = instance.value
         fields[preference.identifier()] = f
         instances.append(instance)

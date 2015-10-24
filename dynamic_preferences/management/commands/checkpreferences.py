@@ -3,6 +3,9 @@ from dynamic_preferences.models import GlobalPreferenceModel, UserPreferenceMode
 from dynamic_preferences import global_preferences_registry
 from dynamic_preferences.registries import preference_models
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 def delete_preferences(queryset):
     """
@@ -29,19 +32,19 @@ class Command(BaseCommand):
 
         # Create needed preferences
         # Global
-        print('Creating missing global preferences...')
+        logger.info('Creating missing global preferences...')
         manager = global_preferences_registry.manager()
         manager.all()
 
         deleted = delete_preferences(GlobalPreferenceModel.objects.all())
-        print("Deleted {0} global preferences".format(len(deleted)))
+        logger.info("Deleted {0} global preferences".format(len(deleted)))
 
         for preference_model, registry in preference_models.items():
             deleted = delete_preferences(preference_model.objects.all())
-            print("Deleted {0} {1} preferences".format(len(deleted), preference_model.__class__.__name__))
+            logger.info("Deleted {0} {1} preferences".format(len(deleted), preference_model.__class__.__name__))
             if not hasattr(preference_model, 'get_instance_model'):
                 continue
 
-            print('Creating missing preferences for {0} model...'.format(preference_model.get_instance_model().__name__))
+            logger.info('Creating missing preferences for {0} model...'.format(preference_model.get_instance_model().__name__))
             for instance in preference_model.get_instance_model().objects.all():
                 instance.preferences.all()

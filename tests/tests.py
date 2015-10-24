@@ -15,7 +15,7 @@ from dynamic_preferences.registries import autodiscover, clear
 from dynamic_preferences.managers import PreferencesManager
 from dynamic_preferences import exceptions
 from dynamic_preferences.forms import global_preference_form_builder, user_preference_form_builder
-
+from dynamic_preferences.preferences import EMPTY_SECTION
 from .types import *
 from .test_app.dynamic_preferences_registry import *
 
@@ -267,7 +267,7 @@ class TestRegistry(BaseTest, TestCase):
 
     def test_can_register_and_retrieve_preference_with_section_none(self):
         no_section_pref = global_preferences_registry.get(name="no_section")
-        self.assertEqual(no_section_pref.section, None)
+        self.assertEqual(no_section_pref.section, EMPTY_SECTION)
 
     def test_can_autodiscover_multiple_times(self):
         autodiscover()
