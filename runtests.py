@@ -22,7 +22,8 @@ except ImportError:
 
 import logging
 
-logging.disable(logging.CRITICAL)
+logging.disable(logging.WARNING)
+logging.captureWarnings(True)
 
 def run_tests(*test_args):
     if not test_args:

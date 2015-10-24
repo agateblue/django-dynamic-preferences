@@ -25,10 +25,6 @@ class TestModelChoicePreference(BaseTest, TestCase):
 
         self.assertGreater(len(signals.pre_delete.receivers), 0)
 
-        for signal in [signals.pre_delete]:
-            # print a List of connected listeners
-            print(signal.receivers)
-
         self.blog_entry.delete()
 
         with self.assertRaises(GlobalPreferenceModel.DoesNotExist):
