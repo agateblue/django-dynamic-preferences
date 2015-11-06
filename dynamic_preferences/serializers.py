@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import decimal
 from six import string_types
 from django.utils import six
 
@@ -99,6 +100,21 @@ class IntegerSerializer(BaseSerializer):
             raise cls.exception("Value {0} cannot be converted to int")
 
 IntSerializer = IntegerSerializer
+
+class DecimalSerializer(BaseSerializer):
+
+    @classmethod
+    def clean_to_db_value(cls, value):
+        if not isinstance(value, decimal.Decimal):
+            raise cls.exception('DecimalSerializer can only serialize Decimal instances')
+        return value
+
+    @classmethod
+    def to_python(cls, value, **kwargs):
+        try:
+            return decimal.Decimal(value)
+        except decimal.InvalidOperation:
+            raise cls.exception("Value {0} cannot be converted to decimal".format(value))
 
 from django.template import defaultfilters
 

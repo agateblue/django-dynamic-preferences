@@ -71,6 +71,11 @@ class IntegerPreference(BasePreferenceType):
 
 IntPreference = IntegerPreference
 
+class DecimalPreference(BasePreferenceType):
+
+    field_class = forms.DecimalField
+    serializer = DecimalSerializer
+
 class StringPreference(BasePreferenceType):
 
     field_class = forms.CharField
