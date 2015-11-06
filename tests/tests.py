@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.core.cache import caches
 from django.db import IntegrityError
 from django.template import defaultfilters
+from decimal import Decimal
 
 from dynamic_preferences.serializers import *
 from dynamic_preferences import user_preferences_registry, global_preferences_registry
@@ -250,10 +251,13 @@ class TestPreferenceObjects(BaseTest, TestCase):
 
         self.assertTrue(isinstance(preference.field.widget, forms.Textarea))
 
-    def test_choice_field(self):
-        #preference = TestChoicePreference()
-        pass
-        #self.assertEqual(preference.field.initial, "FR")
+    def test_decimal_preference(self):
+        class P(DecimalPreference):
+            default = Decimal('2.5')
+        preference = P()
+
+        self.assertEqual(preference.field.initial, Decimal('2.5'))
+
 
 
 class TestRegistry(BaseTest, TestCase):
@@ -325,17 +329,29 @@ class TestSerializers(BaseTest, TestCase):
         with self.assertRaises(s.exception):
             s.serialize("I'm an integer")
 
-    def test_int_deserialization(self):
+    def test_decimal_serialization(self):
 
-        s = IntSerializer
+        s = DecimalSerializer
 
-        self.assertEqual(s.deserialize("1"), 1)
-        self.assertEqual(s.deserialize("125"), 125)
-        self.assertEqual(s.deserialize("-144000"), -144000)
-        self.assertEqual(s.deserialize("0"), 0)
+        self.assertEqual(s.serialize(Decimal("1")), "1")
+        self.assertEqual(s.serialize(Decimal("-1")), "-1")
+        self.assertEqual(s.serialize(Decimal("-666.6")), "-666.6")
+        self.assertEqual(s.serialize(Decimal("666.6")), "666.6")
 
         with self.assertRaises(s.exception):
-            s.deserialize("Trust me, i'm an integer")
+            s.serialize("I'm a decimal")
+
+    def test_int_deserialization(self):
+
+        s = DecimalSerializer
+
+        self.assertEqual(s.deserialize("1"), Decimal("1"))
+        self.assertEqual(s.deserialize("-1"), Decimal("-1"))
+        self.assertEqual(s.deserialize("-666.6"), Decimal("-666.6"))
+        self.assertEqual(s.deserialize("666.6"), Decimal("666.6"))
+
+        with self.assertRaises(s.exception):
+            s.serialize("I'm a decimal!")
 
     def test_string_serialization(self):
 
