@@ -2,16 +2,19 @@
 
 language: python
 
-python:
-  - "3.4"
-  - "3.3"
-  - "2.7"
+env:
+  - TOX_ENV=py27-django17
+  - TOX_ENV=py27-django18
+  - TOX_ENV=py27-django19
+  - TOX_ENV=py34-django17
+  - TOX_ENV=py34-django18
+  - TOX_ENV=py34-django19
 
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install -r requirements-test.txt
+cache: pip
+sudo: false
 
-# command to run tests using coverage, e.g. python setup.py test
-script: coverage run --source dynamic_preferences runtests.py
+install:
+  - pip install tox
 
-# report coverage to coveralls.io
-after_success: coveralls
+script:
+  - tox -e $TOX_ENV
