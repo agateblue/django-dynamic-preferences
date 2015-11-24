@@ -3,6 +3,14 @@
 Changelog
 =========
 
+0.6.2 (24-11-2015)
+******************
+* Added support for django 1.9, [yurtaev]
+* Better travic CI conf (which run tests against two version of Python and three versions of django up to 1.9), fix #22 [yurtaev]
+
+0.6.1 (6-11-2015)
+******************
+* Added decimal field and serializer
 
 0.6 (24-10-2015)
 ****************
