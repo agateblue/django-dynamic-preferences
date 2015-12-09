@@ -69,7 +69,7 @@ class BasePreferenceModel(models.Model):
         return self.__repr__()
 
     def __repr__(self):
-        return '{0} - {1}/{2}'.format(self.__class__.__name__, self.section.name, self.name)
+        return '{0} - {1}/{2}'.format(self.__class__.__name__, self.section, self.name)
 
 
 class GlobalPreferenceModel(BasePreferenceModel):
