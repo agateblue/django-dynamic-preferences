@@ -15,12 +15,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='globalpreferencemodel',
             name='name',
-            field=models.CharField(max_length=255, db_index=True),
+            field=models.CharField(max_length=150, db_index=True),
         ),
         migrations.AlterField(
             model_name='globalpreferencemodel',
             name='section',
-            field=models.CharField(max_length=255, blank=True, db_index=True, default=None, null=True),
+            field=models.CharField(max_length=150, blank=True, db_index=True, default=None, null=True),
         ),
         migrations.AlterField(
             model_name='userpreferencemodel',
@@ -30,11 +30,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='userpreferencemodel',
             name='name',
-            field=models.CharField(max_length=255, db_index=True),
+            field=models.CharField(max_length=150, db_index=True),
         ),
         migrations.AlterField(
             model_name='userpreferencemodel',
             name='section',
-            field=models.CharField(max_length=255, blank=True, db_index=True, default=None, null=True),
+            field=models.CharField(max_length=150, blank=True, db_index=True, default=None, null=True),
         ),
     ]
