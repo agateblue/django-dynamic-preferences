@@ -3,6 +3,11 @@
 Changelog
 =========
 
+0.6.4 (23-12-2015)
+******************
+
+* Fixed #23: Added migration for shorter names and sections
+
 0.6.3 (09-12-2015)
 ******************
 
