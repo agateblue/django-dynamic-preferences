@@ -16,8 +16,8 @@ class Migration(migrations.Migration):
             name='GlobalPreferenceModel',
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
-                ('section', models.CharField(blank=True, default=None, null=True, max_length=255, db_index=True)),
-                ('name', models.CharField(max_length=255, db_index=True)),
+                ('section', models.CharField(blank=True, default=None, null=True, max_length=150, db_index=True)),
+                ('name', models.CharField(max_length=150, db_index=True)),
                 ('raw_value', models.TextField(blank=True, null=True)),
             ],
             options={
@@ -30,8 +30,8 @@ class Migration(migrations.Migration):
             name='UserPreferenceModel',
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
-                ('section', models.CharField(blank=True, default=None, null=True, max_length=255, db_index=True)),
-                ('name', models.CharField(max_length=255, db_index=True)),
+                ('section', models.CharField(blank=True, default=None, null=True, max_length=150, db_index=True)),
+                ('name', models.CharField(max_length=150, db_index=True)),
                 ('raw_value', models.TextField(blank=True, null=True)),
                 ('instance', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='preferences')),
             ],

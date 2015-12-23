@@ -3,6 +3,11 @@
 Changelog
 =========
 
+0.6.5 (23-12-2015)
+******************
+
+* Fixed #23 (again): Fixed initial migration to create section and name columns with correct length
+
 0.6.4 (23-12-2015)
 ******************
 
