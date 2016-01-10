@@ -11,7 +11,7 @@ class RegularTemplateView(TemplateView):
 
 class PreferenceFormView(FormView):
     """Display a form for updating preferences of the given section provided via URL arg.
-    If no section is provided, will dispaly a form for all fields of a given registry.
+    If no section is provided, will display a form for all fields of a given registry.
     """
 
     #: the registry for preference lookups
