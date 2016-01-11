@@ -39,7 +39,7 @@ Glossary
 
     Preference
         An object that deals with preference logic, such as serialization, deserialization, form display, default values, etc.
-        After being defined, preferences can be tied via registries to one ore many preference models, which will deal with database persistance.
+        After being defined, preferences can be tied via registries to one ore many preference models, which will deal with database persistence.
 
     PreferenceModel
         A model that store preferences values in database. A preference model may be tied to a particular instance, which is the case for UserPreferenceModel, or concern the whole project, as GlobalPreferenceModel.
@@ -99,7 +99,7 @@ You can get and update preferences via a ``Manager``, a dictionary-like object. 
 
     from dynamic_preferences import global_preferences_registry
 
-    # We instanciate a manager for our global preferences
+    # We instantiate a manager for our global preferences
     global_preferences = global_preferences_registry.manager()
 
     # now, we can use it to retrieve our preferences
@@ -210,12 +210,12 @@ But if you need more customization, you can do:
     class MyPreference(StringPreference):
 
         def get_verbose_name(self):
-            return "Verbose name instanciated on {0}".format(datetime.datetime.now())
+            return "Verbose name instantiated on {0}".format(datetime.datetime.now())
 
 Both methods are perfectly valid. You can override the following attributes:
 
 * ``field_class``: the field class used to edit the preference value
-* ``field_kwargs``: kwargs that are passed to the field class upon instanciation. Ensure to call ``super()`` since some default are provided.
+* ``field_kwargs``: kwargs that are passed to the field class upon instantiation. Ensure to call ``super()`` since some default are provided.
 * ``verbose_name``: used in admin and as a label for the field
 * ``help_text``: used in admin and in the field
 * ``default``: the default value for the preference, taht will also be used as initial data for the form field

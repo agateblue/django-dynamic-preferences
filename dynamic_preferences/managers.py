@@ -118,7 +118,7 @@ class PreferencesManager(collections.Mapping):
         return db_pref
 
     def all(self):
-        """Return a dictionnary containing all preferences by section
+        """Return a dictionary containing all preferences by section
         Loaded from cache or from db in case of cold cache
         """
         a = {}
@@ -132,7 +132,7 @@ class PreferencesManager(collections.Mapping):
         return a
 
     def load_from_db(self):
-        """Return a dictionnary of preferences by section directly from DB"""
+        """Return a dictionary of preferences by section directly from DB"""
         a = {}
         db_prefs = {p.preference.identifier(): p for p in self.queryset}
         for preference in self.registry.preferences():
