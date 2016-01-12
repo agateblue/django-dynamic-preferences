@@ -258,7 +258,14 @@ class TestPreferenceObjects(BaseTest, TestCase):
 
         self.assertEqual(preference.field.initial, Decimal('2.5'))
 
+    def test_float_preference(self):
+        class P(FloatPreference):
+            default = 0.35
+        preference = P()
 
+        self.assertEqual(preference.field.initial, 0.35)
+        self.assertNotEqual(preference.field.initial, 0.3)
+        self.assertNotEqual(preference.field.initial, 0.3001)
 
 class TestRegistry(BaseTest, TestCase):
 
@@ -340,6 +347,30 @@ class TestSerializers(BaseTest, TestCase):
 
         with self.assertRaises(s.exception):
             s.serialize("I'm a decimal")
+
+    def test_float_serialization(self):
+
+        s = FloatSerializer
+
+        self.assertEqual(s.serialize(1.0), "1.0")
+        self.assertEqual(s.serialize(-1.0), "-1.0")
+        self.assertEqual(s.serialize(-666.6), "-666.6")
+        self.assertEqual(s.serialize(666.6), "666.6")
+
+        with self.assertRaises(s.exception):
+            s.serialize("I'm a float")
+
+    def test_float_deserialization(self):
+
+        s = FloatSerializer
+
+        self.assertEqual(s.deserialize("1.0"), float("1.0"))
+        self.assertEqual(s.deserialize("-1.0"), float("-1.0"))
+        self.assertEqual(s.deserialize("-666.6"), float("-666.6"))
+        self.assertEqual(s.deserialize("666.6"), float("666.6"))
+
+        with self.assertRaises(s.exception):
+            s.serialize("I'm a float")
 
     def test_int_deserialization(self):
 
