@@ -116,6 +116,22 @@ class DecimalSerializer(BaseSerializer):
         except decimal.InvalidOperation:
             raise cls.exception("Value {0} cannot be converted to decimal".format(value))
 
+
+class FloatSerializer(BaseSerializer):
+
+    @classmethod
+    def clean_to_db_value(cls, value):
+        if not isinstance(value, float):
+            raise cls.exception('FloatSerializer can only serialize Float instances')
+        return value
+
+    @classmethod
+    def to_python(cls, value, **kwargs):
+        try:
+            return float(value)
+        except float.InvalidOperation:
+            raise cls.exception("Value {0} cannot be converted to float".format(value))
+
 from django.template import defaultfilters
 
 class StringSerializer(BaseSerializer):
