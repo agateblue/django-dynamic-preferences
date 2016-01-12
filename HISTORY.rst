@@ -3,6 +3,15 @@
 Changelog
 =========
 
+0.7 (12-01-2016)
+****************
+
+* Added by_name and get_by_name methods on manager to retrieve preferences without using sections, fix #34
+* Added float preference, fix #31 [philipbelesky]
+* Made name, section read-only in django admin, fix #36 [what-digital]
+* Fixed typos in documentation [philipbelesky]
+
+
 0.6.6 (23-12-2015)
 ******************
 
