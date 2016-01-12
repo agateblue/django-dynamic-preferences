@@ -30,7 +30,7 @@ Features
 * Can be extended to other models if need (e.g. per-site preferences)
 * Integrates with django caching mechanisms to improve performance
 
-If you're still interessed, head over :doc:`installation`.
+If you're still interested, head over :doc:`installation`.
 
 Contents:
 
