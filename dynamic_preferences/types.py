@@ -137,3 +137,10 @@ class ModelChoicePreference(BasePreferenceType):
         kw = super(ModelChoicePreference, self).get_field_kwargs()
         kw['queryset'] = self.get('queryset')
         return kw
+
+
+class FilePreference(BasePreferenceType):
+    field_class = forms.FileField
+    widget = forms.ClearableFileInput
+    serializer = FileSerializer
+

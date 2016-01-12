@@ -2,6 +2,16 @@ from __future__ import unicode_literals
 import decimal
 from six import string_types
 from django.utils import six
+from django.conf import settings
+import os
+
+from django.core.files.storage import default_storage
+from django.db.models.fields.files import FieldFile
+
+
+# TODO: move this to a more approp place, or remove? This folder has to exist or else Django will throw a file/folder not found
+DDP_BASE_PATH = 'dynamic_settings'
+
 
 class UnsetValue(object):
     pass
@@ -161,3 +171,38 @@ def ModelSerializer(model):
                 raise cls.exception("Value {0} cannot be converted to pk".format(value))
             return model.objects.get(pk=value)
     return S
+
+
+class FileSerializer(BaseSerializer):
+
+    @staticmethod
+    def handle_uploaded_file(f, path):
+        with open(path, 'wb+') as destination:
+            for chunk in f.chunks():
+                destination.write(chunk)
+
+    @classmethod
+    def to_db(cls, value, **kwargs):
+        if settings.MEDIA_ROOT:
+            path = os.path.join(settings.MEDIA_ROOT, DDP_BASE_PATH, value.name)
+            cls.handle_uploaded_file(value, path)
+        else:
+            raise cls.exception("You need to set MEDIA_ROOT in your settings.py")
+
+        return value.name
+
+    @classmethod
+    def to_python(cls, value, **kwargs):
+        # value is file name
+        if settings.MEDIA_ROOT:
+            path = os.path.join(settings.MEDIA_ROOT, DDP_BASE_PATH, value)
+
+            # https://yuji.wordpress.com/2013/01/30/django-form-field-in-initial-data-requires-a-fieldfile-instance/
+            # TODO: Understand this FieldFile better and maybe remove the FakeField workaround
+            class FakeField(object):
+                storage = default_storage
+
+            fieldfile = FieldFile(None, FakeField, path)
+            return fieldfile
+        else:
+            raise cls.exception("You need to set MEDIA_ROOT in your settings.py")
