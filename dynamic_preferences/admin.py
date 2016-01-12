@@ -9,6 +9,7 @@ from .forms import GlobalSinglePreferenceForm, UserSinglePreferenceForm, SingleP
 
 class DynamicPreferenceAdmin(admin.ModelAdmin):
     list_display = ('verbose_name', 'name', 'section', 'help_text', 'raw_value')
+    readonly_fields = ('name', 'section')
     if preferences_settings.ADMIN_ENABLE_CHANGELIST_FORM:
         list_editable = ('raw_value',)
     search_fields = ['name', 'section', 'raw_value']
