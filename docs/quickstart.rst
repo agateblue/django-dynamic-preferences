@@ -144,6 +144,16 @@ When you set a preference value (e.g. via``global_preferences['maintenance_mode'
 
 Updating a preference value will always trigger two database queries.
 
+Misc methods for retrieving preferences
+---------------------------------------
+
+A few other methods are available on managers to retrieve preferences:
+
+- `manager.all()`: returns a `dict` containing all preferences identifiers and values
+- `manager.by_name()`: returns a `dict` containing all preferences identifiers and values. 
+   The preference section name (if any) is removed from the identifier
+- `manager.get_by_name(name)`: returns a single preference value using only the preference name
+
 About serialization
 *******************
 

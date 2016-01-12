@@ -98,6 +98,15 @@ class TestModels(BaseTest, TestCase):
             manager.all()
             manager.all()
 
+    def test_global_preferences_manager_by_name(self):
+        manager = global_preferences_registry.manager()
+        self.assertEqual(manager.by_name()['max_users'], manager['user__max_users'])
+        self.assertEqual(len(manager.all()), len(manager.by_name()))
+
+    def test_global_preferences_manager_get_by_name(self):
+        manager = global_preferences_registry.manager()
+        self.assertEqual(manager.get_by_name('max_users'), manager['user__max_users'])
+        
     def test_cache_invalidate_on_save(self):
 
         manager = global_preferences_registry.manager()

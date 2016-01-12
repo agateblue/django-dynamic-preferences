@@ -39,6 +39,13 @@ class PreferencesManager(collections.Mapping):
     def __len__(self):
         return len(self.all())
 
+    def by_name(self):
+        """Return a dictionary with preferences identifiers and values, but without the section name in the identifier"""
+        return {key.split(preferences_settings.SECTION_KEY_SEPARATOR)[-1]: value for key, value in self.all().items()}
+
+    def get_by_name(self, name):
+        return self.get(self.registry.get_by_name(name).identifier())
+
     def get_cache_key(self, section, name):
         """Return the cache key corresponding to a given preference"""
         if not self.instance:
