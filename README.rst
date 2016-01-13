@@ -42,3 +42,12 @@ Documentation
 -------------
 
 The full documentation is at https://django-dynamic-preferences.readthedocs.org.
+
+Contributing
+------------
+
+Contributions are welcome:
+
+- Bug reports and feature requests should be submitted on the [tracker](https://github.com/EliotBerriot/django-dynamic-preferences/issues/)
+- Pull requests should target the `develop` branch, since the project relies on [git-flow](http://nvie.com/posts/a-successful-git-branching-model/) branching model
+- When writing a new feature or fixing a bug, **always** add some unit tests to ensure you don't break anything and your patch work as intended

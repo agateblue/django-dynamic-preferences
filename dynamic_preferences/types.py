@@ -76,6 +76,11 @@ class DecimalPreference(BasePreferenceType):
     field_class = forms.DecimalField
     serializer = DecimalSerializer
 
+class FloatPreference(BasePreferenceType):
+
+    field_class = forms.FloatField
+    serializer = FloatSerializer
+
 class StringPreference(BasePreferenceType):
 
     field_class = forms.CharField
