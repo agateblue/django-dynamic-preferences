@@ -8,10 +8,7 @@ import os
 from django.core.files.storage import default_storage
 from django.db.models.fields.files import FieldFile
 
-
-# TODO: move this to a more approp place, or remove? This folder has to exist or else Django will throw a file/folder not found
-DDP_BASE_PATH = 'dynamic_settings'
-
+from dynamic_preferences.settings import preferences_settings
 
 class UnsetValue(object):
     pass
@@ -193,6 +190,13 @@ class FileSerializer(BaseSerializer):
 
     @staticmethod
     def handle_uploaded_file(f, path):
+        # create folders for upload_to or app dir if necessary
+        try:
+            os.makedirs(os.path.dirname(path))
+        except OSError:
+            if not os.path.isdir(os.path.dirname(path)):
+                raise
+
         with open(path, 'wb+') as destination:
             for chunk in f.chunks():
                 destination.write(chunk)
@@ -204,7 +208,7 @@ class FileSerializer(BaseSerializer):
             raise cls.exception("You need to set MEDIA_ROOT in your settings.py")
 
         try:
-            path = os.path.join(settings.MEDIA_ROOT, DDP_BASE_PATH, file.name)
+            path = os.path.join(settings.MEDIA_ROOT, preferences_settings.FILE_PREFERENCE_REL_UPLOAD_DIR, file.name)
             cls.handle_uploaded_file(file, path)
             # TODO: delete previous file (if any)
         except AttributeError:
@@ -218,7 +222,7 @@ class FileSerializer(BaseSerializer):
         if not settings.MEDIA_ROOT:
             raise cls.exception("You need to set MEDIA_ROOT in your settings.py")
 
-        path = os.path.join(settings.MEDIA_ROOT, DDP_BASE_PATH, filename)
+        path = os.path.join(settings.MEDIA_ROOT, preferences_settings.FILE_PREFERENCE_REL_UPLOAD_DIR, filename)
 
         if os.path.isfile(path):
             # https://yuji.wordpress.com/2013/01/30/django-form-field-in-initial-data-requires-a-fieldfile-instance/
