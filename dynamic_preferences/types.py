@@ -104,7 +104,7 @@ class ChoicePreference(BasePreferenceType):
 
 class MultiChoicePreference(ChoicePreference):
 
-    field_class = forms.MultiChoiceField
+    field_class = forms.MultipleChoiceField
     serializer = ListSerializer
 
 
