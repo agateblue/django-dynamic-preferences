@@ -158,6 +158,21 @@ class StringSerializer(BaseSerializer):
         raise cls.exception("Cannot deserialize value {0} tostring".format(value))
 
 
+class ListSerializer(BaseSerializer):
+
+    @classmethod
+    def to_db(cls, value, **kwargs):
+        if isinstance(value, string_types):
+            value = [value]
+        if isinstance(value, list):
+            return ','.join(map(str, value))
+        raise cls.exception("Cannot serialize, value {0} is not a string or list".format(value))
+
+    @classmethod
+    def to_python(cls, value, **kwargs):
+        return str(value).split(',')
+            
+
 def ModelSerializer(model):
 
     class S(BaseSerializer):
