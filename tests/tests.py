@@ -317,6 +317,7 @@ class TestPreferenceObjects(BaseTest, TestCase):
         self.assertNotEqual(preference.field.initial, 0.3)
         self.assertNotEqual(preference.field.initial, 0.3001)
     
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
     def test_multiple_choice_preference(self):
         class P(MultipleChoicePreference):
             choices = (('apple', 'Apple'), ('orange', 'Orange'), ('pear', 'Pear'))
