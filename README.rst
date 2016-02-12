@@ -48,6 +48,10 @@ Contributing
 
 Contributions are welcome:
 
-- Bug reports and feature requests should be submitted on the [tracker](https://github.com/EliotBerriot/django-dynamic-preferences/issues/)
-- Pull requests should target the `develop` branch, since the project relies on [git-flow](http://nvie.com/posts/a-successful-git-branching-model/) branching model
+- Bug reports and feature requests should be submitted on the `issue tracker`_
+- Pull requests should target the `develop` branch, since the project relies on `git-flow branching model`_
 - When writing a new feature or fixing a bug, **always** add some unit tests to ensure you don't break anything and your patch work as intended
+- Include whole stacktraces and error reports when necessary, directly in your issue body. Do not use external services such as pastebin.
+
+.. _issue tracker: https://github.com/EliotBerriot/django-dynamic-preferences/issues/
+.. _git-flow branching model: http://nvie.com/posts/a-successful-git-branching-model/
