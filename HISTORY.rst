@@ -11,7 +11,6 @@ Changelog
 * Made name, section read-only in django admin, fix #36 [what-digital]
 * Fixed typos in documentation [philipbelesky]
 
-
 0.6.6 (23-12-2015)
 ******************
 
