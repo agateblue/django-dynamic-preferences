@@ -11,7 +11,7 @@ Glossary
         After being defined, preferences can be tied via registries to one ore many preference models, which will deal with database persistence.
 
     PreferenceModel
-        A model that store preferences values in database. A preference model may be tied to a particular instance, which is the case for UserPreferenceModel, or concern the whole project, as GlobalPreferenceModel.
+        A model that store preferences values in database. A preference model may be tied to a particular model instance, which is the case for UserPreferenceModel, or concern the whole project, as GlobalPreferenceModel.
 
 Create and register your own preferences
 ****************************************
@@ -105,7 +105,7 @@ When you access a preference value (e.g. via ``global_preferences['maintenance_m
 
 1. It checks for the cached value (using classic django cache mechanisms)
 2. If no cache key is found, it queries the database for the value
-3. If the value does not exists in database, a new row is added with the default preference value, and the value is returned. The cache is updated to avoid another database query the nex time you want to retrieve the value.
+3. If the value does not exists in database, a new row is added with the default preference value, and the value is returned. The cache is updated to avoid another database query the next time you want to retrieve the value.
 
 Therefore, in the worst-case scenario, accessing a single preference value can trigger up to two database queries. Most of the time, however, dynamic-preferences will only hit the cache.
 
