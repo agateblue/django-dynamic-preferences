@@ -49,4 +49,5 @@ class UserPreferenceAdmin(PerInstancePreferenceAdmin):
         getattr(request.user, preferences_settings.MANAGER_ATTRIBUTE).all()
         return super(UserPreferenceAdmin, self).get_queryset(request, *args, **kwargs)
 
-admin.site.register(UserPreferenceModel, UserPreferenceAdmin)
+if preferences_settings.ENABLE_USER_PREFERENCES:
+    admin.site.register(UserPreferenceModel, UserPreferenceAdmin)

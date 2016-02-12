@@ -25,6 +25,7 @@ DEFAULTS = {
     'SECTION_KEY_SEPARATOR': '__',
     'REGISTRY_MODULE': 'dynamic_preferences_registry',
     'ADMIN_ENABLE_CHANGELIST_FORM': False,
+    'ENABLE_USER_PREFERENCES': True,
 }
 
 
