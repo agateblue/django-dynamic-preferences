@@ -1,18 +1,10 @@
 # Taken from django-rest-framework
 # https://github.com/tomchristie/django-rest-framework
 # Copyright (c) 2011-2015, Tom Christie All rights reserved.
-
+from django.conf import settings
 SETTINGS_ATTR = 'DYNAMIC_PREFERENCES'
 USER_SETTINGS = None
 
-try:
-    from django.conf import settings
-except ImportError:
-    pass
-else:
-    # Only pull Django settings if Django environment variable exists.
-    if settings.configured:
-        USER_SETTINGS = getattr(settings, SETTINGS_ATTR, None)
 
 
 DEFAULTS = {
@@ -26,6 +18,7 @@ DEFAULTS = {
     'REGISTRY_MODULE': 'dynamic_preferences_registry',
     'ADMIN_ENABLE_CHANGELIST_FORM': False,
     'ENABLE_USER_PREFERENCES': True,
+    'ENABLE_CACHE': True,
 }
 
 
@@ -40,9 +33,12 @@ class PreferenceSettings(object):
     Any setting with string import paths will be automatically resolved
     and return the class, rather than the string literal.
     """
-    def __init__(self, user_settings=None, defaults=None):
-        self.user_settings = user_settings or {}
+    def __init__(self, defaults=None):
         self.defaults = defaults or DEFAULTS
+
+    @property
+    def user_settings(self):
+        return getattr(settings, SETTINGS_ATTR, {})
 
     def __getattr__(self, attr):
         if attr not in self.defaults.keys():
@@ -56,8 +52,10 @@ class PreferenceSettings(object):
             val = self.defaults[attr]
 
         # Cache the result
-        setattr(self, attr, val)
+        # We sometimes need to bypass that, like in tests
+        if getattr(settings, 'CACHE_DYNAMIC_PREFERENCES_SETTINGS', True):
+            setattr(self, attr, val)
         return val
 
 
-preferences_settings = PreferenceSettings(USER_SETTINGS, DEFAULTS)
+preferences_settings = PreferenceSettings(DEFAULTS)

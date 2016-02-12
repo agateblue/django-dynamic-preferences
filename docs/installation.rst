@@ -58,4 +58,6 @@ Also, take some time to look at provided settings if you want to customize the p
             # want to change, but it's here just in case
             'SECTION_KEY_SEPARATOR': '__',
 
+            # Use this to disable caching of preference. This can be useful to debug things
+            'ENABLE_CACHE': True,
         }

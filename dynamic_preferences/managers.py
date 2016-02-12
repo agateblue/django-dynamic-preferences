@@ -81,8 +81,9 @@ class PreferencesManager(collections.Mapping):
     def get(self, key, model=False):
         """Return the value of a single preference using a dotted path key"""
         section, name = self.parse_lookup(key)
-        if model:
+        if model or not preferences_settings.ENABLE_CACHE:
             return self.get_db_pref(section=section, name=name)
+
         try:
             return self.from_cache(section, name)
         except CachedValueNotFound:
@@ -114,11 +115,18 @@ class PreferencesManager(collections.Mapping):
         return db_pref
 
     def create_db_pref(self, section, name, value):
+        kwargs = {
+            'section': section,
+            'name': name,
+        }
         if self.instance:
+            kwargs['instance'] = self.instance
             db_pref = self.model(
                 section=section, name=name, instance=self.instance)
         else:
             db_pref = self.model(section=section, name=name)
+
+        db_pref, created = self.model.objects.get_or_create(**kwargs)
         db_pref.value = value
         db_pref.save()
 
@@ -129,6 +137,9 @@ class PreferencesManager(collections.Mapping):
         Loaded from cache or from db in case of cold cache
         """
         a = {}
+        if not preferences_settings.ENABLE_CACHE:
+            return self.load_from_db()
+
         try:
             for preference in self.registry.preferences():
                 a[preference.identifier()] = self.from_cache(
