@@ -40,3 +40,4 @@ CACHES = {
         'LOCATION': 'unique-snowflake',
     }
 }
+CACHE_DYNAMIC_PREFERENCES_SETTINGS = False

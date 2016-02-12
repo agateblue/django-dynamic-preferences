@@ -3,6 +3,14 @@
 Changelog
 =========
 
+0.7.1 (12-02-2016)
+****************
+
+* Removed useless sections and fixed typos/structure in documentation, fix #39
+* Added setting to disable user preferences admin, see #33
+* Added setting to disable preference caching, fix #7
+* Added validation agains sections and preferences names, fix #28, it could raise backward incompatible behaviour, since invalid names will stop execution by default
+
 0.7 (12-01-2016)
 ****************
 
@@ -10,7 +18,6 @@ Changelog
 * Added float preference, fix #31 [philipbelesky]
 * Made name, section read-only in django admin, fix #36 [what-digital]
 * Fixed typos in documentation [philipbelesky]
-
 
 0.6.6 (23-12-2015)
 ******************
