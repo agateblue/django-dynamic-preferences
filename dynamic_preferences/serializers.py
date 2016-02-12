@@ -1,5 +1,10 @@
 from __future__ import unicode_literals
+import csv
 import decimal
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 from six import string_types
 from django.utils import six
 
@@ -165,12 +170,17 @@ class ListSerializer(BaseSerializer):
         if isinstance(value, string_types):
             value = [value]
         if isinstance(value, list):
-            return ','.join(map(str, value))
+            # Using csv reader and writer for serialization allows us to use any character(?) in choices without worrying about the delimiter (hopefully!)
+            b = StringIO()
+            c = csv.writer(b)
+            c.writerow(value)
+            return b.getvalue()[:-2]    # The last two character are '\r\n', added by csv.writerow; so we have to remove them.
         raise cls.exception("Cannot serialize, value {0} is not a string or list".format(value))
 
     @classmethod
     def to_python(cls, value, **kwargs):
-        return str(value).split(',')
+        c = csv.reader([value], skipinitialspace=True)
+        return list(c)[0]
             
 
 def ModelSerializer(model):

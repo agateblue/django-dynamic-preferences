@@ -275,6 +275,15 @@ class TestPreferenceObjects(BaseTest, TestCase):
         self.assertEqual(preference.field.initial, 0.35)
         self.assertNotEqual(preference.field.initial, 0.3)
         self.assertNotEqual(preference.field.initial, 0.3001)
+    
+    def test_multiple_choice_preference(self):
+        class P(MultipleChoicePreference):
+            choices = (('apple', 'Apple'), ('orange', 'Orange'), ('pear', 'Pear'))
+            default = ['apple', 'pear']
+        preference = P()
+
+        self.assertEqual(preference.field.initial, ['apple', 'pear'])
+        self.assertNotEqual(preference.field.initial, 'apple')
 
 class TestRegistry(BaseTest, TestCase):
 
@@ -429,6 +438,18 @@ class TestSerializers(BaseTest, TestCase):
             defaultfilters.force_escape(
                 "<span>Please, I don't wanna disappear</span>")
         )
+
+    def test_list_serialization(self):
+        s = ListSerializer
+        self.assertEqual(s.serialize(['apple', 'orange']), 'apple,orange')
+        self.assertEqual(s.serialize(['apple,orange', 'pear']), '"apple,orange",pear')
+        self.assertEqual(s.serialize(['apple"', 'orange']), '"apple""",orange')
+    
+    def test_list_deserialization(self):
+        s = ListSerializer
+        self.assertEqual(s.deserialize('apple,orange'), ['apple', 'orange'])
+        self.assertEqual(s.deserialize('"apple,orange",pear'), ['apple,orange', 'pear'])
+        self.assertEqual(s.deserialize('"apple""",orange'), ['apple"', 'orange'])
 
 
 class TestViews(BaseTest, LiveServerTestCase):
