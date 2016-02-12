@@ -19,6 +19,7 @@ DEFAULTS = {
     'ADMIN_ENABLE_CHANGELIST_FORM': False,
     'ENABLE_USER_PREFERENCES': True,
     'ENABLE_CACHE': True,
+    'VALIDATE_NAMES': True,
 }
 
 
