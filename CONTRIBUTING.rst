@@ -22,6 +22,10 @@ If you are reporting a bug, please include:
 * Your operating system name and version.
 * Any details about your local setup that might be helpful in troubleshooting.
 * Detailed steps to reproduce the bug.
+* Include whole stacktraces and error reports when necessary, directly in your issue body. Do not use external services such as pastebin.
+
+Contributing
+------------
 
 Fix Bugs
 ~~~~~~~~
@@ -102,9 +106,13 @@ Before you submit a pull request, check that it meets these guidelines:
 2. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
-3. The pull request should work for Python 2.6, 2.7, and 3.3, and for PyPy. Check
+3. The pull request should work for Python, 2.7, and 3.4. Check
    https://travis-ci.org/EliotBerriot/django-dynamic-preferences/pull_requests
    and make sure that the tests pass for all supported Python versions.
+4. The pull request must target the `develop` branch, since the project relies on `git-flow branching model`_
+
+.. _git-flow branching model: http://nvie.com/posts/a-successful-git-branching-model/
+
 
 Tips
 ----
