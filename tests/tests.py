@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from django.test import LiveServerTestCase, TestCase
+from django.test.utils import override_settings
 from django.core.urlresolvers import reverse
 from django.core.management import call_command
 from django.test.utils import override_settings
@@ -16,7 +17,7 @@ from dynamic_preferences.registries import autodiscover, clear
 from dynamic_preferences.managers import PreferencesManager
 from dynamic_preferences import exceptions
 from dynamic_preferences.forms import global_preference_form_builder, user_preference_form_builder
-from dynamic_preferences.preferences import EMPTY_SECTION
+from dynamic_preferences.preferences import EMPTY_SECTION, Section
 from .types import *
 from .test_app.dynamic_preferences_registry import *
 
@@ -89,6 +90,26 @@ class TestModels(BaseTest, TestCase):
             v = manager['no_section']
             v = manager['no_section']
 
+    @override_settings(DYNAMIC_PREFERENCES={'ENABLE_CACHE': False})
+    def test_can_bypass_cache_in_get(self):
+        manager = global_preferences_registry.manager()
+        manager['no_section']
+        with self.assertNumQueries(3):
+            manager['no_section']
+            manager['no_section']
+            manager['no_section']
+
+    @override_settings(DYNAMIC_PREFERENCES={'ENABLE_CACHE': False}, DEBUG=True)
+    def test_can_bypass_cache_in_get_all(self):
+        from django.db import connection
+        manager = global_preferences_registry.manager()
+
+        queries_before = len(connection.queries)
+        manager.all()
+        manager_queries = len(connection.queries) - queries_before
+
+        manager.all()
+        self.assertGreater(len(connection.queries), manager_queries)
     def test_can_cache_all_preferences(self):
 
         manager = global_preferences_registry.manager()
@@ -103,10 +124,10 @@ class TestModels(BaseTest, TestCase):
         self.assertEqual(manager.by_name()['max_users'], manager['user__max_users'])
         self.assertEqual(len(manager.all()), len(manager.by_name()))
 
-    def test_global_preferences_manager_get_by_name(self):
+    def test_global_preferences_manager_by_name(self):
         manager = global_preferences_registry.manager()
-        self.assertEqual(manager.get_by_name('max_users'), manager['user__max_users'])
-        
+        self.assertEqual(manager.by_name()['max_users'], manager['user__max_users'])
+        self.assertEqual(len(manager.all()), len(manager.by_name()))
     def test_cache_invalidate_on_save(self):
 
         manager = global_preferences_registry.manager()
@@ -131,6 +152,18 @@ class TestDynamicPreferences(BaseTest, TestCase):
         self.test_user = User(
             username="test", password="test", email="test@test.com")
         self.test_user.save()
+
+    def test_cannot_instanciate_preference_or_section_with_invalid_name(self):
+
+        invalid_names = ['with space', 'with__separator', 'with-hyphen']
+
+        for n in invalid_names:
+            with self.assertRaises(ValueError):
+                Section(n)
+            with self.assertRaises(ValueError):
+                class P(IntegerPreference):
+                    name = n
+                P()
 
     def test_manager_is_attached_to_each_referenced_instance(self):
         self.assertTrue(isinstance(self.test_user.preferences, PreferencesManager))
@@ -203,6 +236,7 @@ class TestPreferenceObjects(BaseTest, TestCase):
         with self.assertRaises(exceptions.MissingDefault):
             preference = NoDefault()
 
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
     def test_default_accepts_callable(self):
 
         class P(IntPreference):
@@ -211,6 +245,7 @@ class TestPreferenceObjects(BaseTest, TestCase):
 
         self.assertEqual(P().get('default'), 4)
 
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
     def test_getter(self):
         class PNoGetter(IntPreference):
             default = 1
@@ -229,6 +264,7 @@ class TestPreferenceObjects(BaseTest, TestCase):
             self.assertEqual(p_no_getter.get(attribute), expected)
             self.assertEqual(p_getter.get(attribute), expected)
 
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
     def test_field(self):
         class P(IntPreference):
             default = 1
@@ -239,6 +275,7 @@ class TestPreferenceObjects(BaseTest, TestCase):
         self.assertEqual(p.field.label, 'P')
         self.assertEqual(p.field.__class__, forms.IntegerField)
 
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
     def test_boolean_field_class_instantiation(self):
 
         class P(BooleanPreference):
@@ -246,6 +283,7 @@ class TestPreferenceObjects(BaseTest, TestCase):
         preference = P()
         self.assertEqual(preference.field.initial, False)
 
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
     def test_char_field_class_instantiation(self):
         class P(StringPreference):
             default = "hello world!"
@@ -253,6 +291,7 @@ class TestPreferenceObjects(BaseTest, TestCase):
 
         self.assertEqual(preference.field.initial, "hello world!")
 
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
     def test_longstring_preference_widget(self):
         class P(LongStringPreference):
             default = "hello world!"
@@ -260,6 +299,7 @@ class TestPreferenceObjects(BaseTest, TestCase):
 
         self.assertTrue(isinstance(preference.field.widget, forms.Textarea))
 
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
     def test_decimal_preference(self):
         class P(DecimalPreference):
             default = Decimal('2.5')
@@ -267,6 +307,7 @@ class TestPreferenceObjects(BaseTest, TestCase):
 
         self.assertEqual(preference.field.initial, Decimal('2.5'))
 
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
     def test_float_preference(self):
         class P(FloatPreference):
             default = 0.35
