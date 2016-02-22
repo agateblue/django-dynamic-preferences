@@ -22,20 +22,24 @@ except:
     # we are on Python2
     pass
 
+import collections
+
+import persisting_theory
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
 
 #: The package where autodiscover will try to find preferences to register
 
-
 from .managers import PreferencesManager
 from .settings import preferences_settings
 from .exceptions import NotFoundInRegistry
 
-class PreferenceModelsRegistry(dict):
-
+class PreferenceModelsRegistry(persisting_theory.Registry):
     """Store relationships beetween preferences model and preferences registry"""
+
+    look_into = preferences_settings.REGISTRY_MODULE
 
     def register(self, preference_model, preference_registry):
         self[preference_model] = preference_registry
@@ -75,7 +79,7 @@ class PreferenceModelsRegistry(dict):
 preference_models = PreferenceModelsRegistry()
 
 
-class PreferenceRegistry(dict):
+class PreferenceRegistry(persisting_theory.Registry):
 
     """
     Registries are special dictionaries that are used by dynamic-preferences to register and access your preferences.
@@ -88,6 +92,8 @@ class PreferenceRegistry(dict):
     In order to register preferences automatically, you must call :py:func:`autodiscover` in your URLconf.
 
     """
+
+    look_into = preferences_settings.REGISTRY_MODULE
 
     #: a name to identify the registry
     name = "preferences_registry"
@@ -104,7 +110,7 @@ class PreferenceRegistry(dict):
             self[preference.section.name][preference.name] = preference
 
         except KeyError:
-            self[preference.section.name] = {}
+            self[preference.section.name] = collections.OrderedDict()
             self[preference.section.name][preference.name] = preference
 
         return preference_class
@@ -175,41 +181,3 @@ class PreferenceRegistry(dict):
 
 class PerInstancePreferenceRegistry(PreferenceRegistry):
     pass
-
-
-def clear():
-    """
-    Remove all data from registries
-    """
-    from .dynamic_preferences_registry import global_preferences_registry
-    global_preferences_registry.clear()
-    for model, registry in preference_models.items():
-        registry.clear()
-
-
-def autodiscover(force_reload=False):
-    """
-    Populate the registry by iterating through every section declared in :py:const:`settings.INSTALLED_APPS`.
-
-    :param force_reload: if set to `True`, the method will reimport previously imported modules, if any
-    :type force_reload: bool.
-    """
-    logger.info('Dynamic-preferences: autodiscovering preferences...')
-    if force_reload:
-        clear()
-
-    for app in settings.INSTALLED_APPS:
-        # try to import self.package inside current app
-        package = '{0}.{1}'.format(
-            app, preferences_settings.REGISTRY_MODULE)
-        try:
-            # print('Dynamic-preferences: importing {0}...'.format(package))
-            module = import_module(package)
-
-            if force_reload:
-                # mainly used in tests
-                reload(module)
-
-        except ImportError as e:
-            pass
-            # print('Dynamic-preferences: cannnot import {0}, {1}'.format(package, e))
