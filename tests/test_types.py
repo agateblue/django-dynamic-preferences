@@ -1,5 +1,5 @@
 from dynamic_preferences.models import GlobalPreferenceModel
-from dynamic_preferences import user_preferences_registry, global_preferences_registry
+from dynamic_preferences.registries import user_preferences_registry, global_preferences_registry
 from django.db.models import signals
 
 from .tests import BaseTest, TestCase

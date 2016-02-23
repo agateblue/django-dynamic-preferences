@@ -1,5 +1,5 @@
 from dynamic_preferences.types import *
-from dynamic_preferences import global_preferences_registry, user_preferences_registry
+from dynamic_preferences.registries import global_preferences_registry, user_preferences_registry
 
 @global_preferences_registry.register
 class RegistrationAllowed(BooleanPreference):

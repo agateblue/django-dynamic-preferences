@@ -1,9 +1,7 @@
 from django.apps import AppConfig
 from django.conf import settings
 
-from . import global_preferences_registry
-from .registries import preference_models
-from .dynamic_preferences_registry import user_preferences_registry, global_preferences_registry
+from .registries import preference_models, user_preferences_registry, global_preferences_registry
 
 
 class DynamicPreferencesConfig(AppConfig):

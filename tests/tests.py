@@ -11,7 +11,7 @@ from django.template import defaultfilters
 from decimal import Decimal
 
 from dynamic_preferences.serializers import *
-from dynamic_preferences import user_preferences_registry, global_preferences_registry
+from dynamic_preferences.registries import user_preferences_registry, global_preferences_registry
 from dynamic_preferences.models import UserPreferenceModel, GlobalPreferenceModel
 from dynamic_preferences.managers import PreferencesManager
 from dynamic_preferences import exceptions

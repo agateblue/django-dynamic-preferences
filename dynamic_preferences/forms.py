@@ -2,7 +2,7 @@ from six import string_types
 from django import forms
 from django.core.exceptions import ValidationError
 
-from . import global_preferences_registry, user_preferences_registry
+from .registries import global_preferences_registry, user_preferences_registry
 from .models import GlobalPreferenceModel, UserPreferenceModel
 from .exceptions import NotFoundInRegistry
 

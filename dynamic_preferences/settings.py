@@ -1,12 +1,9 @@
 # Taken from django-rest-framework
 # https://github.com/tomchristie/django-rest-framework
 # Copyright (c) 2011-2015, Tom Christie All rights reserved.
-try:
-    from django.conf import settings
-except ImportError:
-    # This may fail on setup.py install since django is not always available
-    # see #45
-    pass
+
+from django.conf import settings
+
 SETTINGS_ATTR = 'DYNAMIC_PREFERENCES'
 USER_SETTINGS = None
 

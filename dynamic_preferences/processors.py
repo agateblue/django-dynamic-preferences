@@ -1,4 +1,4 @@
-from . import user_preferences_registry as upr, global_preferences_registry as gpr
+from .registries import user_preferences_registry as upr, global_preferences_registry as gpr
 
 def global_preferences(request):
     """
