@@ -2,6 +2,29 @@
 Upgrade
 =======
 
+0.8
+***
+
+.. warning::
+
+    there is a backward incompatbile change in this release.
+
+To address #45 and #46, an import statement was removed from __init__.py.
+Because of that, every file containing the following:
+
+.. code-block:: python
+
+    from dynamic_preferences import user_preferences_registry, global_preferences_registry
+
+Will raise an `ImportError`.
+
+To fix this, you need to replace by this:
+
+.. code-block:: python
+
+    #                       .registries was added
+    from dynamic_preferences.registries import user_preferences_registry, global_preferences_registry
+
 0.6
 ***
 

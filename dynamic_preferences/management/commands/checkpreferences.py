@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from dynamic_preferences.models import GlobalPreferenceModel, UserPreferenceModel
-from dynamic_preferences import global_preferences_registry
-from dynamic_preferences.registries import preference_models
+from dynamic_preferences.registries import preference_models, global_preferences_registry
 
 import logging
 logger = logging.getLogger(__name__)

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 
 from .settings import preferences_settings
-from . import global_preferences_registry
+from .registries import global_preferences_registry
 from .models import GlobalPreferenceModel, UserPreferenceModel
 from .forms import GlobalSinglePreferenceForm, UserSinglePreferenceForm, SinglePerInstancePreferenceForm
 

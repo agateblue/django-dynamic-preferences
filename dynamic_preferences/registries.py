@@ -1,28 +1,9 @@
-try:
-    from django.db.models.fields import FieldDoesNotExist
-    from django.apps import apps
-except ImportError:
-    pass
-
-try:
-    from django.utils.importlib import import_module
-except ImportError:
-    from importlib import import_module
+from django.db.models.fields import FieldDoesNotExist
+from django.apps import apps
 
 # import the logging library
 import logging
-
-try:
-    # use Python3 reload
-    from imp import reload
-
-except:
-
-    # we are on Python2
-    pass
-
 import collections
-
 import persisting_theory
 
 # Get an instance of a logger
@@ -180,3 +161,14 @@ class PreferenceRegistry(persisting_theory.Registry):
 
 class PerInstancePreferenceRegistry(PreferenceRegistry):
     pass
+
+class GlobalPreferenceRegistry(PreferenceRegistry):
+    def populate(self, **kwargs):
+        return self.models(**kwargs)
+
+class UserPreferenceRegistry(PerInstancePreferenceRegistry):
+    pass
+
+
+user_preferences_registry = UserPreferenceRegistry()
+global_preferences_registry = GlobalPreferenceRegistry()

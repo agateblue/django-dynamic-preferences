@@ -3,6 +3,13 @@
 Changelog
 =========
 
+0.8 (23-02-2016)
+****************
+
+**Warning**: there is a backward incompatbile change in this release. To address #45 and #46, an
+import statement was removed from __init__.py. Please refer to the documentation for upgrade instructions:
+http://django-dynamic-preferences.readthedocs.org/en/stable/upgrade.html
+
 0.7.2 (23-02-2016)
 ******************
 

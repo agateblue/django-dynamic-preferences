@@ -7,8 +7,7 @@ from django.db.models.query import QuerySet
 from django.conf import settings
 from django.utils.functional import cached_property
 
-from dynamic_preferences import user_preferences_registry, global_preferences_registry
-from dynamic_preferences.registries import preference_models
+from dynamic_preferences.registries import preference_models, user_preferences_registry, global_preferences_registry
 from .utils import update
 
 

@@ -1,5 +1,5 @@
 from dynamic_preferences.types import *
-from dynamic_preferences import user_preferences_registry, global_preferences_registry
+from dynamic_preferences.registries import user_preferences_registry, global_preferences_registry
 from .models import BlogEntry
 
 # Tutorial preferences
