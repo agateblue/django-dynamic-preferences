@@ -3,8 +3,14 @@
 Changelog
 =========
 
+0.7.2 (23-02-2016)
+******************
+
+* Fix #45: importerrror on pip install, and removed useless import
+* Replaced built-in registries by persisting_theory, this will maintain a consistent order for preferences, see #44
+
 0.7.1 (12-02-2016)
-****************
+******************
 
 * Removed useless sections and fixed typos/structure in documentation, fix #39
 * Added setting to disable user preferences admin, see #33
