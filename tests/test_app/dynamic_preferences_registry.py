@@ -23,14 +23,6 @@ class MaxUsers(IntPreference):
     default = 100
 
 
-@global_preferences_registry.register
-class FeaturedBlogEntry(ModelChoicePreference):
-    section = "blog"
-    name = "featured_entry"
-    queryset = BlogEntry.objects.all()
-
-    def get_default(self):
-        return self.queryset.first()
 
 class NoDefault(IntPreference):
     section = "user"
@@ -42,6 +34,15 @@ class ItemsPerPage(IntPreference):
     section = "user"
     name = "items_per_page"
     default = 25
+
+@global_preferences_registry.register
+class FeaturedBlogEntry(ModelChoicePreference):
+    section = "blog"
+    name = "featured_entry"
+    queryset = BlogEntry.objects.all()
+
+    def get_default(self):
+        return self.queryset.first()
 
 @user_preferences_registry.register
 class FavoriteVegetable(ChoicePreference):

@@ -13,7 +13,6 @@ from decimal import Decimal
 from dynamic_preferences.serializers import *
 from dynamic_preferences import user_preferences_registry, global_preferences_registry
 from dynamic_preferences.models import UserPreferenceModel, GlobalPreferenceModel
-from dynamic_preferences.registries import autodiscover, clear
 from dynamic_preferences.managers import PreferencesManager
 from dynamic_preferences import exceptions
 from dynamic_preferences.forms import global_preference_form_builder, user_preference_form_builder
@@ -63,6 +62,15 @@ class TestTutorial(BaseTest, TestCase):
 
 
 class TestModels(BaseTest, TestCase):
+
+    def test_preference_order_match_register_call(self):
+        expected = [
+            'registration_allowed',
+            'max_users',
+            'items_per_page',
+            'featured_entry',
+        ]
+        self.assertEqual([p.name for p in global_preferences_registry.preferences()][:4], expected)
 
     def test_adding_user_create_default_preferences(self):
 
@@ -329,26 +337,6 @@ class TestRegistry(BaseTest, TestCase):
     def test_can_register_and_retrieve_preference_with_section_none(self):
         no_section_pref = global_preferences_registry.get(name="no_section")
         self.assertEqual(no_section_pref.section, EMPTY_SECTION)
-
-    def test_can_autodiscover_multiple_times(self):
-        autodiscover()
-        self.assertEqual(len(global_preferences_registry.preferences()), 8)
-        self.assertEqual(len(user_preferences_registry.preferences()), 7)
-        autodiscover()
-        self.assertEqual(len(global_preferences_registry.preferences()), 8)
-        self.assertEqual(len(user_preferences_registry.preferences()), 7)
-
-    def test_can_autodiscover_user_preferences(self):
-
-        clear()
-        with self.assertRaises(KeyError):
-            user_preferences_registry.preferences(section='test')
-
-        autodiscover(force_reload=True)
-
-        self.assertEqual(
-            len(user_preferences_registry.preferences(section='test')), 4)
-
 
 class TestSerializers(BaseTest, TestCase):
 
