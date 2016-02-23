@@ -1,5 +1,4 @@
 try:
-    from django.conf import settings
     from django.db.models.fields import FieldDoesNotExist
     from django.apps import apps
 except ImportError:
