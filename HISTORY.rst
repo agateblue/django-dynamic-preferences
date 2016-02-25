@@ -3,6 +3,11 @@
 Changelog
 =========
 
+0.8.1 (25-02-2016)
+******************
+
+* Fixed still inconsistend preference order in form builder (#44) [czlee]
+
 0.8 (23-02-2016)
 ****************
 
