@@ -1,6 +1,7 @@
 from six import string_types
 from django import forms
 from django.core.exceptions import ValidationError
+from collections import OrderedDict
 
 from .registries import global_preferences_registry, user_preferences_registry
 from .models import GlobalPreferenceModel, UserPreferenceModel
@@ -104,7 +105,7 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
         # display all preferences in the form
         preferences_obj = registry.preferences()
 
-    fields = {}
+    fields = OrderedDict()
     instances = []
     model_kwargs = kwargs.get('model', {})
     manager = registry.manager(**model_kwargs)
