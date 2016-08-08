@@ -50,7 +50,7 @@ class BooleanSerializer(BaseSerializer):
         "TRUE",
         "1",
         "YES",
-        "Yes"
+        "Yes",
         "yes",
     )
 
@@ -60,8 +60,8 @@ class BooleanSerializer(BaseSerializer):
         "FALSE",
         "0",
         "No",
-        "no"
-        "NO"
+        "no",
+        "NO",
     )
 
 
