@@ -1,5 +1,3 @@
-from django.conf.global_settings import *
-
 
 DEBUG = True
 USE_TZ = True
@@ -30,10 +28,20 @@ MIDDLEWARE_CLASSES =  (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
-TEMPLATE_CONTEXT_PROCESSORS = list(TEMPLATE_CONTEXT_PROCESSORS) + [
-    'django.core.context_processors.request',
-    'dynamic_preferences.processors.global_preferences',
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.request',
+                'dynamic_preferences.processors.global_preferences',
+            ],
+        },
+    },
 ]
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
