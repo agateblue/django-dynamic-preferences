@@ -78,11 +78,13 @@ class PreferencesManager(collections.Mapping):
             section = None
         return section, name
 
-    def get(self, key, model=False):
-        """Return the value of a single preference using a dotted path key"""
+    def get(self, key, no_cache=False):
+        """Return the value of a single preference using a dotted path key
+        :arg no_cache: if true, the cache is bypassed
+        """
         section, name = self.parse_lookup(key)
-        if model or not preferences_settings.ENABLE_CACHE:
-            return self.get_db_pref(section=section, name=name)
+        if no_cache or not preferences_settings.ENABLE_CACHE:
+            return self.get_db_pref(section=section, name=name).value
 
         try:
             return self.from_cache(section, name)

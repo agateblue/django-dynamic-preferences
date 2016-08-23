@@ -18,3 +18,5 @@ Contributors
 * [philipbelesky](https://github.com/philipbelesky)
 * [what-digital](https://github.com/what-digital)
 * [czlee](https://github.com/czlee)
+* [ricard33](https://github.com/ricard33)
+* [JetUni](https://github.com/JetUni)

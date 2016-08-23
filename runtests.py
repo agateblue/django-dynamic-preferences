@@ -3,9 +3,8 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 try:
-    from django.conf import settings
-    from tests import settings as test_settings
-    settings.configure(default_settings=test_settings)
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
+
     try:
         import django
         setup = django.setup

@@ -152,6 +152,17 @@ class TestModels(BaseTest, TestCase):
             assert manager['no_section']
             manager['no_section']
 
+    @override_settings(DYNAMIC_PREFERENCES={'ENABLE_CACHE': False})
+    def test_can_get_single_pref_with_cache_disabled(self):
+        manager = global_preferences_registry.manager()
+        v = manager['no_section']
+        self.assertIsInstance(v, bool)
+
+    def test_can_get_single_pref_bypassing_cache(self):
+        manager = global_preferences_registry.manager()
+        v = manager.get('no_section', no_cache=True)
+        self.assertIsInstance(v, bool)
+
 
 class TestDynamicPreferences(BaseTest, TestCase):
 
