@@ -3,6 +3,15 @@
 Changelog
 =========
 
+0.8.2 (23-08-2016)
+******************
+
+* Added django 1.10 compatibility [ricard33]
+* Fixed tests for django 1.7
+* Fix issue #57: PreferenceManager.get() returns value [ricard33]
+* Fixed missing coma in boolean serializer [czlee]
+* Added some documentations and example [JetUni]
+
 0.8.1 (25-02-2016)
 ******************
 
