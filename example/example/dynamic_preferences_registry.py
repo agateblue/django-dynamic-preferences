@@ -1,6 +1,7 @@
 from dynamic_preferences.types import *
 from dynamic_preferences.registries import global_preferences_registry, user_preferences_registry
 
+
 @global_preferences_registry.register
 class RegistrationAllowed(BooleanPreference):
     """
@@ -10,6 +11,7 @@ class RegistrationAllowed(BooleanPreference):
     section = "auth"
     name = "registration_allowed"
     default = False
+
 
 @global_preferences_registry.register
 class MaxUsers(IntPreference):
@@ -29,12 +31,14 @@ class Header(LongStringPreference):
     name = "presentation"
     default = "You need a presentation"
 
+
 @user_preferences_registry.register
 class ItemsPerPage(IntPreference):
 
     section = "display"
     name = "items_per_page"
     default = 25
+
 
 @user_preferences_registry.register
 class FavoriteVegetable(ChoicePreference):
@@ -48,6 +52,7 @@ class FavoriteVegetable(ChoicePreference):
     name = "favorite_vegetable"
     default = "C"
 
+
 @user_preferences_registry.register
 class FavouriteColour(StringPreference):
     """
@@ -57,6 +62,7 @@ class FavouriteColour(StringPreference):
     name = "favourite_colour"
     default = "Green"
 
+
 @user_preferences_registry.register
 class IsZombie(BooleanPreference):
     """
@@ -65,6 +71,7 @@ class IsZombie(BooleanPreference):
     section = "misc"
     name = "is_zombie"
     default = True
+
 
 @user_preferences_registry.register
 class IsFanOfTokioHotel(BooleanPreference):
