@@ -2,7 +2,7 @@ from django.db import models
 from dynamic_preferences.registries import global_preferences_registry
 
 
-class myModel(models.model):
+class myModel(models.Model):
     # We can't use the global preferences until after this
     title = models.CharField()
 
