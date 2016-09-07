@@ -543,6 +543,32 @@ class TestViews(BaseTest, LiveServerTestCase):
         self.assertEqual(len(response.context['form'].fields), 3)
 
     def test_preference_are_updated_on_form_submission(self):
+        blog_entry = BlogEntry.objects.create(title='test', content='test')
+        self.client.login(username='admin', password="test")
+        url = reverse("dynamic_preferences.global")
+        data = {
+            'user__max_users': 67,
+            'user__registration_allowed': True,
+            "user__items_per_page": 12,
+            'test__TestGlobal1': 'new value',
+            'test__TestGlobal2': True,
+            'test__TestGlobal3': True,
+            'no_section': True,
+            'blog__featured_entry': blog_entry.pk,
+        }
+        response = self.client.post(url, data)
+        for key, expected_value in data.items():
+            try:
+                section, name = key.split('__')
+            except ValueError:
+                section, name = (None, key)
+
+            p = GlobalPreferenceModel.objects.get(name=name, section=section)
+            if name == 'featured_entry':
+                expected_value = blog_entry
+            self.assertEqual(p.value, expected_value)
+
+    def test_preference_are_updated_on_form_submission_by_section(self):
         self.client.login(username='admin', password="test")
         url = reverse(
             "dynamic_preferences.global.section", kwargs={"section": 'user'})

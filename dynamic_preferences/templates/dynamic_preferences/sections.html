@@ -1,5 +1,5 @@
 <ul class="sections">
     {% for section in sections %}
-        <li><a href="./{{ section }}">{{ section }}</a></li>
+        <li><a href="{% url sections_url_name section=section %}">{{ section }}</a></li>
     {% endfor %}
 </ul>
