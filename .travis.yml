@@ -1,4 +1,6 @@
 # Config file for automatic testing at travis-ci.org
+cache: pip
+sudo: false
 
 language: python
 python:
@@ -7,24 +9,29 @@ python:
   - "3.5"
 
 env:
-  - TOX_ENV=py27-django17
-  - TOX_ENV=py27-django18
-  - TOX_ENV=py27-django19
-  - TOX_ENV=py27-django110
-  - TOX_ENV=py34-django17
-  - TOX_ENV=py34-django18
-  - TOX_ENV=py34-django19
-  - TOX_ENV=py34-django110
-  - TOX_ENV=py35-django17
-  - TOX_ENV=py35-django18
-  - TOX_ENV=py35-django19
-  - TOX_ENV=py35-django110
+  - DJANGO="Django>=1.7,<1.8"
+  - DJANGO="Django>=1.8,<1.9"
+  - DJANGO="Django>=1.9,<1.10"
+  - DJANGO="Django>=1.10,<1.11"
+  - DJANGO="https://github.com/django/django/tarball/master"
 
-cache: pip
-sudo: false
+
+matrix:
+  exclude:
+    - python: "3.5"
+      env: DJANGO="Django>=1.7,<1.8"
+  allow_failures:
+    - env: DJANGO="https://github.com/django/django/tarball/master"
+
+
+before_install:
+    - pip install codecov
 
 install:
-  - pip install tox
+    - pip install $DJANGO && pip install -r requirements-test.txt
 
 script:
-  - tox -e $TOX_ENV
+    - coverage run --source=dynamic_preferences runtests.py
+
+after_success:
+    - codecov
