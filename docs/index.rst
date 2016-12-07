@@ -39,6 +39,7 @@ Contents:
 
    installation
    quickstart
+   bind_preferences_to_models
    upgrade
    contributing
    authors
