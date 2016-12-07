@@ -60,7 +60,7 @@ an ``apps.py`` file, as follows:
     from django.apps import AppConfig
     from django.conf import settings
 
-    from dynamic_preferences.registries import preference_modelsglobal_preferences_registry
+    from dynamic_preferences.registries import preference_models
     from .registries import site_preferences_registry
 
     class YourAppConfig(AppConfig):
