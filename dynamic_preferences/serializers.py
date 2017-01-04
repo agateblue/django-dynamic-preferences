@@ -163,7 +163,7 @@ def ModelSerializer(model):
     class S(BaseSerializer):
         @classmethod
         def to_db(cls, value, **kwargs):
-            if value == UNSET:
+            if not value or (value == UNSET):
                 return None
             return str(value.pk)
 
