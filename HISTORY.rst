@@ -3,6 +3,20 @@
 Changelog
 =========
 
+0.8.3 (06-01-2017)
+******************
+
+This is a small bugfix release. Happy new year everyone!
+
+* Now fetch model default value using the get_default method
+* Fixed #50: now use real apps path for autodiscovering, should fix some strange error when using AppConfig and explicit AppConfig path in INSTALLED_APPS
+* Fix #63: Added initial doc to explain how to bind preferences to arbitrary models (#65)
+* Added test to ensure form submission works when no section filter is applied, see #53
+* Example project now works with latest django versions
+* Added missing max_length on example model
+* Fixed a few typos in example project
+
+
 0.8.2 (23-08-2016)
 ******************
 
