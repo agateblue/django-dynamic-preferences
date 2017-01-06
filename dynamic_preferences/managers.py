@@ -102,7 +102,7 @@ class PreferencesManager(collections.Mapping):
         except self.model.DoesNotExist:
             pref_obj = self.pref_obj(section=section, name=name)
             pref = self.create_db_pref(
-                section=section, name=name, value=pref_obj.default)
+                section=section, name=name, value=pref_obj.get('default'))
 
         return pref
 
@@ -160,7 +160,7 @@ class PreferencesManager(collections.Mapping):
                 db_pref = db_prefs[preference.identifier()]
             except KeyError:
                 db_pref = self.create_db_pref(
-                    section=preference.section.name, name=preference.name, value=preference.default)
+                    section=preference.section.name, name=preference.name, value=preference.get('default'))
 
             self.to_cache(db_pref)
             a[preference.identifier()] = self.from_cache(

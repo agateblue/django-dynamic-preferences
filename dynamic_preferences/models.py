@@ -60,8 +60,7 @@ class BasePreferenceModel(models.Model):
     def save(self, **kwargs):
 
         if self.pk is None and not self.raw_value:
-
-                self.value = self.preference.default
+            self.value = self.preference.get('default')
         super(BasePreferenceModel, self).save(**kwargs)
 
     def __str__(self):

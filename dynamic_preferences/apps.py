@@ -1,4 +1,4 @@
-from django.apps import AppConfig
+from django.apps import AppConfig, apps
 from django.conf import settings
 
 from .registries import preference_models, user_preferences_registry, global_preferences_registry
@@ -16,4 +16,5 @@ class DynamicPreferencesConfig(AppConfig):
         preference_models.register(GlobalPreferenceModel, global_preferences_registry)
 
         # This will load all dynamic_preferences_registry.py files under isntalled apps
-        global_preferences_registry.autodiscover(settings.INSTALLED_APPS)
+        app_names = [app.name for app in apps.app_configs.values()]
+        global_preferences_registry.autodiscover(app_names)
