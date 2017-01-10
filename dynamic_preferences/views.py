@@ -16,10 +16,10 @@ class PreferenceFormView(FormView):
 
     #: the registry for preference lookups
     registry = None
+
     #: will be used by :py:func:`forms.preference_form_builder` to create the form
     form_class = None
 
-    sections_url_name = None
     template_name = "dynamic_preferences/form.html"
 
     def get_form_class(self, *args, **kwargs):
@@ -32,11 +32,6 @@ class PreferenceFormView(FormView):
         context = super(PreferenceFormView, self).get_context_data(*args, **kwargs)
 
         context['registry'] = self.registry
-        if self.sections_url_name is None:
-            raise ValueError(
-                'You must provide an sections_url_name attribute on the view'
-                'otherwise url reversing of sections will not work')
-        context['sections_url_name'] = self.sections_url_name
 
         return context
 
