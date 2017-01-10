@@ -3,8 +3,20 @@
 Changelog
 =========
 
-0.8.3 (06-01-2017)
+0.8.4 (10-01-2017)
 ******************
+
+This version is an emergency release to restore backward compatibility that was broken in 0.8.3, as
+described in issue #67. Please upgrade as soon as possible if you use 0.8.3.
+
+Special thanks to [czlee](https://github.com/czlee) for reporting this!
+
+
+0.8.3 (06-01-2017) (**DO NOT USE: BACKWARD INCOMPATIBLE**)
+**********************************************************
+
+**This release introduced by mistake a backward incompatible change (commit 723f2e).**
+**Please upgrade to 0.8.4 or higher to restore backward compatibility with earlier versions**
 
 This is a small bugfix release. Happy new year everyone!
 
