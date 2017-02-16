@@ -102,6 +102,17 @@ class ChoicePreference(BasePreferenceType):
         return field_kwargs
 
 
+class MultipleChoicePreference(ChoicePreference):
+
+    field_class = forms.MultipleChoiceField
+    serializer = ListSerializer
+    
+    def get_field_kwargs(self):
+        kwargs = super(MultipleChoicePreference, self).get_field_kwargs()
+        kwargs['initial'] = list(kwargs['initial'])
+        return kwargs
+
+
 def create_deletion_handler(preference):
     """Will generate a dynamic handler to purge related preference on instance deletion"""
     def delete_related_preferences(sender, instance, *args, **kwargs):
