@@ -54,6 +54,18 @@ class FavoriteVegetable(ChoicePreference):
 
 
 @user_preferences_registry.register
+class FavoriteDaysOfWeek(MultipleChoicePreference):
+
+    choices = (
+        ("friday", "Friday"),
+        ("sunday", "Sunday"),
+        ("monday", "Monday")
+    )
+    section = "auth"
+    name = "favorite_days"
+    default = ["monday"]
+
+@user_preferences_registry.register
 class FavouriteColour(StringPreference):
     """
     What's your favourite colour ?
