@@ -33,7 +33,8 @@ class BasePreferenceModel(models.Model):
 
     @cached_property
     def preference(self):
-        return self.registry.get(section=self.section, name=self.name)
+        return self.registry.get(
+            section=self.section, name=self.name, fallback=True)
 
     @property
     def verbose_name(self):

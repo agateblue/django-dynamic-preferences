@@ -1,7 +1,7 @@
 from django.db.models.fields import FieldDoesNotExist
 from django.apps import apps
-
 # import the logging library
+import warnings
 import logging
 import collections
 import persisting_theory
@@ -15,6 +15,18 @@ logger = logging.getLogger(__name__)
 from .managers import PreferencesManager
 from .settings import preferences_settings
 from .exceptions import NotFoundInRegistry
+from .types import StringPreference
+from .preferences import EMPTY_SECTION, Section
+
+
+class MissingPreference(StringPreference):
+    """
+    Used as a fallback when the preference object is not found in registries
+    This can happen for example when you delete a preference in the code,
+    but don't remove the corresponding entries in database
+    """
+    pass
+
 
 class PreferenceModelsRegistry(persisting_theory.Registry):
     """Store relationships beetween preferences model and preferences registry"""
@@ -95,7 +107,30 @@ class PreferenceRegistry(persisting_theory.Registry):
 
         return preference_class
 
-    def get(self, name, section=None):
+    def _fallback(self, section_name, pref_name):
+        """
+        Create a fallback preference object,
+        This is used when you have model instances that do not match
+        any registered preferences, see #41
+        """
+        message = (
+            'Creating a fallback preference with ' +
+            'section "{}" and name "{}".' +
+            'This means you have preferences in your database that ' +
+            'don\'t match any registered preference. ' +
+            'If you want to delete these entries, please refer to the ' +
+            'documentation: https://django-dynamic-preferences.readthedocs.io/en/latest/lifecycle.html')  # NOQA
+        warnings.warn(message.format(section_name, pref_name))
+
+        class Fallback(MissingPreference):
+            section = Section(name=section_name) if section_name else None
+            name = pref_name
+            default = ''
+            help_text = 'Obsolete: missing in registry'
+
+        return Fallback()
+
+    def get(self, name, section=None, fallback=False):
         """
         Returns a previously registered preference
 
@@ -103,6 +138,8 @@ class PreferenceRegistry(persisting_theory.Registry):
         :type section: str.
         :param name: The name of the preference. You can use dotted notation 'section.name' if you want to avoid providing section param
         :type name: str.
+        :param fallback: Should we return a dummy preference object instead of raising an error if no preference is found?
+        :type name: bool.
         :return: a :py:class:`prefs.BasePreference` instance
         """
         # try dotted notation
@@ -119,6 +156,8 @@ class PreferenceRegistry(persisting_theory.Registry):
             return self[section][name]
 
         except KeyError:
+            if fallback:
+                return self._fallback(section_name=section, pref_name=name)
             raise NotFoundInRegistry("No such preference in {0} with section={1} and name={2}".format(
                 self.__class__.__name__, section, name))
 

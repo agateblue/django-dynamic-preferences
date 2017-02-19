@@ -39,6 +39,7 @@ Contents:
 
    installation
    quickstart
+   lifecycle
    bind_preferences_to_models
    upgrade
    contributing
