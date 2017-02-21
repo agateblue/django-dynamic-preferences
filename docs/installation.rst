@@ -15,6 +15,8 @@ Add this to your :py:const:`settings.INSTALLED_APPS`::
         # ...
         'django.contrib.auth',
         'dynamic_preferences',
+        # comment the following line if you don't want to use user preferences
+        'dynamic_preferences.users.apps.UserPreferencesConfig',
     )
 
 Then, create missing tables in your database::
@@ -49,9 +51,6 @@ Also, take some time to look at provided settings if you want to customize the p
             # WARNING: enabling this feature can cause data corruption if multiple users
             # use the same list view at the same time, see https://code.djangoproject.com/ticket/11313
             'ADMIN_ENABLE_CHANGELIST_FORM': False,
-
-            # Should we enable the admin module for user preferences ?
-            'ENABLE_USER_PREFERENCES': True,
 
             # Customize how you can access preferences from managers. The default is to
             # separate sections and keys with two underscores. This is probably not a settings you'll

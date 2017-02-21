@@ -14,6 +14,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.admin',
     'dynamic_preferences',
+    'dynamic_preferences.users.apps.UserPreferencesConfig',
     'tests.test_app'
 ]
 SITE_ID = 1
