@@ -7,7 +7,7 @@ from django.db.models.query import QuerySet
 from django.conf import settings
 from django.utils.functional import cached_property
 
-from dynamic_preferences.registries import preference_models, user_preferences_registry, global_preferences_registry
+from dynamic_preferences.registries import preference_models, global_preferences_registry
 from .utils import update
 
 
@@ -33,7 +33,8 @@ class BasePreferenceModel(models.Model):
 
     @cached_property
     def preference(self):
-        return self.registry.get(section=self.section, name=self.name)
+        return self.registry.get(
+            section=self.section, name=self.name, fallback=True)
 
     @property
     def verbose_name(self):
@@ -100,16 +101,6 @@ class PerInstancePreferenceModel(BasePreferenceModel):
     @property
     def registry(self):
         return preference_models.get_by_instance(self.instance)
-
-
-class UserPreferenceModel(PerInstancePreferenceModel):
-
-    instance = models.ForeignKey(settings.AUTH_USER_MODEL)
-
-    class Meta(PerInstancePreferenceModel.Meta):
-        app_label = 'dynamic_preferences'
-        verbose_name = "user preference"
-        verbose_name_plural = "user preferences"
 
 
 global_preferences_registry.preference_model = GlobalPreferenceModel

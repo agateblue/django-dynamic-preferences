@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from dynamic_preferences.models import GlobalPreferenceModel, UserPreferenceModel
+from dynamic_preferences.models import GlobalPreferenceModel
 from dynamic_preferences.registries import preference_models, global_preferences_registry
 
 import logging

@@ -3,6 +3,27 @@
 Changelog
 =========
 
+[Major release] 1.0 (21-02-2017)
+***********************************
+
+Dynamic-preferences was release more than two years ago, and since then, more than 20 feature and bugfixe releases have been published.
+But even after two years the project was still advertised as in Alpha-state on PyPi, and  the tags used for the releases, were implicitly saying that the project was not production-ready.
+
+Today, we're changing that by releasing the first major version of dynamic-preferences, the ``1.0`` release. We will stick to semantic versioning and keep backward compatibility until the next major version.
+
+Dynamic-preferences is already used in various production applications .The implemented features are stable, working, and address many of the uses cases the project was designed for:
+
+- painless and efficient global configuration for your project
+- painless and efficient per-user (or any other model) settings
+- ease-of-use, both for end-user (via the admin interface) and developpers (settings are easy to create and to manage)
+- more than decent performance, thanks to caching
+
+By making a major release, we want to show that the project is trustworthy and, in the end, to attract new users and develop the community around it. Development will goes on as before, with an increased focus on stability and backward compatibility.
+
+**Because of the major version switch, some dirt was removed from the code, and manual intervention is required for the upgrade. Please have a look at https://django-dynamic-preferences.readthedocs.io/en/latest/upgrade.html for the detailed instructions.**
+
+Thanks to all the people who contributed over the years by reporting bugs, asking for new features, working on the documentation or on implementing solutions!
+
 0.8.4 (10-01-2017)
 ******************
 
