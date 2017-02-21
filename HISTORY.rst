@@ -20,7 +20,7 @@ Dynamic-preferences is already used in various production applications .The impl
 
 By making a major release, we want to show that the project is trustworthy and, in the end, to attract new users and develop the community around it. Development will goes on as before, with an increased focus on stability and backward compatibility.
 
-**Because of the major version switch, some dirt was removed from the code, and manual intervention is required for the upgrade. Please have a look at https://django-dynamic-preferences.readthedocs.io/en/latest/upgrade.html for the detailed instructions.**
+**Because of the major version switch, some dirt was removed from the code, and manual intervention is required for the upgrade. Please have a for the detailed instructions:** https://django-dynamic-preferences.readthedocs.io/en/latest/upgrade.html
 
 Thanks to all the people who contributed over the years by reporting bugs, asking for new features, working on the documentation or on implementing solutions!
 
