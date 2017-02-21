@@ -7,11 +7,10 @@ from django.contrib.auth.models import User
 from django.core.cache import caches
 from django.db import IntegrityError
 
-from dynamic_preferences.registries import (
-    user_preferences_registry,)
-from dynamic_preferences.models import UserPreferenceModel
+from dynamic_preferences.users.registries import user_preferences_registry
+from dynamic_preferences.users.models import UserPreferenceModel
 from dynamic_preferences.managers import PreferencesManager
-from dynamic_preferences.forms import user_preference_form_builder
+from dynamic_preferences.users.forms import user_preference_form_builder
 from .test_app.dynamic_preferences_registry import *
 
 

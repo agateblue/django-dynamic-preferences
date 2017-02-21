@@ -27,7 +27,8 @@ Let's declare a few preferences in this file:
     # blog/dynamic_preferences_registry.py
 
     from dynamic_preferences.types import BooleanPreference, StringPreference, Section
-    from dynamic_preferences.registries import user_preferences_registry, global_preferences_registry
+    from dynamic_preferences.registries import global_preferences_registry
+    from dynamic_preferences.users.registries import user_preferences_registry
 
     # we create some section objects to link related preferences together
 

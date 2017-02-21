@@ -3,8 +3,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 from collections import OrderedDict
 
-from .registries import global_preferences_registry, user_preferences_registry
-from .models import GlobalPreferenceModel, UserPreferenceModel
+from .registries import global_preferences_registry
+from .models import GlobalPreferenceModel
 from .exceptions import NotFoundInRegistry
 
 
@@ -69,13 +69,6 @@ class GlobalSinglePreferenceForm(AbstractSinglePreferenceForm):
         fields = AbstractSinglePreferenceForm.Meta.fields
 
 
-class UserSinglePreferenceForm(SinglePerInstancePreferenceForm):
-
-    class Meta:
-        model = UserPreferenceModel
-        fields = SinglePerInstancePreferenceForm.Meta.fields
-
-
 def preference_form_builder(form_base_class, preferences=[], **kwargs):
     """
     Return a form class for updating preferences
@@ -133,14 +126,6 @@ def global_preference_form_builder(preferences=[], **kwargs):
     return preference_form_builder(GlobalPreferenceForm, preferences, **kwargs)
 
 
-def user_preference_form_builder(instance, preferences=[], **kwargs):
-    """
-    A shortcut :py:func:`preference_form_builder(UserPreferenceForm, preferences, **kwargs)`
-    :param user: a :py:class:`django.contrib.auth.models.User` instance
-    """
-    return preference_form_builder(UserPreferenceForm, preferences, model={'instance': instance}, **kwargs)
-
-
 class PreferenceForm(forms.Form):
 
     registry = None
@@ -155,8 +140,3 @@ class PreferenceForm(forms.Form):
 class GlobalPreferenceForm(PreferenceForm):
 
     registry = global_preferences_registry
-
-
-class UserPreferenceForm(PreferenceForm):
-
-    registry = user_preferences_registry

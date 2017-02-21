@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from django.core.cache import caches
 
 from dynamic_preferences.registries import global_preferences_registry
-from dynamic_preferences.models import (
-    UserPreferenceModel, GlobalPreferenceModel)
+from dynamic_preferences.models import GlobalPreferenceModel
+from dynamic_preferences.users.models import UserPreferenceModel
 
 
 class BaseTest(object):
