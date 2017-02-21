@@ -2,10 +2,10 @@
 Upgrade
 =======
 
-Next
+1.0
 ****
 
-In order to fix #33 and to make the whole package lighter and more modular,
+In order to fix #33 and to make the whole package lighter and more modular for the 1.0 release,
 user preferences where moved to a dedicated app.
 
 If you were using user preferences before and want to use them after the package, upgrade will require a few changes
