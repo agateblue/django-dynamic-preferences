@@ -11,12 +11,17 @@ from django.template import defaultfilters
 from decimal import Decimal
 
 from dynamic_preferences.serializers import *
-from dynamic_preferences.registries import user_preferences_registry, global_preferences_registry
+from dynamic_preferences.registries import (
+    user_preferences_registry,
+    MissingPreference,
+    global_preferences_registry)
 from dynamic_preferences.models import UserPreferenceModel, GlobalPreferenceModel
 from dynamic_preferences.managers import PreferencesManager
 from dynamic_preferences import exceptions
 from dynamic_preferences.forms import global_preference_form_builder, user_preference_form_builder
-from dynamic_preferences.preferences import EMPTY_SECTION, Section
+from dynamic_preferences.preferences import (
+    EMPTY_SECTION,
+    Section)
 from .types import *
 from .test_app.dynamic_preferences_registry import *
 
@@ -136,6 +141,7 @@ class TestModels(BaseTest, TestCase):
         manager = global_preferences_registry.manager()
         self.assertEqual(manager.by_name()['max_users'], manager['user__max_users'])
         self.assertEqual(len(manager.all()), len(manager.by_name()))
+
     def test_cache_invalidate_on_save(self):
 
         manager = global_preferences_registry.manager()
@@ -162,6 +168,19 @@ class TestModels(BaseTest, TestCase):
         manager = global_preferences_registry.manager()
         v = manager.get('no_section', no_cache=True)
         self.assertIsInstance(v, bool)
+
+    def test_do_not_crash_if_preference_is_missing_in_registry(self):
+        """see #41"""
+        manager = global_preferences_registry.manager()
+        instance = manager.create_db_pref(
+            section=None, name='bad_pref', value='something')
+
+        self.assertTrue(
+            isinstance(instance.preference, MissingPreference))
+
+        self.assertEqual(instance.preference.section, None)
+        self.assertEqual(instance.preference.name, 'bad_pref')
+        self.assertEqual(instance.value, 'something')
 
 
 class TestDynamicPreferences(BaseTest, TestCase):
