@@ -1,2 +1,2 @@
-__version__ = "0.8.4"
+__version__ = "1.0"
 default_app_config = 'dynamic_preferences.apps.DynamicPreferencesConfig'
