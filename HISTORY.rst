@@ -3,6 +3,11 @@
 Changelog
 =========
 
+Current
+********
+
+* Fixed #49 and #71 by passing full section objects in templates (and not just the section identifiers). This means it's easier to write template that use sections, for example if you want have i18n in your project and want to display the translated section's name. URL reversing for sections is also more reliable in templates. If you subclassed `PreferenceRegistry`  to implement your own preference class and use the built-in templates, you need to add a ``section_url_namespace`` attribute to your registry class to benefit from the new URL reversing.
+
 [Major release] 1.0 (21-02-2017)
 ***********************************
 

@@ -1,5 +1,8 @@
 <ul class="sections">
-    {% for section in sections %}
-        <li><a href="./{{ section }}">{{ section }}</a></li>
+    {% for section in registry.section_objects.values %}
+        <li>
+            <a href="{% if registry.section_url_namespace %}{% url registry.section_url_namespace section=section.name %}{% else %}./{{ section.name }}{% endif %}"
+            >{{ section.verbose_name }}</a>
+        </li>
     {% endfor %}
 </ul>

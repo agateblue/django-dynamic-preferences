@@ -5,7 +5,8 @@
 </head>
 <body>
     <div class="sidebar">
-        {% include "dynamic_preferences/sections.html" %}
+        {# we continue to pass the sections key in case someone subclassed the template and use these #}
+        {% include "dynamic_preferences/sections.html" with registry=registry sections=registry.sections %}
     </div>
     <div class="main_content">
         {% block content %}{% endblock %}

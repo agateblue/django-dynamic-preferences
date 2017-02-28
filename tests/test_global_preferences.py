@@ -5,7 +5,9 @@ from django.core.management import call_command
 from django.core.cache import caches
 from django.contrib.auth.models import User
 
-from dynamic_preferences.registries import global_preferences_registry
+from dynamic_preferences.registries import (
+    global_preferences_registry as registry
+)
 from dynamic_preferences.models import GlobalPreferenceModel
 from dynamic_preferences.forms import global_preference_form_builder
 
@@ -27,7 +29,7 @@ class TestGlobalPreferences(BaseTest, TestCase):
         self.test_user.save()
 
     def test_preference_model_manager_to_dict(self):
-        manager = global_preferences_registry.manager()
+        manager = registry.manager()
         call_command('checkpreferences', verbosity=1, interactive=False)
         expected = {
             u'test__TestGlobal1': u'default value',
@@ -95,7 +97,22 @@ class TestViews(BaseTest, LiveServerTestCase):
         response = self.client.get(url)
         self.assertEqual(len(response.context['form'].fields), 8)
         self.assertEqual(
-            response.context['registry'], global_preferences_registry)
+            response.context['registry'], registry)
+
+    def test_formview_includes_section_in_context(self):
+        url = reverse(
+            "dynamic_preferences.global.section", kwargs={"section": 'user'})
+        self.client.login(username='admin', password="test")
+        response = self.client.get(url)
+        self.assertEqual(
+            response.context['section'], registry.section_objects['user'])
+
+    def test_formview_with_bad_section_returns_404(self):
+        url = reverse(
+            "dynamic_preferences.global.section", kwargs={"section": 'nope'})
+        self.client.login(username='admin', password="test")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
 
     def test_global_preference_filters_by_section(self):
         self.client.login(username='admin', password="test")
@@ -147,7 +164,7 @@ class TestViews(BaseTest, LiveServerTestCase):
             section="user", name="items_per_page").value, 12)
 
     def test_template_gets_global_preferences_via_template_processor(self):
-        global_preferences = global_preferences_registry.manager()
+        global_preferences = registry.manager()
         url = reverse("dynamic_preferences.test.templateview")
         response = self.client.get(url)
         self.assertEqual(
