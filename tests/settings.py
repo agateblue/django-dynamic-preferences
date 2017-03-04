@@ -1,5 +1,6 @@
 
 DEBUG = True
+TEMPLATE_DEBUG = True
 USE_TZ = True
 DATABASES = {
     "default": {
@@ -45,6 +46,7 @@ if check_django_version("1.8"):
             'DIRS': [],
             'APP_DIRS': True,
             'OPTIONS': {
+                'debug': True,
                 'context_processors': [
                     'django.template.context_processors.request',
                     'dynamic_preferences.processors.global_preferences',

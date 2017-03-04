@@ -91,6 +91,13 @@ class PreferenceRegistry(persisting_theory.Registry):
     name = "preferences_registry"
     preference_model = None
 
+    #: used to reverse urls for sections in form views/templates
+    section_url_namespace = None
+
+    def __init__(self, *args, **kwargs):
+        super(PreferenceRegistry, self).__init__(*args, **kwargs)
+        self.section_objects = collections.OrderedDict()
+
     def register(self, preference_class):
         """
         Store the given preference class in the registry.
@@ -98,6 +105,8 @@ class PreferenceRegistry(persisting_theory.Registry):
         :param preference_class: a :py:class:`prefs.Preference` subclass
         """
         preference = preference_class(registry=self)
+        self.section_objects[preference.section.name] = preference.section
+
         try:
             self[preference.section.name][preference.name] = preference
 
@@ -203,6 +212,8 @@ class PerInstancePreferenceRegistry(PreferenceRegistry):
 
 
 class GlobalPreferenceRegistry(PreferenceRegistry):
+    section_url_namespace = 'dynamic_preferences.global.section'
+
     def populate(self, **kwargs):
         return self.models(**kwargs)
 
