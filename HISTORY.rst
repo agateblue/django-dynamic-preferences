@@ -3,6 +3,11 @@
 Changelog
 =========
 
+1.1.1 (11-05-2017)
+*******************
+
+Bugfix release to restore disabled user preferences admin (#77).
+
 1.1 (06-03-2017)
 *****************
 
