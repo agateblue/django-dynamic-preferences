@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin as django_admin
 from django import forms
 
 from ..settings import preferences_settings
@@ -19,4 +19,4 @@ class UserPreferenceAdmin(admin.PerInstancePreferenceAdmin):
             request, *args, **kwargs)
 
 
-admin.site.register(UserPreferenceModel, UserPreferenceAdmin)
+django_admin.site.register(UserPreferenceModel, UserPreferenceAdmin)
