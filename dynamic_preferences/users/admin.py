@@ -1,3 +1,4 @@
+from django.contrib import admin as django_admin
 from django import forms
 
 from ..settings import preferences_settings
@@ -16,3 +17,6 @@ class UserPreferenceAdmin(admin.PerInstancePreferenceAdmin):
         getattr(request.user, preferences_settings.MANAGER_ATTRIBUTE).all()
         return super(UserPreferenceAdmin, self).get_queryset(
             request, *args, **kwargs)
+
+
+django_admin.site.register(UserPreferenceModel, UserPreferenceAdmin)
