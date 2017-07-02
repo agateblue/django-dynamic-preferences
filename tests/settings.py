@@ -14,6 +14,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.admin',
+    'rest_framework',
     'dynamic_preferences',
     'dynamic_preferences.users.apps.UserPreferencesConfig',
     'tests.test_app'
