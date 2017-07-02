@@ -19,10 +19,12 @@ class PreferenceSerializer(serializers.Serializer):
 
     section = serializers.CharField(read_only=True)
     name = serializers.CharField(read_only=True)
+    identifier = serializers.SerializerMethodField()
     default = serializers.SerializerMethodField()
     value = PreferenceValueField()
     verbose_name = serializers.SerializerMethodField()
     help_text = serializers.SerializerMethodField()
+    additional_data = serializers.SerializerMethodField()
 
     class Meta:
         fields = [
@@ -40,8 +42,14 @@ class PreferenceSerializer(serializers.Serializer):
     def get_verbose_name(self, o):
         return o.preference.get('verbose_name')
 
+    def get_identifier(self, o):
+        return o.preference.identifier()
+
     def get_help_text(self, o):
         return o.preference.get('help_text')
+
+    def get_additional_data(self, o):
+        return o.preference.get_api_additional_data()
 
     def validate_value(self, value):
         """

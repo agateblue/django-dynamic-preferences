@@ -61,6 +61,12 @@ class BasePreferenceType(AbstractPreference):
         """
         return value
 
+    def get_api_additional_data(self):
+        """
+        Additional data to serialize for use on front-end side, for example
+        """
+        return {}
+
     def validate(self, value):
         """
         Used to implement custom cleaning logic for use in forms
@@ -120,6 +126,11 @@ class ChoicePreference(BasePreferenceType):
         field_kwargs = super(ChoicePreference, self).get_field_kwargs()
         field_kwargs['choices'] = self.choices or self.field_attribute['initial']
         return field_kwargs
+
+    def get_api_additional_data(self):
+        d = super(ChoicePreference, self).get_api_additional_data()
+        d['choices'] = self.get('choices')
+        return d
 
 
 def create_deletion_handler(preference):
