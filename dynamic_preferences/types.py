@@ -67,6 +67,29 @@ class BasePreferenceType(AbstractPreference):
         """
         return {}
 
+    def get_api_field_data(self):
+        """
+        Field data to serialize for use on front-end side, for example
+        will include choices available for a choice field
+        """
+        field = self.setup_field()
+        print(dir(field.widget))
+        d = {
+            'class': field.__class__.__name__,
+            'widget': {
+                'class': field.widget.__class__.__name__
+            }
+        }
+
+        try:
+            d['input_type'] = field.widget.input_type
+        except AttributeError:
+            # some widgets, such as Select do not have an input type
+            # in django < 1.11
+            d['input_type'] = None
+
+        return d
+
     def validate(self, value):
         """
         Used to implement custom cleaning logic for use in forms

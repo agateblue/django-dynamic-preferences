@@ -41,6 +41,9 @@ class TestSerializers(BaseTest, TestCase):
         self.assertEqual(data['name'], pref.name)
         self.assertEqual(data['verbose_name'], pref.preference.verbose_name)
         self.assertEqual(data['help_text'], pref.preference.help_text)
+        self.assertEqual(data['field']['class'], 'IntegerField')
+        self.assertEqual(data['field']['input_type'], 'number')
+        self.assertEqual(data['field']['widget']['class'], 'NumberInput')
 
     def test_can_change_preference_value_using_serializer(self):
         manager = registry.manager()

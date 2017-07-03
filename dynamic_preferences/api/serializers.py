@@ -25,6 +25,7 @@ class PreferenceSerializer(serializers.Serializer):
     verbose_name = serializers.SerializerMethodField()
     help_text = serializers.SerializerMethodField()
     additional_data = serializers.SerializerMethodField()
+    field = serializers.SerializerMethodField()
 
     class Meta:
         fields = [
@@ -50,6 +51,9 @@ class PreferenceSerializer(serializers.Serializer):
 
     def get_additional_data(self, o):
         return o.preference.get_api_additional_data()
+
+    def get_field(self, o):
+        return o.preference.get_api_field_data()
 
     def validate_value(self, value):
         """
