@@ -1,3 +1,4 @@
+import tempfile
 
 DEBUG = True
 TEMPLATE_DEBUG = True
@@ -22,6 +23,8 @@ INSTALLED_APPS = [
 SITE_ID = 1
 SECRET_KEY = 'FDLDSKSDJHF'
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = tempfile.mkdtemp()
 NOSE_ARGS = ['-s']
 MIDDLEWARE_CLASSES =  (
     'django.contrib.sessions.middleware.SessionMiddleware',

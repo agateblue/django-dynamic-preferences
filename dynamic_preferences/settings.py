@@ -22,6 +22,10 @@ DEFAULTS = {
     'ENABLE_USER_PREFERENCES': True,
     'ENABLE_CACHE': True,
     'VALIDATE_NAMES': True,
+    'FILE_PREFERENCE_UPLOAD_DIR': 'dynamic_preferences',
+    # this will be used to cache empty values, since some cache backends
+    # does not support it on get_many
+    'CACHE_NONE_VALUE': '__dynamic_preferences_empty_value'
 }
 
 

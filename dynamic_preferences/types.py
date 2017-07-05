@@ -9,8 +9,12 @@ from django.db.models.signals import pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import cached_property
 
+from django.core.files.storage import default_storage
+
 from .preferences import AbstractPreference, Section
 from dynamic_preferences.serializers import *
+from dynamic_preferences.settings import preferences_settings
+
 
 class BasePreferenceType(AbstractPreference):
 
@@ -73,7 +77,6 @@ class BasePreferenceType(AbstractPreference):
         will include choices available for a choice field
         """
         field = self.setup_field()
-        print(dir(field.widget))
         d = {
             'class': field.__class__.__name__,
             'widget': {
@@ -205,3 +208,31 @@ class ModelChoicePreference(BasePreferenceType):
         if not value:
             return None
         return value.pk
+
+
+class FilePreference(BasePreferenceType):
+    field_class = forms.FileField
+    serializer_class = FileSerializer
+    default = None
+
+    @property
+    def serializer(self):
+        """
+        The serializer need additional data about the related preference
+        to upload file to correct directory
+        """
+        return self.serializer_class(self)
+
+    def get_field_kwargs(self):
+        kwargs = super(FilePreference, self).get_field_kwargs()
+        kwargs['required'] = self.get('required', False)
+        return kwargs
+
+    def get_upload_path(self):
+        return os.path.join(
+            preferences_settings.FILE_PREFERENCE_UPLOAD_DIR,
+            self.identifier()
+        )
+
+    def get_file_storage(self):
+        return default_storage

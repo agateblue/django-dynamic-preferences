@@ -57,6 +57,12 @@ class FeaturedBlogEntry(ModelChoicePreference):
         return self.queryset.first()
 
 
+@global_preferences_registry.register
+class BlogLogo(FilePreference):
+    section = "blog"
+    name = "logo"
+
+
 @user_preferences_registry.register
 class FavoriteVegetable(ChoicePreference):
 
