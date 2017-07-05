@@ -52,7 +52,51 @@ class BasePreferenceType(AbstractPreference):
         kwargs['help_text'] = self.get('help_text')
         kwargs['widget'] = self.get('widget')
         kwargs['initial'] = self.get('default')
+        kwargs['validators'] = [self.validate]
         return kwargs
+
+    def api_repr(self, value):
+        """
+        Used only to represent a preference value using Rest Framework
+        """
+        return value
+
+    def get_api_additional_data(self):
+        """
+        Additional data to serialize for use on front-end side, for example
+        """
+        return {}
+
+    def get_api_field_data(self):
+        """
+        Field data to serialize for use on front-end side, for example
+        will include choices available for a choice field
+        """
+        field = self.setup_field()
+        print(dir(field.widget))
+        d = {
+            'class': field.__class__.__name__,
+            'widget': {
+                'class': field.widget.__class__.__name__
+            }
+        }
+
+        try:
+            d['input_type'] = field.widget.input_type
+        except AttributeError:
+            # some widgets, such as Select do not have an input type
+            # in django < 1.11
+            d['input_type'] = None
+
+        return d
+
+    def validate(self, value):
+        """
+        Used to implement custom cleaning logic for use in forms
+        and serializers
+        """
+        return
+
 
 class BooleanPreference(BasePreferenceType):
 
@@ -64,6 +108,7 @@ class BooleanPreference(BasePreferenceType):
         kwargs['required'] = False
         return kwargs
 
+
 class IntegerPreference(BasePreferenceType):
 
     field_class = forms.IntegerField
@@ -71,23 +116,28 @@ class IntegerPreference(BasePreferenceType):
 
 IntPreference = IntegerPreference
 
+
 class DecimalPreference(BasePreferenceType):
 
     field_class = forms.DecimalField
     serializer = DecimalSerializer
+
 
 class FloatPreference(BasePreferenceType):
 
     field_class = forms.FloatField
     serializer = FloatSerializer
 
+
 class StringPreference(BasePreferenceType):
 
     field_class = forms.CharField
     serializer = StringSerializer
 
+
 class LongStringPreference(StringPreference):
     widget = forms.Textarea
+
 
 class ChoicePreference(BasePreferenceType):
 
@@ -97,18 +147,26 @@ class ChoicePreference(BasePreferenceType):
 
     def get_field_kwargs(self):
         field_kwargs = super(ChoicePreference, self).get_field_kwargs()
-
         field_kwargs['choices'] = self.choices or self.field_attribute['initial']
         return field_kwargs
 
+    def get_api_additional_data(self):
+        d = super(ChoicePreference, self).get_api_additional_data()
+        d['choices'] = self.get('choices')
+        return d
+
 
 def create_deletion_handler(preference):
-    """Will generate a dynamic handler to purge related preference on instance deletion"""
+    """
+    Will generate a dynamic handler to purge related preference
+    on instance deletion
+    """
     def delete_related_preferences(sender, instance, *args, **kwargs):
         queryset = preference.registry.preference_model.objects\
                                       .filter(name=preference.name,
                                               section=preference.section)
-        related_preferences = queryset.filter(raw_value=preference.serializer.serialize(instance))
+        related_preferences = queryset.filter(
+            raw_value=preference.serializer.serialize(instance))
         related_preferences.delete()
     return delete_related_preferences
 
@@ -142,3 +200,8 @@ class ModelChoicePreference(BasePreferenceType):
         kw = super(ModelChoicePreference, self).get_field_kwargs()
         kw['queryset'] = self.get('queryset')
         return kw
+
+    def api_repr(self, value):
+        if not value:
+            return None
+        return value.pk

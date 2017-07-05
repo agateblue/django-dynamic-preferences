@@ -98,10 +98,6 @@ class PerInstancePreferenceModel(BasePreferenceModel):
     def get_instance_model(cls):
         return cls._meta.get_field('instance').rel.to
 
-    @property
-    def registry(self):
-        return preference_models.get_by_instance(self.instance)
-
 
 global_preferences_registry.preference_model = GlobalPreferenceModel
 

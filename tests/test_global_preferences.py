@@ -23,7 +23,6 @@ class BaseTest(object):
 class TestGlobalPreferences(BaseTest, TestCase):
 
     def setUp(self):
-
         self.test_user = User(
             username="test", password="test", email="test@test.com")
         self.test_user.save()

@@ -1,6 +1,7 @@
 from dynamic_preferences.types import *
 from dynamic_preferences.registries import global_preferences_registry
 from dynamic_preferences.users.registries import user_preferences_registry
+from django.forms import ValidationError
 from .models import BlogEntry
 
 
@@ -23,6 +24,14 @@ class MaxUsers(IntPreference):
     section = "user"
     name = "max_users"
     default = 100
+    verbose_name = 'Maximum user count'
+    help_text = 'Be careful with this setting'
+
+    def validate(self, value):
+        # value can't be equal to 1001, no no no!
+        if value == 1001:
+            raise ValidationError('Wrong value!')
+        return value
 
 
 class NoDefault(IntPreference):

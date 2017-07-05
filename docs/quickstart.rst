@@ -128,6 +128,32 @@ A few other methods are available on managers to retrieve preferences:
    The preference section name (if any) is removed from the identifier
 - `manager.get_by_name(name)`: returns a single preference value using only the preference name
 
+Additional validation
+*********************
+
+In some situations, you'll want to enforce custom rules for your preferences
+values, and raise validation errors when those rules are not matched.
+
+You can implement that behaviour by declaring a ``validate`` method on your preference
+class, as follows:
+
+.. code-block:: python
+
+    from django.forms import ValidationError
+
+    # We start with a global preference
+    @global_preferences_registry.register
+    class MeaningOfLife(IntegerPreference):
+        name = 'meaning_of_life'
+        default = 42
+
+        def validate(self, value):
+            # ensure the meaning of life is always 42
+            if value != 42:
+                raise ValidationError('42 only')
+
+Internally, the validate method is pass as `a validator <https://docs.djangoproject.com/en/1.11/ref/validators/>`_ to the underlying form field.
+
 About serialization
 *******************
 

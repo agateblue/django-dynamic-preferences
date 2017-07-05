@@ -3,6 +3,13 @@
 Changelog
 =========
 
+Current
+*******************
+
+- important performance improvements (less database and cache queries)
+- rest api (wip)
+
+
 1.1.1 (11-05-2017)
 *******************
 

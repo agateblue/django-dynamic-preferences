@@ -11,6 +11,7 @@ from dynamic_preferences import preferences, exceptions
 from dynamic_preferences.types import IntegerPreference
 
 from .test_app import dynamic_preferences_registry as prefs
+from .test_app.models import BlogEntry
 
 
 class BaseTest(object):
@@ -98,10 +99,11 @@ class TestPreferences(BaseTest, TestCase):
         self.assertGreater(len(connection.queries), manager_queries)
 
     def test_can_cache_all_preferences(self):
-
+        blog_entry = BlogEntry.objects.create(title='test', content='test')
         manager = global_preferences_registry.manager()
         manager.all()
-        with self.assertNumQueries(0):
+        with self.assertNumQueries(3):
+            # one request each time we retrieve the blog entry
             manager.all()
             manager.all()
             manager.all()
