@@ -161,6 +161,18 @@ class TestFilePreference(BaseTest, TestCase):
         manager['blog__logo'].delete()
         self.assertFalse(os.path.exists(path))
 
+    def test_file_preference_api_repr_returns_path(self):
+        f = SimpleUploadedFile('test_file.txt', 'hello world'.encode('utf-8'))
+        p = global_preferences_registry.get(section='blog', name='logo')
+        manager = global_preferences_registry.manager()
+        manager['blog__logo'] = f
+
+        f = manager['blog__logo']
+        self.assertEqual(
+            p.api_repr(f),
+            f.url
+        )
+
 
 class TestModelChoicePreference(BaseTest, TestCase):
 

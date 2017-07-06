@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.core.management import call_command
 from django.core.cache import caches
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from dynamic_preferences.registries import (
     global_preferences_registry as registry
@@ -170,3 +171,21 @@ class TestViews(BaseTest, LiveServerTestCase):
         response = self.client.get(url)
         self.assertEqual(
             response.context['global_preferences'], global_preferences.all())
+
+    def test_file_preference(self):
+
+        blog_entry = BlogEntry.objects.create(title='Hello', content='World')
+        content = b"hello"
+        logo = SimpleUploadedFile(
+            "logo.png", content, content_type="image/png")
+        self.client.login(username='admin', password="test")
+        url = reverse(
+            "dynamic_preferences.global.section", kwargs={"section": 'blog'})
+        response = self.client.post(
+            url,
+            {'blog__featured_entry': blog_entry.pk,
+             'blog__logo': logo})
+        self.assertEqual(GlobalPreferenceModel.objects.get(
+            section="blog", name="featured_entry").value, blog_entry)
+        self.assertEqual(GlobalPreferenceModel.objects.get(
+            section="blog", name="logo").value.read(), content)

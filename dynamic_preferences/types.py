@@ -1,6 +1,6 @@
 """
-    Class defined here are used by dynamic_preferences.preferences to specify
-    preferences types (Bool, int, etc.) and rules according validation
+You'll find here the final, concrete classes of preferences you can use
+in your own project.
 
 """
 import datetime
@@ -17,33 +17,55 @@ from dynamic_preferences.settings import preferences_settings
 
 
 class BasePreferenceType(AbstractPreference):
+    """
+    Used as a base for all other preference classes. You should subclass
+    this one if you want to implement your own preference.
+    """
 
-    # A form field that will be used to display and edit the preference
-    # use a class, not an instance
     field_class = None
+    """
+    A form field that will be used to display and edit the preference
+    use a class, not an instance.
 
-    # Override this attribute to change field behaviour
+    :Example:
+
+    .. code-block:: python
+
+        from django import forms
+
+        class MyPreferenceType(BasePreferenceType):
+            field_class = forms.CharField
+    """
     field_attributes = {}
+    """
+    Those attributes are passed to as kwargs :py:attr:`field_class` when
+    :py:meth:`setup_field` is called
+    """
 
-    # A serializer class (see dynamic_preferences.serializers)
+    #: A serializer class (see dynamic_preferences.serializers)
     serializer = None
 
     @property
     def initial(self):
         """
-        :return: initial data for form field, from field_attribute['initial'], _default_field_attribute['initial'] or
-         default
+        :return: initial data for form field,
+            from field_attribute['initial'],
+            _default_field_attribute['initial'] or default
         """
         return self.field_attributes.get('initial', self._default_field_attributes.get('initial', self.default))
 
     @property
     def field(self):
+        """
+        :return: an instance of a form field for this preference, with
+        the correct configuration (widget, initial value, validators...)
+        """
         return self.setup_field()
 
     def setup_field(self, **kwargs):
         """
-            Create an actual instance of self.field
-            Override this method if needed
+        Create an actual instance of :py:attr:`field_class`
+        Override this method if needed
         """
         field_class = self.get('field_class')
         field_kwargs = self.get_field_kwargs()
@@ -96,13 +118,22 @@ class BasePreferenceType(AbstractPreference):
     def validate(self, value):
         """
         Used to implement custom cleaning logic for use in forms
-        and serializers
+        and serializers. The method will be passed as a validator to
+        the preference form field.
+
+        :Example:
+
+        def validate(self, value):
+            if value == '42':
+                raise ValidationError('Wrong value!')
         """
         return
 
 
 class BooleanPreference(BasePreferenceType):
-
+    """
+    A preference type that stores a boolean.
+    """
     field_class = forms.BooleanField
     serializer = BooleanSerializer
 
@@ -113,7 +144,9 @@ class BooleanPreference(BasePreferenceType):
 
 
 class IntegerPreference(BasePreferenceType):
-
+    """
+    A preference type that stores an integer.
+    """
     field_class = forms.IntegerField
     serializer = IntegerSerializer
 
@@ -121,30 +154,55 @@ IntPreference = IntegerPreference
 
 
 class DecimalPreference(BasePreferenceType):
-
+    """
+    A preference type that stores a :py:class:`decimal.Decimal`.
+    """
     field_class = forms.DecimalField
     serializer = DecimalSerializer
 
 
 class FloatPreference(BasePreferenceType):
-
+    """
+    A preference type that stores a float.
+    """
     field_class = forms.FloatField
     serializer = FloatSerializer
 
 
 class StringPreference(BasePreferenceType):
-
+    """
+    A preference type that stores a string.
+    """
     field_class = forms.CharField
     serializer = StringSerializer
 
 
 class LongStringPreference(StringPreference):
+    """
+    A preference type that stores a string, but with a textarea widget.
+    """
     widget = forms.Textarea
 
 
 class ChoicePreference(BasePreferenceType):
+    """
+    A preference type that stores a string among a list of choices.
+    """
 
     choices = ()
+    """
+    Expects the same values as for django :py:class:`forms.ChoiceField`.
+
+    :Example:
+
+    .. code-block:: python
+
+        class MyChoicePreference(ChoicePreference):
+            choices = [
+                ('c', 'Carrot'),
+                ('t', 'Tomato'),
+            ]
+    """
     field_class = forms.ChoiceField
     serializer = StringSerializer
 
@@ -175,10 +233,46 @@ def create_deletion_handler(preference):
 
 
 class ModelChoicePreference(BasePreferenceType):
+    """
+    A preference type that stores a reference to a model instance.
+
+    :Example:
+
+    .. code-block:: python
+
+        from myapp.blog.models import BlogEntry
+
+        @registry.register
+        class FeaturedEntry(ModelChoicePreference):
+            section = Section('blog')
+            name = 'featured_entry'
+            queryset = BlogEntry.objects.filter(status='published')
+
+        blog_entry = BlogEntry.objects.get(pk=12)
+        manager['blog__featured_entry'] = blog_entry
+
+        # accessing the value will return the model instance
+        assert manager['blog__featured_entry'].pk == 12
+
+    .. note::
+
+        You should provide either the :py:attr:`queryset` or :py:attr:`model`
+        attribute
+    """
+
     field_class = forms.ModelChoiceField
     serializer_class = ModelSerializer
+
     model = None
+    """
+    Which model class to link the preference to. You can skip this if you
+    define the :py:attr:`queryset` attribute.
+    """
+
     queryset = None
+    """
+    A queryset to filter available model instances.
+    """
     signals_handlers = {}
 
     def __init__(self, *args, **kwargs):
@@ -211,6 +305,31 @@ class ModelChoicePreference(BasePreferenceType):
 
 
 class FilePreference(BasePreferenceType):
+    """
+    A preference type that stores a a reference to a model.
+
+    :Example:
+
+    .. code-block:: python
+
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        @registry.register
+        class Logo(FilePreference):
+            section = Section('blog')
+            name = 'logo'
+
+        logo = SimpleUploadedFile(
+            "logo.png", b"file_content", content_type="image/png")
+        manager['blog__logo'] = logo
+
+        # accessing the value will return a FieldFile object, just as
+        # django.db.models.FileField
+        assert manager['blog__logo'].read() == b'file_content'
+
+        manager['blog__logo'].delete()
+
+    """
     field_class = forms.FileField
     serializer_class = FileSerializer
     default = None
@@ -235,4 +354,11 @@ class FilePreference(BasePreferenceType):
         )
 
     def get_file_storage(self):
+        """
+        Override this method if you want to use a custom storage
+        """
         return default_storage
+
+    def api_repr(self, value):
+        if value:
+            return value.url
