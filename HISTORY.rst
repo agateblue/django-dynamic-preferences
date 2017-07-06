@@ -3,12 +3,12 @@
 Changelog
 =========
 
-Current
+1.2 (06-07-2017)
 *******************
 
 - important performance improvements (less database and cache queries)
-- rest api (wip)
-
+- A brand new `REST API <https://django-dynamic-preferences.readthedocs.io/en/latest/rest_api.html>`_ based on Django REST Framework, to interact with preferences (this is an optionnal, opt-in feature)
+- A new `FilePreference <https://django-dynamic-preferences.readthedocs.io/en/latest/preference_types.html#dynamic_preferences.types.FilePreference>`_ [original work by @macolo]
 
 1.1.1 (11-05-2017)
 *******************
