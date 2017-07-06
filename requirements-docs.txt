@@ -1,0 +1,4 @@
+-r requirements.txt
+
+# this is needed for autodoc
+django

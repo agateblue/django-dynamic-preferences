@@ -36,7 +36,8 @@ class PreferenceModelsRegistry(persisting_theory.Registry):
     def register(self, preference_model, preference_registry):
         self[preference_model] = preference_registry
         preference_registry.preference_model = preference_model
-
+        if not hasattr(preference_model, 'registry'):
+            setattr(preference_model, 'registry', preference_registry)
         self.attach_manager(preference_model, preference_registry)
 
     def attach_manager(self, model, registry):

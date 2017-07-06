@@ -13,10 +13,14 @@ class PreferencesManager(collections.Mapping):
         self.model = model
 
         self.registry = registry
-        self.queryset = self.model.objects.all()
         self.instance = kwargs.get('instance')
+
+    @property
+    def queryset(self):
+        qs = self.model.objects.all()
         if self.instance:
-            self.queryset = self.queryset.filter(instance=self.instance)
+            qs = qs.filter(instance=self.instance)
+        return qs
 
     @property
     def cache(self):
@@ -28,6 +32,8 @@ class PreferencesManager(collections.Mapping):
 
     def __setitem__(self, key, value):
         section, name = self.parse_lookup(key)
+        preference = self.registry.get(
+            section=section, name=name, fallback=False)
         self.update_db_pref(section=section, name=name, value=value)
 
     def __repr__(self):
@@ -59,12 +65,49 @@ class PreferencesManager(collections.Mapping):
 
         if cached_value is CachedValueNotFound:
             raise CachedValueNotFound
-        return self.registry.get(section=section, name=name).serializer.deserialize(cached_value)
+
+        if cached_value == preferences_settings.CACHE_NONE_VALUE:
+            cached_value = None
+        return self.registry.get(
+            section=section, name=name).serializer.deserialize(cached_value)
+
+    def many_from_cache(self, preferences):
+        """
+        Return cached value for given preferences
+        missing preferences will be skipped
+        """
+        keys = {
+            p: self.get_cache_key(p.section.name, p.name)
+            for p in preferences
+        }
+        cached = self.cache.get_many(list(keys.values()))
+
+        for k, v in cached.items():
+            # we replace dummy cached values by None here, if needed
+            if v == preferences_settings.CACHE_NONE_VALUE:
+                cached[k] = None
+
+        # we have to remap returned value since the underlying cached keys
+        # are not usable for an end user
+        return {
+            p.identifier(): p.serializer.deserialize(cached[k])
+            for p, k in keys.items()
+            if k in cached
+        }
+
 
     def to_cache(self, pref):
-        """Update/create the cache value for the given preference model instance"""
-        self.cache.set(
-            self.get_cache_key(pref.section, pref.name), pref.raw_value, None)
+        """
+        Update/create the cache value for the given preference model instance
+        """
+        key = self.get_cache_key(pref.section, pref.name)
+        value = pref.raw_value
+        if value is None or value == '':
+            # some cache backends refuse to cache None or empty values
+            # resulting in more DB queries, so we cache an arbitrary value
+            # to ensure the cache is hot (even with empty values)
+            value = preferences_settings.CACHE_NONE_VALUE
+        self.cache.set(key, value, None)
 
     def pref_obj(self, section, name):
         return self.registry.get(section=section, name=name)
@@ -83,6 +126,8 @@ class PreferencesManager(collections.Mapping):
         :arg no_cache: if true, the cache is bypassed
         """
         section, name = self.parse_lookup(key)
+        preference = self.registry.get(
+            section=section, name=name, fallback=False)
         if no_cache or not preferences_settings.ENABLE_CACHE:
             return self.get_db_pref(section=section, name=name).value
 
@@ -123,15 +168,19 @@ class PreferencesManager(collections.Mapping):
         }
         if self.instance:
             kwargs['instance'] = self.instance
-            db_pref = self.model(
-                section=section, name=name, instance=self.instance)
-        else:
-            db_pref = self.model(section=section, name=name)
 
-        db_pref, created = self.model.objects.get_or_create(**kwargs)
-        db_pref.value = value
-        db_pref.save()
+        # this is ajust a shortcut to get the raw, serialized value
+        # so we can pass it to udpate_or_create
+        m = self.model(**kwargs)
+        m.value = value
+        raw_value = m.raw_value
 
+        db_pref, updated = self.model.objects.update_or_create(
+            defaults={
+                'raw_value': raw_value
+            },
+            **kwargs
+        )
         return db_pref
 
     def all(self):
@@ -142,12 +191,22 @@ class PreferencesManager(collections.Mapping):
         if not preferences_settings.ENABLE_CACHE:
             return self.load_from_db()
 
-        try:
-            for preference in self.registry.preferences():
-                a[preference.identifier()] = self.from_cache(
-                    preference.section.name, preference.name)
-        except CachedValueNotFound:
-            return self.load_from_db()
+        # first we hit the cache once for all existing preferences
+        cached = self.many_from_cache(self.registry.preferences())
+
+        # then we fill those that miss
+        for preference in self.registry.preferences():
+            identifier = preference.identifier()
+            try:
+                a[identifier] = cached[identifier]
+            except KeyError:
+                default = preference.get('default')
+                db_pref = self.create_db_pref(
+                    section=preference.section.name,
+                    name=preference.name,
+                    value=default)
+
+                a[preference.identifier()] = default
 
         return a
 
@@ -160,10 +219,10 @@ class PreferencesManager(collections.Mapping):
                 db_pref = db_prefs[preference.identifier()]
             except KeyError:
                 db_pref = self.create_db_pref(
-                    section=preference.section.name, name=preference.name, value=preference.get('default'))
+                    section=preference.section.name,
+                    name=preference.name,
+                    value=preference.get('default'))
 
-            self.to_cache(db_pref)
-            a[preference.identifier()] = self.from_cache(
-                preference.section.name, preference.name)
+            a[preference.identifier()] = db_pref.value
 
         return a

@@ -1,3 +1,4 @@
+import tempfile
 
 DEBUG = True
 TEMPLATE_DEBUG = True
@@ -14,6 +15,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.admin',
+    'rest_framework',
     'dynamic_preferences',
     'dynamic_preferences.users.apps.UserPreferencesConfig',
     'tests.test_app'
@@ -21,6 +23,8 @@ INSTALLED_APPS = [
 SITE_ID = 1
 SECRET_KEY = 'FDLDSKSDJHF'
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = tempfile.mkdtemp()
 NOSE_ARGS = ['-s']
 MIDDLEWARE_CLASSES =  (
     'django.contrib.sessions.middleware.SessionMiddleware',

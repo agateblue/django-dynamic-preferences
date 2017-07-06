@@ -29,6 +29,7 @@ Features
 * Bundled with global and per-user preferences
 * Can be extended to other models if need (e.g. per-site preferences)
 * Integrates with django caching mechanisms to improve performance
+* Django REST Framework integration
 
 If you're still interested, head over :doc:`installation`.
 
@@ -39,8 +40,10 @@ Contents:
 
    installation
    quickstart
-   lifecycle
    bind_preferences_to_models
+   preference_types
+   rest_api
+   lifecycle
    upgrade
    contributing
    authors

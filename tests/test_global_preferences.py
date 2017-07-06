@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.core.management import call_command
 from django.core.cache import caches
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from dynamic_preferences.registries import (
     global_preferences_registry as registry
@@ -23,7 +24,6 @@ class BaseTest(object):
 class TestGlobalPreferences(BaseTest, TestCase):
 
     def setUp(self):
-
         self.test_user = User(
             username="test", password="test", email="test@test.com")
         self.test_user.save()
@@ -39,6 +39,7 @@ class TestGlobalPreferences(BaseTest, TestCase):
             u'user__max_users': 100,
             u'user__items_per_page': 25,
             u'blog__featured_entry': None,
+            u'blog__logo': None,
             u'user__registration_allowed': False}
         self.assertDictEqual(manager.all(), expected)
 
@@ -95,7 +96,7 @@ class TestViews(BaseTest, LiveServerTestCase):
         url = reverse("dynamic_preferences.global")
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
-        self.assertEqual(len(response.context['form'].fields), 8)
+        self.assertEqual(len(response.context['form'].fields), 9)
         self.assertEqual(
             response.context['registry'], registry)
 
@@ -134,6 +135,7 @@ class TestViews(BaseTest, LiveServerTestCase):
             'test__TestGlobal3': True,
             'no_section': True,
             'blog__featured_entry': blog_entry.pk,
+            'blog__logo': None,
         }
         response = self.client.post(url, data)
         for key, expected_value in data.items():
@@ -169,3 +171,21 @@ class TestViews(BaseTest, LiveServerTestCase):
         response = self.client.get(url)
         self.assertEqual(
             response.context['global_preferences'], global_preferences.all())
+
+    def test_file_preference(self):
+
+        blog_entry = BlogEntry.objects.create(title='Hello', content='World')
+        content = b"hello"
+        logo = SimpleUploadedFile(
+            "logo.png", content, content_type="image/png")
+        self.client.login(username='admin', password="test")
+        url = reverse(
+            "dynamic_preferences.global.section", kwargs={"section": 'blog'})
+        response = self.client.post(
+            url,
+            {'blog__featured_entry': blog_entry.pk,
+             'blog__logo': logo})
+        self.assertEqual(GlobalPreferenceModel.objects.get(
+            section="blog", name="featured_entry").value, blog_entry)
+        self.assertEqual(GlobalPreferenceModel.objects.get(
+            section="blog", name="logo").value.read(), content)
