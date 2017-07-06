@@ -41,6 +41,7 @@ Contents:
    installation
    quickstart
    bind_preferences_to_models
+   preference_types
    rest_api
    lifecycle
    upgrade

@@ -1,12 +1,15 @@
+import os
 import decimal
 
+from django import forms
 from django.test import TestCase
 from django.db.models import signals
 from django.test.utils import override_settings
 from django.core.cache import caches
-from django import forms
-
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.conf import settings
 from dynamic_preferences.models import GlobalPreferenceModel
+from dynamic_preferences.settings import preferences_settings
 from dynamic_preferences.registries import global_preferences_registry
 from dynamic_preferences import types
 
@@ -100,6 +103,63 @@ class TestTypes(BaseTest, TestCase):
         self.assertEqual(preference.field.initial, 0.35)
         self.assertNotEqual(preference.field.initial, 0.3)
         self.assertNotEqual(preference.field.initial, 0.3001)
+
+
+class TestFilePreference(BaseTest, TestCase):
+
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
+    def test_file_preference_defaults_to_none(self):
+        class P(types.FilePreference):
+            pass
+        preference = P()
+
+        self.assertEqual(preference.field.initial, None)
+
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
+    def test_can_get_upload_path(self):
+        class P(types.FilePreference):
+            pass
+
+        p = P()
+
+        self.assertEqual(
+            p.get_upload_path(),
+            preferences_settings.FILE_PREFERENCE_UPLOAD_DIR +
+            '/' + p.identifier()
+        )
+
+    def test_file_preference_store_file_path(self):
+        f = SimpleUploadedFile('test_file.txt', 'hello world'.encode('utf-8'))
+        p = global_preferences_registry.get(section='blog', name='logo')
+        manager = global_preferences_registry.manager()
+        manager['blog__logo'] = f
+        self.assertEqual(
+            manager['blog__logo'].read(),
+            b'hello world')
+        self.assertEqual(
+            manager['blog__logo'].url,
+            os.path.join(
+                settings.MEDIA_URL, p.get_upload_path(), f.name)
+        )
+        self.assertEqual(
+            manager['blog__logo'].path,
+            os.path.join(
+                settings.MEDIA_ROOT, p.get_upload_path(), f.name)
+            )
+
+    def test_can_delete_file_preference(self):
+        f = SimpleUploadedFile('test_file.txt', 'hello world'.encode('utf-8'))
+        p = global_preferences_registry.get(section='blog', name='logo')
+        manager = global_preferences_registry.manager()
+        manager['blog__logo'] = f
+        path = os.path.join(
+            settings.MEDIA_ROOT,
+            p.get_upload_path(),
+            f.name
+        )
+        self.assertTrue(os.path.exists(path))
+        manager['blog__logo'].delete()
+        self.assertFalse(os.path.exists(path))
 
 
 class TestModelChoicePreference(BaseTest, TestCase):

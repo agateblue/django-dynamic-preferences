@@ -32,6 +32,8 @@ class PreferencesManager(collections.Mapping):
 
     def __setitem__(self, key, value):
         section, name = self.parse_lookup(key)
+        preference = self.registry.get(
+            section=section, name=name, fallback=False)
         self.update_db_pref(section=section, name=name, value=value)
 
     def __repr__(self):
@@ -63,7 +65,11 @@ class PreferencesManager(collections.Mapping):
 
         if cached_value is CachedValueNotFound:
             raise CachedValueNotFound
-        return self.registry.get(section=section, name=name).serializer.deserialize(cached_value)
+
+        if cached_value == preferences_settings.CACHE_NONE_VALUE:
+            cached_value = None
+        return self.registry.get(
+            section=section, name=name).serializer.deserialize(cached_value)
 
     def many_from_cache(self, preferences):
         """
@@ -76,6 +82,11 @@ class PreferencesManager(collections.Mapping):
         }
         cached = self.cache.get_many(list(keys.values()))
 
+        for k, v in cached.items():
+            # we replace dummy cached values by None here, if needed
+            if v == preferences_settings.CACHE_NONE_VALUE:
+                cached[k] = None
+
         # we have to remap returned value since the underlying cached keys
         # are not usable for an end user
         return {
@@ -84,12 +95,19 @@ class PreferencesManager(collections.Mapping):
             if k in cached
         }
 
+
     def to_cache(self, pref):
         """
         Update/create the cache value for the given preference model instance
         """
         key = self.get_cache_key(pref.section, pref.name)
-        self.cache.set(key, pref.raw_value, None)
+        value = pref.raw_value
+        if value is None or value == '':
+            # some cache backends refuse to cache None or empty values
+            # resulting in more DB queries, so we cache an arbitrary value
+            # to ensure the cache is hot (even with empty values)
+            value = preferences_settings.CACHE_NONE_VALUE
+        self.cache.set(key, value, None)
 
     def pref_obj(self, section, name):
         return self.registry.get(section=section, name=name)
@@ -108,6 +126,8 @@ class PreferencesManager(collections.Mapping):
         :arg no_cache: if true, the cache is bypassed
         """
         section, name = self.parse_lookup(key)
+        preference = self.registry.get(
+            section=section, name=name, fallback=False)
         if no_cache or not preferences_settings.ENABLE_CACHE:
             return self.get_db_pref(section=section, name=name).value
 
@@ -173,6 +193,7 @@ class PreferencesManager(collections.Mapping):
 
         # first we hit the cache once for all existing preferences
         cached = self.many_from_cache(self.registry.preferences())
+
         # then we fill those that miss
         for preference in self.registry.preferences():
             identifier = preference.identifier()

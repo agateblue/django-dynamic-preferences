@@ -1,7 +1,13 @@
 from __future__ import unicode_literals
 import decimal
+import os
 from six import string_types
 from django.utils import six
+from django.conf import settings
+from django.db.models.fields.files import FieldFile
+from django.core.files.base import File
+
+from dynamic_preferences.settings import preferences_settings
 
 class UnsetValue(object):
     pass
@@ -41,6 +47,29 @@ class BaseSerializer:
     @classmethod
     def clean_to_db_value(cls, value):
         return value
+
+
+class InstanciatedSerializer(BaseSerializer):
+    """
+    In some situations, such as with FileSerializer,
+    we need the serializer to be an instance and not a class
+    """
+
+    def serialize(self, value, **kwargs):
+        return self.to_db(value, **kwargs)
+
+    def deserialize(self, value, **kwargs):
+        return self.to_python(value, **kwargs)
+
+    def to_python(self, value, **kwargs):
+        raise NotImplementedError
+
+    def to_db(self, value, **kwargs):
+        return six.text_type(self.clean_to_db_value(value))
+
+    def clean_to_db_value(self, value):
+        return value
+
 
 class BooleanSerializer(BaseSerializer):
 
@@ -177,3 +206,76 @@ def ModelSerializer(model):
                 raise cls.exception("Value {0} cannot be converted to pk".format(value))
             return model.objects.get(pk=value)
     return S
+
+
+class PreferenceFieldFile(FieldFile):
+    """
+    In order to have the same API that we have with models.FileField,
+    we must return a FieldFile object. However, there are various
+    things we have to override, since our files are not bound to a model
+    field.
+    """
+
+    def __init__(self, preference, storage, name):
+        super(FieldFile, self).__init__(None, name)
+
+        # FieldFile also needs a model instance to save changes.
+        class FakeInstance(object):
+            """
+            FieldFile needs a model instance to update when file is persisted
+            or deleted
+            """
+            def save(self):
+                return
+
+        self.instance = FakeInstance()
+
+        class FakeField(object):
+            """
+            FieldFile needs a field object to generate a filename, persist
+            and delete files, so we are effectively mocking that.
+            """
+            name = 'noop'
+            max_length = 10000
+
+            def generate_filename(field, instance, name):
+                return os.path.join(
+                    self.preference.get_upload_path(),
+                    f.name)
+        self.field = FakeField()
+        self.storage = storage
+        self._committed = True
+        self.preference = preference
+
+
+class FileSerializer(InstanciatedSerializer):
+    """
+    Since this serializer requires additional data from the preference
+    especially the upload path, we cannot do it without binding it
+    to the preference
+
+    it is therefore designed to be explicitely instanciated by the preference
+    object.
+    """
+    def __init__(self, preference):
+        self.preference = preference
+
+    def to_db(self, f, **kwargs):
+        if not f:
+            return
+        path = os.path.join(
+            self.preference.get_upload_path(),
+            f.name)
+        self.preference.get_file_storage().save(path, f)
+
+        return path
+
+    def to_python(self, value, **kwargs):
+        if not value:
+            return
+        storage = self.preference.get_file_storage()
+
+        return PreferenceFieldFile(
+            preference=self.preference,
+            storage=storage,
+            name=value)
