@@ -3,8 +3,20 @@
 Changelog
 =========
 
+1.3 (03-07-2017)
+*******************
+
+This release fix a critical bug in 1.2 that can result in data loss.
+
+Please upgrade to 1.3 as soon as possible and never use 1.2 in production. See `#81 <https://github.com/EliotBerriot/django-dynamic-preferences/pull/81>`_ for more details.
+
 1.2 (06-07-2017)
 *******************
+
+.. warning::
+
+    There is a critical bug in this that can result in dataloss. Please upgrade to 1.3 as
+    soon as possible and never use 1.2 in production. See `#81 <https://github.com/EliotBerriot/django-dynamic-preferences/pull/81>`_ for more details.
 
 - important performance improvements (less database and cache queries)
 - A brand new `REST API <https://django-dynamic-preferences.readthedocs.io/en/latest/rest_api.html>`_ based on Django REST Framework, to interact with preferences (this is an optionnal, opt-in feature)
