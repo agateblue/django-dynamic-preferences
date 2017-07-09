@@ -175,12 +175,11 @@ class PreferencesManager(collections.Mapping):
         m.value = value
         raw_value = m.raw_value
 
-        db_pref, updated = self.model.objects.update_or_create(
-            defaults={
-                'raw_value': raw_value
-            },
-            **kwargs
-        )
+        db_pref, created = self.model.objects.get_or_create(**kwargs)
+        if created and db_pref.raw_value != raw_value:
+            db_pref.raw_value = raw_value
+            db_pref.save()
+
         return db_pref
 
     def all(self):
@@ -206,7 +205,7 @@ class PreferencesManager(collections.Mapping):
                     name=preference.name,
                     value=default)
 
-                a[preference.identifier()] = default
+                a[preference.identifier()] = db_pref.value
 
         return a
 
