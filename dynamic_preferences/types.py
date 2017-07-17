@@ -216,6 +216,14 @@ class ChoicePreference(BasePreferenceType):
         d['choices'] = self.get('choices')
         return d
 
+    def get_choice_values(self):
+        return [c[0] for c in self.get('choices')]
+
+    def validate(self, value):
+        if value not in self.get_choice_values():
+            raise forms.ValidationError(
+                '{} is not a valid choice'.format(value))
+
 
 def create_deletion_handler(preference):
     """
