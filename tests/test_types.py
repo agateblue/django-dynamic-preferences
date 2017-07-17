@@ -8,6 +8,8 @@ from django.test.utils import override_settings
 from django.core.cache import caches
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
+from django.contrib.auth.models import User
+
 from dynamic_preferences.models import GlobalPreferenceModel
 from dynamic_preferences.settings import preferences_settings
 from dynamic_preferences.registries import global_preferences_registry
@@ -172,6 +174,23 @@ class TestFilePreference(BaseTest, TestCase):
             p.api_repr(f),
             f.url
         )
+
+
+class TestChoicePreference(BaseTest, TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(username="test")
+
+    def test_choice_preference(self):
+        self.user.preferences['user__favorite_vegetable'] = 'C'
+        self.assertEqual(
+            self.user.preferences['user__favorite_vegetable'], 'C')
+        self.user.preferences['user__favorite_vegetable'] = 'P'
+        self.assertEqual(
+            self.user.preferences['user__favorite_vegetable'], 'P')
+
+        with self.assertRaises(forms.ValidationError):
+            self.user.preferences['user__favorite_vegetable'] = 'Nope'
 
 
 class TestModelChoicePreference(BaseTest, TestCase):

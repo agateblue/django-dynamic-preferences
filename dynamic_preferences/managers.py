@@ -34,6 +34,7 @@ class PreferencesManager(collections.Mapping):
         section, name = self.parse_lookup(key)
         preference = self.registry.get(
             section=section, name=name, fallback=False)
+        preference.validate(value)
         self.update_db_pref(section=section, name=name, value=value)
 
     def __repr__(self):
