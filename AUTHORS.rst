@@ -24,3 +24,4 @@ Contributors
 * [@JanMalte](https://github.com/JanMalte)
 * [@macolo](https://github.com/macolo)
 * [@fabrixxm](https://github.com/fabrixxm)
+* [@swalladge](https://github.com/swalladge)
