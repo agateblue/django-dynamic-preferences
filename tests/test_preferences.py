@@ -8,7 +8,7 @@ from dynamic_preferences.registries import (
     MissingPreference,
     global_preferences_registry)
 from dynamic_preferences import preferences, exceptions
-from dynamic_preferences.types import IntegerPreference
+from dynamic_preferences.types import IntegerPreference, StringPreference
 
 from .test_app import dynamic_preferences_registry as prefs
 from .test_app.models import BlogEntry
@@ -162,3 +162,16 @@ class TestPreferences(BaseTest, TestCase):
     def test_preference_requires_default_value(self):
         with self.assertRaises(exceptions.MissingDefault):
             preference = prefs.NoDefault()
+
+    def test_get_field_uses_field_kwargs(self):
+        class P(StringPreference):
+            name = 'test'
+            default = ''
+            field_kwargs = {
+                'required': False
+            }
+
+        p = P()
+
+        kwargs = p.get_field_kwargs()
+        self.assertEqual(kwargs['required'], False)
