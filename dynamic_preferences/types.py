@@ -36,49 +36,72 @@ class BasePreferenceType(AbstractPreference):
         class MyPreferenceType(BasePreferenceType):
             field_class = forms.CharField
     """
-    field_attributes = {}
-    """
-    Those attributes are passed to as kwargs :py:attr:`field_class` when
-    :py:meth:`setup_field` is called
-    """
 
     #: A serializer class (see dynamic_preferences.serializers)
     serializer = None
 
+    field_kwargs = {}
+    """
+    Additional kwargs to be passed to the form field.
+
+    :Example:
+
+    .. code-block:: python
+
+        class MyPreference(StringPreference):
+
+            field_kwargs = {
+                'required': False,
+                'initial': 'Hello there'
+            }
+    """
+
     @property
     def initial(self):
+        return self.get_initial()
+
+    def get_initial(self):
         """
-        :return: initial data for form field,
-            from field_attribute['initial'],
-            _default_field_attribute['initial'] or default
+        :return:
+            initial data for form field
+            from field_attribute['initial'] or default
         """
-        return self.field_attributes.get('initial', self._default_field_attributes.get('initial', self.default))
+        return self.field_kwargs.get('initial', self.get('default'))
 
     @property
     def field(self):
         """
-        :return: an instance of a form field for this preference, with
-        the correct configuration (widget, initial value, validators...)
+        :return:
+            an instance of a form field for this preference, with
+            the correct configuration (widget, initial value, validators...)
         """
         return self.setup_field()
 
     def setup_field(self, **kwargs):
-        """
-        Create an actual instance of :py:attr:`field_class`
-        Override this method if needed
-        """
         field_class = self.get('field_class')
         field_kwargs = self.get_field_kwargs()
         field_kwargs.update(kwargs)
         return field_class(**field_kwargs)
 
     def get_field_kwargs(self):
-        kwargs = {}
-        kwargs['label'] = self.get('verbose_name')
-        kwargs['help_text'] = self.get('help_text')
-        kwargs['widget'] = self.get('widget')
-        kwargs['initial'] = self.get('default')
-        kwargs['validators'] = [self.validate]
+        """
+        Return a dict of arguments to use as parameters for the field
+        class instianciation.
+
+        This will use :py:attr:`field_kwargs` as a starter,
+        and use sensible defaults for a few attributes:
+
+        - :py:attr:`instance.verbose_name` for the field label
+        - :py:attr:`instance.help_text` for the field help text
+        - :py:attr:`instance.widget` for the field widget
+        """
+        kwargs = self.field_kwargs.copy()
+        kwargs.setdefault('label', self.get('verbose_name'))
+        kwargs.setdefault('help_text', self.get('help_text'))
+        kwargs.setdefault('widget', self.get('widget'))
+        kwargs.setdefault('initial', self.initial)
+        kwargs.setdefault('validators', [])
+        kwargs['validators'].append(self.validate)
         return kwargs
 
     def api_repr(self, value):
@@ -123,9 +146,11 @@ class BasePreferenceType(AbstractPreference):
 
         :Example:
 
-        def validate(self, value):
-            if value == '42':
-                raise ValidationError('Wrong value!')
+        .. code-block:: python
+
+            def validate(self, value):
+                if value == '42':
+                    raise ValidationError('Wrong value!')
         """
         return
 

@@ -2,7 +2,7 @@ Quickstart
 ==========
 
 Glossary
-********
+--------
 
 .. glossary::
 
@@ -14,7 +14,7 @@ Glossary
         A model that store preferences values in database. A preference model may be tied to a particular model instance, which is the case for UserPreferenceModel, or concern the whole project, as GlobalPreferenceModel.
 
 Create and register your own preferences
-****************************************
+----------------------------------------
 
 In this example, we assume you are building a blog. Some preferences will apply to your whole project, while others will belong to specific users.
 
@@ -65,7 +65,7 @@ The :py:attr:`name` attribute is a unique identifier for your preference. Howeve
     you'll have to write a data migration.
 
 Retrieve and update preferences
-*******************************
+-------------------------------
 
 You can get and update preferences via a ``Manager``, a dictionary-like object. The logic is almost exactly the same for global preferences and per-instance preferences.
 
@@ -129,7 +129,7 @@ A few other methods are available on managers to retrieve preferences:
 - `manager.get_by_name(name)`: returns a single preference value using only the preference name
 
 Additional validation
-*********************
+---------------------
 
 In some situations, you'll want to enforce custom rules for your preferences
 values, and raise validation errors when those rules are not matched.
@@ -155,7 +155,7 @@ class, as follows:
 Internally, the validate method is pass as `a validator <https://docs.djangoproject.com/en/1.11/ref/validators/>`_ to the underlying form field.
 
 About serialization
-*******************
+-------------------
 
 When you get or set preferences values, you interact with Python values. On the database/cache side, values are serialized before storage.
 
@@ -163,13 +163,15 @@ Dynamic preferences handle this for you, using each preference type (BooleanPref
 
 
 Admin integration
-*****************
+-----------------
 
 Dynamic-preferences integrates with `django.contrib.admin` out of the box. You can therefore use the admin interface to edit preferences values, which is particularly convenient for global preferences.
 
 Forms
-*****
+-----
 
+Form builder
+^^^^^^^^^^^^
 A form builder is provided if you want to create and update preferences in custom views.
 
 .. code-block:: python
@@ -199,8 +201,41 @@ Getting a form for a specific instance preferences works similarly, except that 
     form_class = user_preference_form_builder(instance=request.user)
     form_class = user_preference_form_builder(instance=request.user, section='discussion')
 
+
+Form fields
+^^^^^^^^^^^
+
+In various places, a dynamic form field will be created from preferences.
+Consider the following example:
+
+.. code-block:: python
+
+    class MyPreference(StringPreference):
+        default = 'my text'
+
+In the admin area and using the form builder, the generated form field
+would look like this:
+
+.. code-block:: python
+
+    from django import forms
+
+    field = forms.CharField(initial='my text')
+
+You can customize the behaviour and instanciation of the underlying form
+field using the following attributes and methods on any preference class:
+
+.. autoclass:: dynamic_preferences.types.BasePreferenceType
+    :noindex:
+    :members:
+        field_class,
+        field_kwargs,
+        get_field_kwargs,
+        validate
+
+
 Preferences attributes
-**********************
+----------------------
 
 You can customize a lof of preferences behaviour some class attributes / methods.
 
@@ -232,7 +267,7 @@ Both methods are perfectly valid. You can override the following attributes:
 * ``widget``: the widget used for the form field
 
 Accessing global preferences within a template
-**********************************************
+----------------------------------------------
 
 Dynamic-preferences provide a context processors (remember to add them to your settings, as described in "Installation") that will pass global preferences values to your templates:
 
@@ -250,7 +285,7 @@ Dynamic-preferences provide a context processors (remember to add them to your s
 
 
 Bundled views and urls
-**********************
+----------------------
 
 Example views and urls are bundled for global and per-user preferences updating. Include this in your URLconf:
 
@@ -261,7 +296,9 @@ Example views and urls are bundled for global and per-user preferences updating.
         url(r'^preferences/', include('dynamic_preferences.urls')),
     ]
 
-Then, in your code::
+Then, in your code:
+
+.. code-block:: python
 
     from django.core.urlresolvers import reverse
 
