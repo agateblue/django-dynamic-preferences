@@ -3,6 +3,12 @@
 Changelog
 =========
 
+1.3.1 (30-07-2017)
+******************
+
+- Fix #84: serialization error for preferences with None value (@swalladge)
+- More documentation about preferences form fields
+
 1.3 (03-07-2017)
 *******************
 
