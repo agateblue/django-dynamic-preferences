@@ -11,3 +11,4 @@ pytest-cov
 pytest-django
 pytest-sugar
 djangorestframework
+django-nose

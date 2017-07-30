@@ -178,6 +178,8 @@ class StringSerializer(BaseSerializer):
     @classmethod
     def to_python(cls, value, **kwargs):
         """String deserialisation just return the value as a string"""
+        if not value:
+            return ''
         try:
             return str(value)
         except: pass

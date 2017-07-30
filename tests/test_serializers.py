@@ -119,6 +119,10 @@ class TestSerializers(TestCase):
         self.assertEqual(s.deserialize(
             "I'm a long sentence, but I rock"), "I'm a long sentence, but I rock")
 
+        # check case where empty string (value can be None)
+        self.assertEqual(s.deserialize(None), '')
+        self.assertEqual(s.deserialize(''), '')
+
         kwargs = {"escape_html": True, }
         self.assertEqual(
             s.deserialize(
