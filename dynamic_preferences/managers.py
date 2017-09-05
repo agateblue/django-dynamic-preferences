@@ -205,6 +205,7 @@ class PreferencesManager(collections.Mapping):
                     section=preference.section.name,
                     name=preference.name,
                     value=default)
+                self.to_cache(db_pref)
 
                 a[preference.identifier()] = db_pref.value
 
