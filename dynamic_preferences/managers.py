@@ -216,7 +216,8 @@ class PreferencesManager(collections.Mapping):
                 section=preference.section.name,
                 name=preference.name,
                 value=default)
-            self.to_cache(db_pref)
+            # no need to cache, since it should be cached on creation
+            # (and since it's missing, it should always be created)
 
             a[preference.identifier()] = db_pref.value
 
