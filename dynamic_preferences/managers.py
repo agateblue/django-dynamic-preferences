@@ -170,8 +170,8 @@ class PreferencesManager(collections.Mapping):
         if self.instance:
             kwargs['instance'] = self.instance
 
-        # this is ajust a shortcut to get the raw, serialized value
-        # so we can pass it to udpate_or_create
+        # this is a just a shortcut to get the raw, serialized value
+        # so we can pass it to get_or_create
         m = self.model(**kwargs)
         m.value = value
         raw_value = m.raw_value
@@ -191,23 +191,34 @@ class PreferencesManager(collections.Mapping):
         if not preferences_settings.ENABLE_CACHE:
             return self.load_from_db()
 
+        preferences = self.registry.preferences()
+
         # first we hit the cache once for all existing preferences
-        cached = self.many_from_cache(self.registry.preferences())
+        cached = self.many_from_cache(preferences)
+        if len(cached) == len(preferences):
+            return cached  # avoid database hit if not necessary
 
-        # then we fill those that miss
-        for preference in self.registry.preferences():
-            identifier = preference.identifier()
-            try:
-                a[identifier] = cached[identifier]
-            except KeyError:
-                default = preference.get('default')
-                db_pref = self.create_db_pref(
-                    section=preference.section.name,
-                    name=preference.name,
-                    value=default)
-                self.to_cache(db_pref)
+        # then we fill those that miss, but exist in the database, including fallbacks
+        # (just hit the database for all of them, filtering is complicated, in most
+        #  cases you'd need to grab the majority of them anyway)
+        db_prefs = self.model.objects.all()
+        if self.instance:
+            db_prefs = db_prefs.filter(instance=self.instance)
+        for db_pref in db_prefs:
+            a[db_pref.preference.identifier()] = db_pref.value
+            self.to_cache(db_pref)
 
-                a[preference.identifier()] = db_pref.value
+        # finally, fill those that are neither cached nor in the database
+        missing = [p for p in preferences if p.identifier() not in a]
+        for preference in missing:
+            default = preference.get('default')
+            db_pref = self.create_db_pref(
+                section=preference.section.name,
+                name=preference.name,
+                value=default)
+            self.to_cache(db_pref)
+
+            a[preference.identifier()] = db_pref.value
 
         return a
 
