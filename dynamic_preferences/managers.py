@@ -187,43 +187,23 @@ class PreferencesManager(collections.Mapping):
         """Return a dictionary containing all preferences by section
         Loaded from cache or from db in case of cold cache
         """
-        a = {}
         if not preferences_settings.ENABLE_CACHE:
             return self.load_from_db()
 
         preferences = self.registry.preferences()
 
         # first we hit the cache once for all existing preferences
-        cached = self.many_from_cache(preferences)
-        if len(cached) == len(preferences):
-            return cached  # avoid database hit if not necessary
+        a = self.many_from_cache(preferences)
+        if len(a) == len(preferences):
+            return a  # avoid database hit if not necessary
 
-        # then we fill those that miss, but exist in the database, including fallbacks
-        # (just hit the database for all of them, filtering is complicated, in most
-        #  cases you'd need to grab the majority of them anyway)
-        db_prefs = self.model.objects.all()
-        if self.instance:
-            db_prefs = db_prefs.filter(instance=self.instance)
-        for db_pref in db_prefs:
-            a[db_pref.preference.identifier()] = db_pref.value
-            self.to_cache(db_pref)
-
-        # finally, fill those that are neither cached nor in the database
-        missing = [p for p in preferences if p.identifier() not in a]
-        for preference in missing:
-            default = preference.get('default')
-            db_pref = self.create_db_pref(
-                section=preference.section.name,
-                name=preference.name,
-                value=default)
-            # no need to cache, since it should be cached on creation
-            # (and since it's missing, it should always be created)
-
-            a[preference.identifier()] = db_pref.value
-
+        # then we fill those that miss, but exist in the database
+        # (just hit the database for all of them, filtering is complicated, and
+        # in most cases you'd need to grab the majority of them anyway)
+        a.update(self.load_from_db(cache=True))
         return a
 
-    def load_from_db(self):
+    def load_from_db(self, cache=False):
         """Return a dictionary of preferences by section directly from DB"""
         a = {}
         db_prefs = {p.preference.identifier(): p for p in self.queryset}
@@ -235,6 +215,10 @@ class PreferencesManager(collections.Mapping):
                     section=preference.section.name,
                     name=preference.name,
                     value=preference.get('default'))
+            else:
+                # cache if create_db_pref() hasn't already done so
+                if cache:
+                    self.to_cache(db_pref)
 
             a[preference.identifier()] = db_pref.value
 
