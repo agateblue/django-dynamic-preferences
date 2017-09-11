@@ -3,18 +3,18 @@ cache: pip
 sudo: false
 
 python:
-  - "3.6"
+  - "3.5"
 
 env:
-  - TOX_ENV=py36-django-18
+  # - TOX_ENV=py36-django-18
   - TOX_ENV=py35-django-18
   - TOX_ENV=py34-django-18
   - TOX_ENV=py27-django-18
-  - TOX_ENV=py36-django-19
+  # - TOX_ENV=py36-django-19
   - TOX_ENV=py35-django-19
   - TOX_ENV=py34-django-19
   - TOX_ENV=py27-django-19
-  - TOX_ENV=py36-django-110
+  # - TOX_ENV=py36-django-110
   - TOX_ENV=py35-django-110
   - TOX_ENV=py34-django-110
   - TOX_ENV=py27-django-110
@@ -23,12 +23,12 @@ env:
   - TOX_ENV=py35-django-111
   - TOX_ENV=py34-django-111
   - TOX_ENV=py27-django-111
-  - TOX_ENV=py36-django-master
+  - TOX_ENV=py35-django-master
 
 matrix:
   fast_finish: true
   allow_failures:
-    - env: TOX_ENV=py36-django-master
+    - env: TOX_ENV=py35-django-master
     # - env: TOX_ENV=py36-django-master
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
