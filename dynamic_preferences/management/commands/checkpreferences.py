@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
+from dynamic_preferences.exceptions import NotFoundInRegistry
 from dynamic_preferences.models import GlobalPreferenceModel
 from dynamic_preferences.registries import preference_models, global_preferences_registry
 
@@ -15,8 +16,8 @@ def delete_preferences(queryset):
     # Iterate through preferences. If an error is raised when accessing preference object, just delete it
     for p in queryset:
         try:
-            pref = p.preference
-        except KeyError:
+            pref = p.registry.get(section=p.section, name=p.name, fallback=False)
+        except NotFoundInRegistry:
             p.delete()
             deleted.append(p)
 
@@ -40,7 +41,7 @@ class Command(BaseCommand):
 
         for preference_model, registry in preference_models.items():
             deleted = delete_preferences(preference_model.objects.all())
-            logger.info("Deleted {0} {1} preferences".format(len(deleted), preference_model.__class__.__name__))
+            logger.info("Deleted {0} {1} preferences".format(len(deleted), preference_model.__name__))
             if not hasattr(preference_model, 'get_instance_model'):
                 continue
 
