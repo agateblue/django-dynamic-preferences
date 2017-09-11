@@ -3,6 +3,18 @@
 Changelog
 =========
 
+1.3.2 (11-09-2017)
+******************
+
+* Should fix Python 3.3 complaints in CI, also add tests on Python 3.6 (#94)
+* Fixed #75: Fix checkpreferences command that was not deleting obsolete preferences anymore (#93)
+* Retrieve existing preferences in bulk (#92)
+* Cache values when queried in all() (#91)
+
+Contributors:
+
+* @czlee
+
 1.3.1 (30-07-2017)
 ******************
 
