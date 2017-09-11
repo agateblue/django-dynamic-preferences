@@ -170,8 +170,8 @@ class PreferencesManager(collections.Mapping):
         if self.instance:
             kwargs['instance'] = self.instance
 
-        # this is ajust a shortcut to get the raw, serialized value
-        # so we can pass it to udpate_or_create
+        # this is a just a shortcut to get the raw, serialized value
+        # so we can pass it to get_or_create
         m = self.model(**kwargs)
         m.value = value
         raw_value = m.raw_value
@@ -187,30 +187,23 @@ class PreferencesManager(collections.Mapping):
         """Return a dictionary containing all preferences by section
         Loaded from cache or from db in case of cold cache
         """
-        a = {}
         if not preferences_settings.ENABLE_CACHE:
             return self.load_from_db()
 
+        preferences = self.registry.preferences()
+
         # first we hit the cache once for all existing preferences
-        cached = self.many_from_cache(self.registry.preferences())
+        a = self.many_from_cache(preferences)
+        if len(a) == len(preferences):
+            return a  # avoid database hit if not necessary
 
-        # then we fill those that miss
-        for preference in self.registry.preferences():
-            identifier = preference.identifier()
-            try:
-                a[identifier] = cached[identifier]
-            except KeyError:
-                default = preference.get('default')
-                db_pref = self.create_db_pref(
-                    section=preference.section.name,
-                    name=preference.name,
-                    value=default)
-
-                a[preference.identifier()] = db_pref.value
-
+        # then we fill those that miss, but exist in the database
+        # (just hit the database for all of them, filtering is complicated, and
+        # in most cases you'd need to grab the majority of them anyway)
+        a.update(self.load_from_db(cache=True))
         return a
 
-    def load_from_db(self):
+    def load_from_db(self, cache=False):
         """Return a dictionary of preferences by section directly from DB"""
         a = {}
         db_prefs = {p.preference.identifier(): p for p in self.queryset}
@@ -222,6 +215,10 @@ class PreferencesManager(collections.Mapping):
                     section=preference.section.name,
                     name=preference.name,
                     value=preference.get('default'))
+            else:
+                # cache if create_db_pref() hasn't already done so
+                if cache:
+                    self.to_cache(db_pref)
 
             a[preference.identifier()] = db_pref.value
 
