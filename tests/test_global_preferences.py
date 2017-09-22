@@ -1,4 +1,6 @@
 from __future__ import unicode_literals
+
+from decimal import Decimal
 from django.test import LiveServerTestCase, TestCase
 from django.core.urlresolvers import reverse
 from django.core.management import call_command
@@ -35,6 +37,7 @@ class TestGlobalPreferences(BaseTest, TestCase):
             u'test__TestGlobal1': u'default value',
             u'test__TestGlobal2': False,
             u'test__TestGlobal3': False,
+            u'type__cost': Decimal(0),
             u'no_section': False,
             u'user__max_users': 100,
             u'user__items_per_page': 25,
@@ -96,7 +99,7 @@ class TestViews(BaseTest, LiveServerTestCase):
         url = reverse("dynamic_preferences.global")
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
-        self.assertEqual(len(response.context['form'].fields), 9)
+        self.assertEqual(len(response.context['form'].fields), 10)
         self.assertEqual(
             response.context['registry'], registry)
 
