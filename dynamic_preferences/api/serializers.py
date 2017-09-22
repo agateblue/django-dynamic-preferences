@@ -60,6 +60,7 @@ class PreferenceSerializer(serializers.Serializer):
         We call validation from the underlying form field
         """
         field = self.instance.preference.setup_field()
+        value = field.to_python(value)
         field.validate(value)
         field.run_validators(value)
         return value

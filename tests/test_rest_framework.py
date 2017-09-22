@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 import json
+
+from decimal import Decimal
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
@@ -18,13 +20,11 @@ from .test_app.models import BlogEntry
 
 
 class BaseTest(object):
-
     def tearDown(self):
         caches['default'].clear()
 
 
 class TestSerializers(BaseTest, TestCase):
-
     def test_can_serialize_preference(self):
         manager = registry.manager()
         pref = manager.get_db_pref(section='user', name='max_users')
@@ -161,6 +161,21 @@ class TestViewSets(BaseTest, TestCase):
         pref = manager.get_db_pref(section='user', name='max_users')
 
         self.assertEqual(pref.value, 16)
+
+    def test_can_update_decimal_preference(self):
+        manager = registry.manager()
+        pref = manager.get_db_pref(section='type', name='cost')
+        url = reverse(
+            'api:global-detail',
+            kwargs={'pk': pref.preference.identifier()})
+        self.client.login(username='admin', password="test")
+        response = self.client.patch(
+            url, json.dumps({'value': '111.11'}), content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        pref = manager.get_db_pref(section='type', name='cost')
+
+        self.assertEqual(pref.value, Decimal('111.11'))
 
     def test_can_update_multiple_preferences(self):
         manager = registry.manager()
