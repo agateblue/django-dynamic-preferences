@@ -47,3 +47,5 @@ docs/_build
 
 example/*.sqlite*
 .idea/
+.python-version
+.cache
