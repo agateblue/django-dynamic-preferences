@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from dynamic_preferences.types import *
 from dynamic_preferences.registries import global_preferences_registry
 from dynamic_preferences.users.registries import user_preferences_registry
@@ -41,7 +43,6 @@ class NoDefault(IntPreference):
 
 @global_preferences_registry.register
 class ItemsPerPage(IntPreference):
-
     section = "user"
     name = "items_per_page"
     default = 25
@@ -63,9 +64,15 @@ class BlogLogo(FilePreference):
     name = "logo"
 
 
+@global_preferences_registry.register
+class BlogCost(DecimalPreference):
+    section = 'type'
+    name = 'cost'
+    default = Decimal(0)
+
+
 @user_preferences_registry.register
 class FavoriteVegetable(ChoicePreference):
-
     choices = (
         ("C", "Carrot"),
         ("T", "Tomato. I know, it's not a vegetable"),
