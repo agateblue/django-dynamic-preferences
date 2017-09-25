@@ -3,6 +3,15 @@
 Changelog
 =========
 
+1.3.3 (25-09-2017)
+******************
+
+* Fix #97 where the API serializer could crash during preference update because of incomplete parsing
+
+Contributors:
+
+* @rvignesh89
+
 1.3.2 (11-09-2017)
 ******************
 
