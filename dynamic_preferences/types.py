@@ -395,3 +395,11 @@ class FilePreference(BasePreferenceType):
     def api_repr(self, value):
         if value:
             return value.url
+
+
+class DurationPreference(BasePreferenceType):
+    """
+    A preference type that stores a timdelta.
+    """
+    field_class = forms.DurationField
+    serializer = DurationSerializer
