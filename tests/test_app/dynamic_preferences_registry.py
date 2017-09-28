@@ -156,3 +156,10 @@ class TestGlobal2(BaseTestPref, BooleanPreference):
 class TestGlobal3(BaseTestPref, BooleanPreference):
     name = "TestGlobal3"
     default = False
+
+
+@global_preferences_registry.register
+class ExamDuration(DurationPreference):
+    section = 'exam'
+    name = 'duration'
+    default = timedelta(hours=3)

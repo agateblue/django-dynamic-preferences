@@ -1,13 +1,15 @@
 from __future__ import unicode_literals
 import decimal
 import os
+
+from datetime import timedelta
+from django.utils.dateparse import parse_duration
+from django.utils.duration import duration_string
+from django.utils.encoding import force_text
 from six import string_types
 from django.utils import six
-from django.conf import settings
 from django.db.models.fields.files import FieldFile
-from django.core.files.base import File
 
-from dynamic_preferences.settings import preferences_settings
 
 class UnsetValue(object):
     pass
@@ -281,3 +283,20 @@ class FileSerializer(InstanciatedSerializer):
             preference=self.preference,
             storage=storage,
             name=value)
+
+
+class DurationSerializer(BaseSerializer):
+    @classmethod
+    def to_db(cls, value, **kwargs):
+        if not isinstance(value, timedelta):
+            raise cls.exception("Cannot serialize, value {0} is not a timedelta".format(value))
+
+        return duration_string(value)
+
+    @classmethod
+    def to_python(cls, value, **kwargs):
+        parsed = parse_duration(force_text(value))
+        if parsed is None:
+            raise cls.exception("Value {0} cannot be converted to timedelta".format(value))
+        return parsed
+

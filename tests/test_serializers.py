@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from datetime import timedelta
 from django.test import TestCase
 from django.template import defaultfilters
 
@@ -130,3 +131,21 @@ class TestSerializers(TestCase):
             defaultfilters.force_escape(
                 "<span>Please, I don't wanna disappear</span>")
         )
+
+    def test_duarion_serialization(self):
+        s = serializers.DurationSerializer
+
+        self.assertEqual(s.serialize(timedelta(minutes=1)), '00:01:00')
+        self.assertEqual(s.serialize(timedelta(milliseconds=1)), '00:00:00.001000')
+        self.assertEqual(s.serialize(timedelta(weeks=1)), '7 00:00:00')
+
+        with self.assertRaises(s.exception):
+            s.serialize('Not a timedelta')
+
+    def test_duarion_deserialization(self):
+        s = serializers.DurationSerializer
+
+        self.assertEqual(s.deserialize('7 00:00:00'), timedelta(weeks=1))
+
+        with self.assertRaises(s.exception):
+            s.deserialize('Invalid duration string')
