@@ -135,8 +135,9 @@ class TestSerializers(TestCase):
     def test_duarion_serialization(self):
         s = serializers.DurationSerializer
 
-        self.assertEqual(s.serialize(timedelta(minutes=1)), 'P0DT00H01M00S')
-        self.assertEqual(s.serialize(timedelta(milliseconds=1)), 'P0DT00H00M00.001000S')
+        self.assertEqual(s.serialize(timedelta(minutes=1)), '00:01:00')
+        self.assertEqual(s.serialize(timedelta(milliseconds=1)), '00:00:00.001000')
+        self.assertEqual(s.serialize(timedelta(weeks=1)), '7 00:00:00')
 
         with self.assertRaises(s.exception):
             s.serialize('Not a timedelta')
@@ -144,7 +145,7 @@ class TestSerializers(TestCase):
     def test_duarion_deserialization(self):
         s = serializers.DurationSerializer
 
-        self.assertEqual(s.deserialize('P0DT00H01M00S'), timedelta(minutes=1))
+        self.assertEqual(s.deserialize('7 00:00:00'), timedelta(weeks=1))
 
         with self.assertRaises(s.exception):
             s.deserialize('Invalid duration string')
