@@ -403,3 +403,11 @@ class DurationPreference(BasePreferenceType):
     """
     field_class = forms.DurationField
     serializer = DurationSerializer
+
+
+class DatePreference(BasePreferenceType):
+    """
+        A preference type that stores a date.
+    """
+    field_class = forms.DateField
+    serializer = DateSerializer

@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 import decimal
 import os
 
-from datetime import timedelta
-from django.utils.dateparse import parse_duration
+from datetime import timedelta, date, datetime
+from django.utils.dateparse import parse_duration, parse_date
 from django.utils.duration import duration_string
 from django.utils.encoding import force_text
 from six import string_types
@@ -300,3 +300,18 @@ class DurationSerializer(BaseSerializer):
             raise cls.exception("Value {0} cannot be converted to timedelta".format(value))
         return parsed
 
+
+class DateSerializer(BaseSerializer):
+    @classmethod
+    def to_db(cls, value, **kwargs):
+        if not isinstance(value, date):
+            raise cls.exception("Cannot serialize, value {0} is not a date object".format(value))
+
+        return value.isoformat()
+
+    @classmethod
+    def to_python(cls, value, **kwargs):
+        parsed = parse_date(force_text(value))
+        if parsed is None:
+            raise cls.exception("Value {0} cannot be converted to a date object".format(value))
+        return parsed

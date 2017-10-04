@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from datetime import timedelta
+from datetime import timedelta, date
 from django.test import TestCase
 from django.template import defaultfilters
 
@@ -149,3 +149,19 @@ class TestSerializers(TestCase):
 
         with self.assertRaises(s.exception):
             s.deserialize('Invalid duration string')
+
+    def test_date_serialization(self):
+        s = serializers.DateSerializer
+
+        self.assertEqual(s.serialize(date(2017, 10, 5)), '2017-10-05')
+
+        with self.assertRaises(s.exception):
+            s.serialize('Not a date')
+
+    def test_date_deserialization(self):
+        s = serializers.DateSerializer
+
+        self.assertEqual(s.deserialize('1900-01-01'), date(1900, 1, 1))
+
+        with self.assertRaises(s.exception):
+            s.deserialize('Invalid date string')

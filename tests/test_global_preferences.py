@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from decimal import Decimal
 
-from datetime import timedelta
+from datetime import timedelta, date
 from django.test import LiveServerTestCase, TestCase
 from django.core.urlresolvers import reverse
 from django.core.management import call_command
@@ -46,6 +46,7 @@ class TestGlobalPreferences(BaseTest, TestCase):
             u'user__items_per_page': 25,
             u'blog__featured_entry': None,
             u'blog__logo': None,
+            u'company__RegistrationDate': date(1998, 9, 4),
             u'user__registration_allowed': False}
         self.assertDictEqual(manager.all(), expected)
 
@@ -102,7 +103,7 @@ class TestViews(BaseTest, LiveServerTestCase):
         url = reverse("dynamic_preferences.global")
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
-        self.assertEqual(len(response.context['form'].fields), 11)
+        self.assertEqual(len(response.context['form'].fields), 12)
         self.assertEqual(
             response.context['registry'], registry)
 
@@ -142,6 +143,7 @@ class TestViews(BaseTest, LiveServerTestCase):
             'no_section': True,
             'blog__featured_entry': blog_entry.pk,
             'blog__logo': None,
+            'company__RegistrationDate': date(1976, 4, 1),
             'type__cost': 1,
             'exam__duration': timedelta(hours=5),
         }

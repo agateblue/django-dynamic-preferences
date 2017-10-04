@@ -163,3 +163,10 @@ class ExamDuration(DurationPreference):
     section = 'exam'
     name = 'duration'
     default = timedelta(hours=3)
+
+
+@global_preferences_registry.register
+class RegistrationDate(DatePreference):
+    section = 'company'
+    name = 'RegistrationDate'
+    default = date(1998, 9, 4)
