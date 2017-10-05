@@ -3,15 +3,12 @@ You'll find here the final, concrete classes of preferences you can use
 in your own project.
 
 """
-import datetime
 from django import forms
 from django.db.models.signals import pre_delete
-from django.utils.translation import ugettext_lazy as _
-from django.utils.functional import cached_property
 
 from django.core.files.storage import default_storage
 
-from .preferences import AbstractPreference, Section
+from .preferences import AbstractPreference
 from dynamic_preferences.serializers import *
 from dynamic_preferences.settings import preferences_settings
 
@@ -411,3 +408,11 @@ class DatePreference(BasePreferenceType):
     """
     field_class = forms.DateField
     serializer = DateSerializer
+
+    
+class DateTimePreference(BasePreferenceType):
+    """
+        A preference type that stores a datetime.
+    """
+    field_class = forms.DateTimeField
+    serializer = DateTimeSerializer
