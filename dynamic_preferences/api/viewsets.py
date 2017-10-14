@@ -163,7 +163,7 @@ class PerInstancePreferenceViewSet(PreferenceViewSet):
         )
 
     def get_queryset(self):
-        return super().get_queryset().filter(
+        return super(PerInstancePreferenceViewSet, self).get_queryset().filter(
             instance=self.get_related_instance()
         )
 
