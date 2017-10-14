@@ -9,7 +9,7 @@ from django.core.management import call_command
 from django.core.cache import caches
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.utils.timezone import FixedOffset, get_default_timezone
+from django.utils.timezone import FixedOffset, make_aware
 
 from dynamic_preferences.registries import (
     global_preferences_registry as registry
@@ -161,7 +161,7 @@ class TestViews(BaseTest, LiveServerTestCase):
             if name == 'featured_entry':
                 expected_value = blog_entry
             if name == 'BirthDateTime':
-                expected_value = expected_value.astimezone(get_default_timezone())
+                expected_value = make_aware(expected_value)
 
             self.assertEqual(p.value, expected_value)
 
