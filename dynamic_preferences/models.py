@@ -106,17 +106,6 @@ global_preferences_registry.preference_model = GlobalPreferenceModel
 from django.db.models.signals import post_save
 
 
-def create_default_per_instance_preferences(sender, created, instance, **kwargs):
-    """Create default preferences for PerInstancePreferenceModel"""
-
-    if created:
-        try:
-            registry = preference_models.get_by_instance(instance)
-            registry.create_default_preferences(instance)
-        except AttributeError:
-            pass
-
-
 def invalidate_cache(sender, created, instance, **kwargs):
     if not isinstance(instance, BasePreferenceModel):
         return
@@ -129,5 +118,4 @@ def invalidate_cache(sender, created, instance, **kwargs):
     manager = registry.manager(**kwargs)
     manager.to_cache(instance)
 
-post_save.connect(create_default_per_instance_preferences)
 post_save.connect(invalidate_cache)
