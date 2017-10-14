@@ -5,10 +5,8 @@ mock>=1.0.1
 flake8>=2.1.0
 tox>=1.7.0
 # Additional test requirements go here
-djangorestframework
 pytest
 pytest-cov
 pytest-django
 pytest-sugar
-djangorestframework
 django-nose
