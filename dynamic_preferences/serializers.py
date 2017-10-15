@@ -2,10 +2,13 @@ from __future__ import unicode_literals
 import decimal
 import os
 
-from datetime import timedelta, date, datetime
-from django.utils.dateparse import parse_duration, parse_date
+from datetime import date, timedelta, datetime
+
+from django.conf import settings
+from django.utils.dateparse import parse_duration, parse_datetime, parse_date
 from django.utils.duration import duration_string
 from django.utils.encoding import force_text
+from django.utils.timezone import utc, is_aware, make_aware, make_naive, get_default_timezone
 from six import string_types
 from django.utils import six
 from django.db.models.fields.files import FieldFile
@@ -314,4 +317,41 @@ class DateSerializer(BaseSerializer):
         parsed = parse_date(force_text(value))
         if parsed is None:
             raise cls.exception("Value {0} cannot be converted to a date object".format(value))
+
+        return parsed
+
+
+class DateTimeSerializer(BaseSerializer):
+    @classmethod
+    def to_db(cls, value, **kwargs):
+        if not isinstance(value, datetime):
+            raise cls.exception("Cannot serialize, value {0} is not a datetime object".format(value))
+
+        value = cls.enforce_timezone(value)
+
+        return value.isoformat()
+
+    @classmethod
+    def enforce_timezone(cls, value):
+        """
+        When `self.default_timezone` is `None`, always return naive datetimes.
+        When `self.default_timezone` is not `None`, always return aware datetimes.
+        """
+        field_timezone = cls.default_timezone()
+
+        if (field_timezone is not None) and not is_aware(value):
+            return make_aware(value, field_timezone)
+        elif (field_timezone is None) and is_aware(value):
+            return make_naive(value, utc)
+        return value
+
+    @classmethod
+    def default_timezone(cls):
+        return get_default_timezone() if settings.USE_TZ else None
+
+    @classmethod
+    def to_python(cls, value, **kwargs):
+        parsed = parse_datetime(force_text(value))
+        if parsed is None:
+            raise cls.exception("Value {0} cannot be converted to a datetime object".format(value))
         return parsed

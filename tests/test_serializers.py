@@ -1,8 +1,9 @@
 from decimal import Decimal
 
-from datetime import timedelta, date
-from django.test import TestCase
+from datetime import date, timedelta, datetime
+from django.test import TestCase, override_settings
 from django.template import defaultfilters
+from django.utils.timezone import FixedOffset
 
 from dynamic_preferences import serializers
 
@@ -165,3 +166,28 @@ class TestSerializers(TestCase):
 
         with self.assertRaises(s.exception):
             s.deserialize('Invalid date string')
+            
+    def test_datetime_serialization(self):
+        s = serializers.DateTimeSerializer
+
+        # If TZ is enabled default timezone is America/Chicago
+        # https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-TIME_ZONE
+        self.assertEqual(s.serialize(datetime(2017, 10, 5, 23, 45, 1, 792346)), '2017-10-05T23:45:01.792346-05:00')
+
+        with override_settings(USE_TZ=False):
+            self.assertEqual(s.serialize(datetime(2017, 10, 5, 23, 45, 1, 792346)), '2017-10-05T23:45:01.792346')
+
+        with self.assertRaises(s.exception) as ex:
+            s.serialize('a string')
+            self.assertEqual(ex.exception.args, ("Cannot serialize, value 'a string' is not a datetime object",))
+
+    def test_datetime_deserialization(self):
+        s = serializers.DateTimeSerializer
+
+        self.assertEqual(s.deserialize('2017-10-05T23:45:01.792346'), datetime(2017, 10, 5, 23, 45, 1, 792346))
+        self.assertEqual(s.deserialize('2017-10-05T23:45:01.792346+12:00'), datetime(2017, 10, 5, 23, 45, 1, 792346, tzinfo=FixedOffset(offset=720)))
+        self.assertEqual(s.deserialize('2017-10-05T23:45:01.792346-08:00'), datetime(2017, 10, 5, 23, 45, 1, 792346, tzinfo=FixedOffset(offset=-480)))
+
+        with self.assertRaises(s.exception) as ex:
+            s.deserialize('abcd')
+            self.assertEqual(ex.exception.args, ('Value abcd cannot be converted to a datetime object',))
