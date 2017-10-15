@@ -33,6 +33,10 @@ and add a ``ForeignKey`` field pointing to the target model:
         # note: you *have* to use the `instance` field
         instance = models.ForeignKey(Site)
 
+        class Meta:
+            # Specifying the app_label here is mandatory for backward
+            # compatibility reasons, see #96
+            app_label = 'yourapp'
 
 Now, you can create a migration for your newly created model with ``python manage.py makemigrations``, apply it with ``python manage.py migrate``.
 
