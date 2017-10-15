@@ -162,6 +162,11 @@ class PerInstancePreferenceViewSet(PreferenceViewSet):
             instance=self.get_related_instance()
         )
 
+    def get_queryset(self):
+        return super(PerInstancePreferenceViewSet, self).get_queryset().filter(
+            instance=self.get_related_instance()
+        )
+
     def get_related_instance(self):
         """
         Override this to  the instance binded to the preferences

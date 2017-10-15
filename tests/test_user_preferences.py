@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 import json
 
 from django.test import LiveServerTestCase, TestCase
-from django.test.utils import override_settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.core.cache import caches
@@ -14,7 +13,6 @@ from dynamic_preferences.users.models import UserPreferenceModel
 from dynamic_preferences.users import serializers
 from dynamic_preferences.managers import PreferencesManager
 from dynamic_preferences.users.forms import user_preference_form_builder
-from .test_app.dynamic_preferences_registry import *
 
 
 class BaseTest(object):
@@ -170,6 +168,40 @@ class TestViewSets(BaseTest, TestCase):
         payload = json.loads(response.content.decode('utf-8'))
 
         self.assertEqual(len(payload), len(registry.preferences()))
+
+        for e in payload:
+            pref = manager.get_db_pref(section=e['section'], name=e['name'])
+            serializer = serializers.UserPreferenceSerializer(pref)
+            self.assertEqual(pref.preference.identifier(), e['identifier'])
+
+    def test_can_list_preference_of_requeting_user(self):
+        second_user = User(
+            username="user2",
+            email="user2@user.com",
+            is_superuser=True,
+            is_staff=True)
+        second_user.set_password('test')
+        second_user.save()
+
+        manager = registry.manager(instance=self.user)
+        url = reverse('api:user-list')
+        self.client.login(username='user', password="test")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        payload = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(len(payload), len(registry.preferences()))
+
+        url = reverse('api:user-list')
+        self.client.login(username='user2', password="test")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        payload = json.loads(response.content.decode('utf-8'))
+
+        # This should be 7 because each user gets 7 preferences by default.
+        self.assertEqual(len(payload), 7)
 
         for e in payload:
             pref = manager.get_db_pref(section=e['section'], name=e['name'])

@@ -1,6 +1,7 @@
 import os
 import decimal
 
+from datetime import date, timedelta, datetime
 from django import forms
 from django.test import TestCase
 from django.db.models import signals
@@ -105,6 +106,35 @@ class TestTypes(BaseTest, TestCase):
         self.assertEqual(preference.field.initial, 0.35)
         self.assertNotEqual(preference.field.initial, 0.3)
         self.assertNotEqual(preference.field.initial, 0.3001)
+
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
+    def test_duration_preference(self):
+        class P(types.DurationPreference):
+            default = timedelta(0)
+
+        preference = P()
+
+        self.assertEqual(preference.field.initial, timedelta(0))
+
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
+    def test_date_preference(self):
+        class P(types.DatePreference):
+            default = date.today()
+
+        preference = P()
+
+        self.assertEqual(preference.field.initial, date.today())
+
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
+    def test_datetime_preference(self):
+        initial_date_time = datetime(2017, 10, 4, 23, 7, 20, 682380)
+
+        class P(types.DateTimePreference):
+            default = initial_date_time
+
+        preference = P()
+
+        self.assertEqual(preference.field.initial, initial_date_time)
 
 
 class TestFilePreference(BaseTest, TestCase):
