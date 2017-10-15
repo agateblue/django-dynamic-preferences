@@ -3,6 +3,22 @@
 Changelog
 =========
 
+1.4 (15-1°-2017)
+******************
+
+* Fix #8: we now have date, datetime and duration preferences
+* Fix #108: Dropped tests and guaranteed compatibility with django 1.8 and 1.9, though
+* Fix #103: bugged filtering of user preferences via REST API
+* Fix #78: removed ``create_default_per_instance_preferences``.
+  This is *not* considered a backward-incompatible change as this method did nothing at all
+  and was not documented
+
+Contributors:
+
+* @rvignesh89
+* @haroon-sheikh
+
+
 1.3.3 (25-09-2017)
 ******************
 
