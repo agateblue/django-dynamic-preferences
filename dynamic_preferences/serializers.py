@@ -273,9 +273,9 @@ class FileSerializer(InstanciatedSerializer):
         path = os.path.join(
             self.preference.get_upload_path(),
             f.name)
-        self.preference.get_file_storage().save(path, f)
+        saved_path = self.preference.get_file_storage().save(path, f)
 
-        return path
+        return saved_path
 
     def to_python(self, value, **kwargs):
         if not value:
