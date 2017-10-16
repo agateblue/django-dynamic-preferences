@@ -47,6 +47,7 @@ class TestGlobalPreferences(BaseTest, TestCase):
             u'user__items_per_page': 25,
             u'blog__featured_entry': None,
             u'blog__logo': None,
+            u'blog__logo2': None,
             u'company__RegistrationDate': date(1998, 9, 4),
             u'child__BirthDateTime': datetime(1992, 5, 4, 3, 4, 10, 150, tzinfo=FixedOffset(offset=330)),
             u'user__registration_allowed': False}
@@ -105,7 +106,7 @@ class TestViews(BaseTest, LiveServerTestCase):
         url = reverse("dynamic_preferences.global")
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
-        self.assertEqual(len(response.context['form'].fields), 13)
+        self.assertEqual(len(response.context['form'].fields), 14)
         self.assertEqual(
             response.context['registry'], registry)
 

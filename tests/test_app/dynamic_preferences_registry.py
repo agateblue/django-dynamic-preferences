@@ -67,6 +67,12 @@ class BlogLogo(FilePreference):
 
 
 @global_preferences_registry.register
+class BlogLogo2(FilePreference):
+    section = "blog"
+    name = "logo2"
+
+
+@global_preferences_registry.register
 class BlogCost(DecimalPreference):
     section = 'type'
     name = 'cost'
