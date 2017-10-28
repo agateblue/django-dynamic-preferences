@@ -9,12 +9,29 @@ from .forms import GlobalSinglePreferenceForm, SinglePerInstancePreferenceForm
 
 class SectionFilter(admin.AllValuesFieldListFilter):
 
+    def __init__(self, field, request, params, model, model_admin, field_path):
+        super(SectionFilter, self).__init__(field, request, params, model, model_admin, field_path)
+        parent_model, reverse_path = reverse_field_path(model, field_path)
+        if model == parent_model:
+            queryset = model_admin.get_queryset(request)
+        else:
+            queryset = parent_model._default_manager.all()
+        self.registries = []
+        registry_name_set = set()
+        for preferenceModel in queryset.distinct():
+            l = len(registry_name_set)
+            registry_name_set.add(preferenceModel.registry.__class__.__name__)
+            if len(registry_name_set) != l:
+                self.registries.append(preferenceModel.registry)
+        
+
     def choices(self, changelist):
         choices = super(SectionFilter, self).choices(changelist)
         for choice in choices:
             display = choice['display']
             try:
-                display = global_preferences_registry.section_objects[display].verbose_name
+                for registry in self.registries:
+                    display = registry.section_objects[display].verbose_name
                 choice["display"] = display
             except (KeyError):
                 pass
@@ -23,11 +40,12 @@ class SectionFilter(admin.AllValuesFieldListFilter):
 
 class DynamicPreferenceAdmin(admin.ModelAdmin):
     list_display = ('verbose_name', 'name', 'section_name', 'help_text', 'raw_value')
+    fields = ('raw_value', 'name', 'section_name')
     readonly_fields = ('name', 'section_name')
     if preferences_settings.ADMIN_ENABLE_CHANGELIST_FORM:
         list_editable = ('raw_value',)
     search_fields = ['name', 'section', 'raw_value']
-    list_filter = ('section',)
+    list_filter = (('section',  SectionFilter),)
 
     if preferences_settings.ADMIN_ENABLE_CHANGELIST_FORM:
         def get_changelist_form(self, request, **kwargs):
@@ -44,7 +62,6 @@ class DynamicPreferenceAdmin(admin.ModelAdmin):
 class GlobalPreferenceAdmin(DynamicPreferenceAdmin):
     form = GlobalSinglePreferenceForm
     changelist_form = GlobalSinglePreferenceForm
-    list_filter = (('section',  SectionFilter),)
 
     def get_queryset(self, *args, **kwargs):
         # Instanciate default prefs
