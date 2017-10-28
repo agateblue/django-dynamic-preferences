@@ -38,9 +38,9 @@ class Section(object):
         self.verbose_name = verbose_name or name
 
     def __str__(self):
-        if not self.name:
+        if not self.verbose_name:
             return ''
-        return str(self.name)
+        return str(self.verbose_name)
 
 EMPTY_SECTION = Section(None)
 
