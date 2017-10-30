@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.admin.util import reverse_field_path
 from django import forms
 
 from .settings import preferences_settings
