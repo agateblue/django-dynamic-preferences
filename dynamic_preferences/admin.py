@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.contrib.admin.util import reverse_field_path
 from django import forms
 
 from .settings import preferences_settings
@@ -12,7 +11,7 @@ class SectionFilter(admin.AllValuesFieldListFilter):
 
     def __init__(self, field, request, params, model, model_admin, field_path):
         super(SectionFilter, self).__init__(field, request, params, model, model_admin, field_path)
-        parent_model, reverse_path = reverse_field_path(model, field_path)
+        parent_model, reverse_path = admin.utils.reverse_field_path(model, field_path)
         if model == parent_model:
             queryset = model_admin.get_queryset(request)
         else:
