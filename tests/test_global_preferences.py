@@ -111,13 +111,13 @@ class TestViews(BaseTest, LiveServerTestCase):
             response.context['registry'], registry)
 
     def test_global_preference_view_section_verbose_names(self):
-        url = reverse("dynamic_preferences.global")
+        url = reverse("admin:dynamic_preferences_globalpreferencemodel_changelist")
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
         for key, section in registry.section_objects.items():
             if section.name != section.verbose_name:
-                # There should be at least two occurences of our verbose_name, one in filter and one in list
-                self.assertTrue(str(response._container).count(section.verbose_name) >= 2)
+                # There should be at least two occurences of our verbose_name, two in filter (title and content) and one in list
+                self.assertTrue(str(response._container).count(section.verbose_name) >= 3)
 
     def test_formview_includes_section_in_context(self):
         url = reverse(
