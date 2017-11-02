@@ -116,8 +116,10 @@ class TestViews(BaseTest, LiveServerTestCase):
         response = self.client.get(url)
         for key, section in registry.section_objects.items():
             if section.name != section.verbose_name:
-                # There should be at least two occurences of our verbose_name, two in filter (title and content) and one in list
-                self.assertTrue(str(response._container).count(section.verbose_name) >= 3)
+                # Assert verbose_name in table
+                self.assertTrue(str(response._container).count(section.verbose_name + "</td>") >= 1)
+                # Assert verbose_name in filter link
+                self.assertTrue(str(response._container).count(section.verbose_name + "</a>") >= 1)
 
     def test_formview_includes_section_in_context(self):
         url = reverse(
