@@ -38,9 +38,14 @@ class Section(object):
         self.verbose_name = verbose_name or name
 
     def __str__(self):
-        if not self.verbose_name:
-            return ''
-        return str(self.verbose_name)
+        if hasattr(self, 'verbose_name'):
+            if not self.verbose_name:
+                return ''
+            return str(self.verbose_name)
+        else:
+            if not self.name:
+                return ''
+            return str(self.name)
 
 EMPTY_SECTION = Section(None)
 
