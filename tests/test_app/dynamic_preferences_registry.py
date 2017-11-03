@@ -5,6 +5,7 @@ from django.utils.timezone import FixedOffset
 from dynamic_preferences.types import *
 from dynamic_preferences.registries import global_preferences_registry
 from dynamic_preferences.users.registries import user_preferences_registry
+from dynamic_preferences.preferences import Section
 from django.forms import ValidationError
 from .models import BlogEntry
 
@@ -182,6 +183,6 @@ class RegistrationDate(DatePreference):
 
 @global_preferences_registry.register
 class BirthDateTime(DateTimePreference):
-    section = 'child'
+    section = Section('child', verbose_name='Child Section Verbose Name')
     name = 'BirthDateTime'
     default = datetime(1992, 5, 4, 3, 4, 10, 150, FixedOffset(offset=330))

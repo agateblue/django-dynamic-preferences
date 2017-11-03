@@ -33,14 +33,15 @@ class Section(object):
 
     def __init__(self, name, verbose_name=None):
         self.name = name
+        self.verbose_name = verbose_name or name
         if preferences_settings.VALIDATE_NAMES and name:
             check_name(self.name, self)
-        self.verbose_name = verbose_name or name
 
     def __str__(self):
-        if not self.name:
+        if not self.verbose_name:
             return ''
-        return str(self.name)
+        return str(self.verbose_name)
+
 
 EMPTY_SECTION = Section(None)
 
