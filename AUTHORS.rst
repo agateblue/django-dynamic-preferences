@@ -26,3 +26,4 @@ Contributors
 * [@fabrixxm](https://github.com/fabrixxm)
 * [@swalladge](https://github.com/swalladge)
 * [@rvignesh89](https://github.com/rvignesh89)
+* [@okolimar](https://github.com/okolimar)
