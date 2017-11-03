@@ -3,7 +3,20 @@
 Changelog
 =========
 
-1.4 (15-1°-2017)
+1.4.1 (03-11-2017)
+******************
+
+* Section verbose name and filter in django admin (#114)
+* Fixed wrong import in Quickstart documentation (#113)
+* Fix #111: use path as returned by storage save method (#112)
+
+Contributors:
+
+* @okolimar
+* @swalladge
+
+
+1.4 (15-10-2017)
 ******************
 
 * Fix #8: we now have date, datetime and duration preferences

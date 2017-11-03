@@ -161,7 +161,7 @@ class TestFilePreference(BaseTest, TestCase):
         )
 
     def test_file_preference_store_file_path(self):
-        f = SimpleUploadedFile('test_file.txt', 'hello world'.encode('utf-8'))
+        f = SimpleUploadedFile('test_file_1ce410e5-6814-4910-afd7-be1486d3644f.txt', 'hello world'.encode('utf-8'))
         p = global_preferences_registry.get(section='blog', name='logo')
         manager = global_preferences_registry.manager()
         manager['blog__logo'] = f
@@ -179,8 +179,37 @@ class TestFilePreference(BaseTest, TestCase):
                 settings.MEDIA_ROOT, p.get_upload_path(), f.name)
             )
 
+    def test_file_preference_conflicting_file_names(self):
+        '''
+        f2 should have a different file name to f, since Django storage needs
+        to differentiate between the two
+        '''
+        f = SimpleUploadedFile('test_file_c95d02ef-0e5d-4d36-98c0-1b54505860d0.txt', 'hello world'.encode('utf-8'))
+        f2 = SimpleUploadedFile('test_file_c95d02ef-0e5d-4d36-98c0-1b54505860d0.txt', 'hello world 2'.encode('utf-8'))
+        p = global_preferences_registry.get(section='blog', name='logo')
+        manager = global_preferences_registry.manager()
+
+        manager['blog__logo'] = f
+        manager['blog__logo2'] = f2
+
+        self.assertEqual(
+            manager['blog__logo2'].read(),
+            b'hello world 2')
+        self.assertEqual(
+            manager['blog__logo'].read(),
+            b'hello world')
+
+        self.assertNotEqual(
+            manager['blog__logo'].url,
+            manager['blog__logo2'].url
+        )
+        self.assertNotEqual(
+            manager['blog__logo'].path,
+            manager['blog__logo2'].path
+        )
+
     def test_can_delete_file_preference(self):
-        f = SimpleUploadedFile('test_file.txt', 'hello world'.encode('utf-8'))
+        f = SimpleUploadedFile('test_file_bf2e72ef-092f-4a71-9cda-f2442d6166d0.txt', 'hello world'.encode('utf-8'))
         p = global_preferences_registry.get(section='blog', name='logo')
         manager = global_preferences_registry.manager()
         manager['blog__logo'] = f
@@ -194,7 +223,7 @@ class TestFilePreference(BaseTest, TestCase):
         self.assertFalse(os.path.exists(path))
 
     def test_file_preference_api_repr_returns_path(self):
-        f = SimpleUploadedFile('test_file.txt', 'hello world'.encode('utf-8'))
+        f = SimpleUploadedFile('test_file_24485a80-8db9-4191-ae49-da7fe2013794.txt', 'hello world'.encode('utf-8'))
         p = global_preferences_registry.get(section='blog', name='logo')
         manager = global_preferences_registry.manager()
         manager['blog__logo'] = f

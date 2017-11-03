@@ -47,6 +47,7 @@ class TestGlobalPreferences(BaseTest, TestCase):
             u'user__items_per_page': 25,
             u'blog__featured_entry': None,
             u'blog__logo': None,
+            u'blog__logo2': None,
             u'company__RegistrationDate': date(1998, 9, 4),
             u'child__BirthDateTime': datetime(1992, 5, 4, 3, 4, 10, 150, tzinfo=FixedOffset(offset=330)),
             u'user__registration_allowed': False}
@@ -105,9 +106,20 @@ class TestViews(BaseTest, LiveServerTestCase):
         url = reverse("dynamic_preferences.global")
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
-        self.assertEqual(len(response.context['form'].fields), 13)
+        self.assertEqual(len(response.context['form'].fields), 14)
         self.assertEqual(
             response.context['registry'], registry)
+
+    def test_global_preference_view_section_verbose_names(self):
+        url = reverse("admin:dynamic_preferences_globalpreferencemodel_changelist")
+        self.client.login(username='admin', password="test")
+        response = self.client.get(url)
+        for key, section in registry.section_objects.items():
+            if section.name != section.verbose_name:
+                # Assert verbose_name in table
+                self.assertTrue(str(response._container).count(section.verbose_name + "</td>") >= 1)
+                # Assert verbose_name in filter link
+                self.assertTrue(str(response._container).count(section.verbose_name + "</a>") >= 1)
 
     def test_formview_includes_section_in_context(self):
         url = reverse(
