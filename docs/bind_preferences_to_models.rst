@@ -98,7 +98,8 @@ you would do with the ``User`` model. You'll simply need to use your registry in
 .. code-block:: python
 
     # yourapp/dynamic_preferences_registry.py
-    from dynamic_preferences.types import BooleanPreference, StringPreference, Section
+    from dynamic_preferences.types import BooleanPreference, StringPreference
+    from dynamic_preferences.preferences import Section
     from yourapp.registries import site_preferences_registry
 
     access = Section('access')
