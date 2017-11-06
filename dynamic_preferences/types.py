@@ -8,7 +8,7 @@ from django.db.models.signals import pre_delete
 
 from django.core.files.storage import default_storage
 
-from .preferences import AbstractPreference
+from .preferences import AbstractPreference, Section
 from dynamic_preferences.serializers import *
 from dynamic_preferences.settings import preferences_settings
 
