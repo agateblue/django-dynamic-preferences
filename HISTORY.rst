@@ -3,6 +3,17 @@
 Changelog
 =========
 
+1.4.2 (06-11-2017)
+******************
+
+* Fix #121: reverted Section import missing from dynamic_preferences.types
+
+Contributors:
+
+* @okolimar
+* @swalladge
+
+
 1.4.1 (03-11-2017)
 ******************
 
