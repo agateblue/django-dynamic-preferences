@@ -401,6 +401,9 @@ class DurationPreference(BasePreferenceType):
     field_class = forms.DurationField
     serializer = DurationSerializer
 
+    def api_repr(self, value):
+        return duration_string(value)
+
 
 class DatePreference(BasePreferenceType):
     """
@@ -409,6 +412,9 @@ class DatePreference(BasePreferenceType):
     field_class = forms.DateField
     serializer = DateSerializer
 
+    def api_repr(self, value):
+        return value.isoformat()
+
     
 class DateTimePreference(BasePreferenceType):
     """
@@ -416,3 +422,6 @@ class DateTimePreference(BasePreferenceType):
     """
     field_class = forms.DateTimeField
     serializer = DateTimeSerializer
+
+    def api_repr(self, value):
+        return value.isoformat()
