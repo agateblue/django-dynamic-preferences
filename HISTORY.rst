@@ -3,6 +3,13 @@
 Changelog
 =========
 
+(unreleased)
+******************
+
+* Fix #127: removed typo in API code that could cause a crash
+
+
+
 1.4.2 (06-11-2017)
 ******************
 
