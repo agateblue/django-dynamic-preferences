@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from datetime import date, timedelta, datetime
 from django.test import LiveServerTestCase, TestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.management import call_command
 from django.core.cache import caches
 from django.contrib.auth.models import User
@@ -35,7 +35,7 @@ class TestGlobalPreferences(BaseTest, TestCase):
 
     def test_preference_model_manager_to_dict(self):
         manager = registry.manager()
-        call_command('checkpreferences', verbosity=1, interactive=False)
+        call_command('checkpreferences', verbosity=1)
         expected = {
             u'test__TestGlobal1': u'default value',
             u'test__TestGlobal2': False,
@@ -98,7 +98,7 @@ class TestViews(BaseTest, LiveServerTestCase):
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
 
-        self.assertEqual(self.admin.is_authenticated(), True)
+        self.assertEqual(self.admin.is_authenticated, True)
         self.assertEqual(response.status_code, 200)
 
     def test_global_preference_view_display_form(self):

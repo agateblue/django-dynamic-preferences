@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 import json
 
 from django.test import LiveServerTestCase, TestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth.models import User
 from django.core.cache import caches
 from django.db import IntegrityError
