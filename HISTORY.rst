@@ -3,11 +3,24 @@
 Changelog
 =========
 
-(unreleased)
+1.5 (16-12-2017)
 ******************
 
-* Fix #127: removed typo in API code that could cause a crash
+From now on, django-dynamic-preferences should fully support Django 2.0.
+This release should be fully backward-compatible with previous versions
+of the module.
 
+You will still have to upgrade your own code to work with Django 2, like
+adding on_delete option to your ForeignKey fields.
+
+* removed typo in API code that could cause a crash (#127)
+* added on_dete=models.CASCADE to migrations for Django 2.0 compatibility (#129 and #131)
+* Duration, date and datetime serialization issue in rest framework (#115)
+
+Contributors:
+
+* @rvignesh89
+* @zamai
 
 
 1.4.2 (06-11-2017)
