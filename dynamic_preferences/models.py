@@ -96,7 +96,7 @@ class PerInstancePreferenceModel(BasePreferenceModel):
 
     @classmethod
     def get_instance_model(cls):
-        return cls._meta.get_field('instance').rel.to
+        return cls._meta.get_field('instance').remote_field.model
 
 
 global_preferences_registry.preference_model = GlobalPreferenceModel

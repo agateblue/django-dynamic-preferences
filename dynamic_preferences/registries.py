@@ -48,7 +48,7 @@ class PreferenceModelsRegistry(persisting_theory.Registry):
             return registry.manager(instance=self)
 
         getter = property(instance_getter)
-        instance_class = model._meta.get_field('instance').rel.to
+        instance_class = model._meta.get_field('instance').remote_field.model
         setattr(instance_class, preferences_settings.MANAGER_ATTRIBUTE, getter)
 
     def get_by_preference(self, preference):
@@ -60,7 +60,7 @@ class PreferenceModelsRegistry(persisting_theory.Registry):
         # and check if instance is and instance of this class
         for model, registry in self.items():
             try:
-                instance_class = model._meta.get_field('instance').rel.to
+                instance_class = model._meta.get_field('instance').remote_field.model
                 if isinstance(instance, instance_class):
                     return registry
 
