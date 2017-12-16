@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from datetime import date, timedelta, datetime
 from django.test import LiveServerTestCase, TestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.management import call_command
 from django.core.cache import caches
 from django.contrib.auth.models import User
