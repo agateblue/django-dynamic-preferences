@@ -3,20 +3,18 @@ import json
 
 from decimal import Decimal
 from django.test import TestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth.models import User
 from django.core.cache import caches
+
 from dynamic_preferences.registries import (
     global_preferences_registry as registry
 )
 from dynamic_preferences.users.registries import (
     user_preferences_registry as user_registry
 )
-from dynamic_preferences.models import GlobalPreferenceModel
-from dynamic_preferences.forms import global_preference_form_builder
 from dynamic_preferences.api import serializers
 from dynamic_preferences.users.serializers import UserPreferenceSerializer
-from .test_app.models import BlogEntry
 
 
 class BaseTest(object):
@@ -32,10 +30,8 @@ class TestSerializers(BaseTest, TestCase):
         serializer = serializers.GlobalPreferenceSerializer(pref)
         data = serializer.data
 
-        self.assertEqual(
-            data['default'], pref.preference.api_repr(pref.preference.default))
-        self.assertEqual(
-            data['value'], pref.preference.api_repr(pref.value))
+        self.assertEqual(data['default'], pref.preference.api_repr(pref.preference.default))
+        self.assertEqual(data['value'], pref.preference.api_repr(pref.value))
         self.assertEqual(data['identifier'], pref.preference.identifier())
         self.assertEqual(data['section'], pref.section)
         self.assertEqual(data['name'], pref.name)
@@ -44,6 +40,21 @@ class TestSerializers(BaseTest, TestCase):
         self.assertEqual(data['field']['class'], 'IntegerField')
         self.assertEqual(data['field']['input_type'], 'number')
         self.assertEqual(data['field']['widget']['class'], 'NumberInput')
+
+        pref = manager.get_db_pref(section='exam', name='duration')
+        serializer = serializers.GlobalPreferenceSerializer(pref)
+        data = serializer.data
+        self.assertEqual(data['value'], '03:00:00')
+
+        pref = manager.get_db_pref(section='company', name='RegistrationDate')
+        serializer = serializers.GlobalPreferenceSerializer(pref)
+        data = serializer.data
+        self.assertEqual(data['value'], '1998-09-04')
+
+        pref = manager.get_db_pref(section='child', name='BirthDateTime')
+        serializer = serializers.GlobalPreferenceSerializer(pref)
+        data = serializer.data
+        self.assertEqual(data['value'], '1992-05-04T03:04:10.000150+05:30')
 
     def test_can_change_preference_value_using_serializer(self):
         manager = registry.manager()

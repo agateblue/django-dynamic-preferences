@@ -33,7 +33,9 @@ class Migration(migrations.Migration):
                 ('section', models.CharField(blank=True, default=None, null=True, max_length=150, db_index=True)),
                 ('name', models.CharField(max_length=150, db_index=True)),
                 ('raw_value', models.TextField(blank=True, null=True)),
-                ('instance', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='preferences')),
+                ('instance', models.ForeignKey(to=settings.AUTH_USER_MODEL, 
+                                               on_delete=models.CASCADE, 
+                                               related_name='preferences')),
             ],
             options={
                 'verbose_name_plural': 'user preferences',

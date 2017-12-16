@@ -16,9 +16,9 @@ router.register(r'user', UserPreferencesViewSet, base_name='user')
 
 urlpatterns = [
     url(r'^', include("dynamic_preferences.urls")),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^test/template$',
         views.RegularTemplateView.as_view(),
         name="dynamic_preferences.test.templateview"),
-    url(r'^api', include(router.urls, namespace='api'))
+    url(r'^api', include((router.urls, 'api'), namespace='api'))
 ]

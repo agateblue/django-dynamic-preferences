@@ -94,7 +94,7 @@ class PreferenceViewSet(
                 except exceptions.NotFoundInRegistry:
                     errors[identifier] = 'invalid preference'
         except (TypeError, AttributeError):
-            return Reponse('invalid payload', status=400)
+            return Response('invalid payload', status=400)
 
         if errors:
             return Response(errors, status=400)

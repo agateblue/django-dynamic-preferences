@@ -301,7 +301,7 @@ Then, in your code:
 
 .. code-block:: python
 
-    from django.core.urlresolvers import reverse
+    from django.urls import reverse
 
     # URL to a page that display a form to edit all global preferences
     url = reverse("dynamic_preferences.global")
