@@ -52,7 +52,10 @@ class PreferenceModelsRegistry(persisting_theory.Registry):
         setattr(instance_class, preferences_settings.MANAGER_ATTRIBUTE, getter)
 
     def get_by_preference(self, preference):
-        return self[preference.__class__]
+        return self[
+            preference._meta.proxy_for_model if preference._meta.proxy
+            else preference.__class__
+        ]
 
     def get_by_instance(self, instance):
         """Return a preference registry using a model instance"""
