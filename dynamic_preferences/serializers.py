@@ -131,7 +131,7 @@ class IntegerSerializer(BaseSerializer):
         try:
             return int(value)
         except:
-            raise cls.exception("Value {0} cannot be converted to int")
+            raise cls.exception("Value {0} cannot be converted to int".format(value))
 
 IntSerializer = IntegerSerializer
 
