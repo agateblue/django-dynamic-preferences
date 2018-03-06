@@ -3,6 +3,20 @@
 Changelog
 =========
 
+1.5.1 (06-03-2018)
+******************
+
+This is a minor bugfix release:
+
+* Get proper PreferenceModelsRegistry when preference is proxy model (#137)
+* Add missing `format()` to IntegerSerializer exception text (#138)
+* Add some attributes to PerInstancePreferenceAdmin (#135)
+
+Contributors:
+
+* @czlee
+* @danie1k
+
 1.5 (16-12-2017)
 ******************
 
