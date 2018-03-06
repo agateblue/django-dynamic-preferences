@@ -74,6 +74,8 @@ admin.site.register(GlobalPreferenceModel, GlobalPreferenceAdmin)
 
 class PerInstancePreferenceAdmin(DynamicPreferenceAdmin):
     list_display = ('instance',) + DynamicPreferenceAdmin.list_display
+    fields = ('instance',) + DynamicPreferenceAdmin.fields
     raw_id_fields = ('instance',)
     form = SinglePerInstancePreferenceForm
+    changelist_form = SinglePerInstancePreferenceForm
     list_select_related = True
