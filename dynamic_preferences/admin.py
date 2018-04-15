@@ -39,9 +39,9 @@ class SectionFilter(admin.AllValuesFieldListFilter):
 
 
 class DynamicPreferenceAdmin(admin.ModelAdmin):
-    list_display = ('verbose_name', 'name', 'section_name', 'help_text', 'raw_value')
-    fields = ('raw_value', 'name', 'section_name')
-    readonly_fields = ('name', 'section_name')
+    list_display = ('verbose_name', 'name', 'section_name', 'help_text', 'raw_value', 'default_value')
+    fields = ('raw_value', 'default_value', 'name', 'section_name')
+    readonly_fields = ('name', 'section_name', 'default_value')
     if preferences_settings.ADMIN_ENABLE_CHANGELIST_FORM:
         list_editable = ('raw_value',)
     search_fields = ['name', 'section', 'raw_value']
@@ -50,6 +50,9 @@ class DynamicPreferenceAdmin(admin.ModelAdmin):
     if preferences_settings.ADMIN_ENABLE_CHANGELIST_FORM:
         def get_changelist_form(self, request, **kwargs):
             return self.changelist_form
+
+    def default_value(self, obj):
+        return obj.preference.default
 
     def section_name(self, obj):
         try:
