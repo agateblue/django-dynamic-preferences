@@ -4,6 +4,7 @@ from . import views
 from .registries import global_preferences_registry
 from .forms import GlobalPreferenceForm
 
+app_name = 'dynamic_preferences'
 
 urlpatterns = [
 
