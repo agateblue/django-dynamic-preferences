@@ -12,12 +12,12 @@ urlpatterns = [
         staff_member_required(views.PreferenceFormView.as_view(
             registry=global_preferences_registry,
             form_class=GlobalPreferenceForm)),
-        name="dynamic_preferences.global"),
+        name="global"),
     url(r'^global/(?P<section>[\w\ ]+)$',
         staff_member_required(views.PreferenceFormView.as_view(
             registry=global_preferences_registry,
             form_class=GlobalPreferenceForm)),
-        name="dynamic_preferences.global.section"),
+        name="global.section"),
 
     url(r'^user/', include('dynamic_preferences.users.urls')),
 ]

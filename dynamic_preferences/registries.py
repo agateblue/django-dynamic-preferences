@@ -216,7 +216,7 @@ class PerInstancePreferenceRegistry(PreferenceRegistry):
 
 
 class GlobalPreferenceRegistry(PreferenceRegistry):
-    section_url_namespace = 'dynamic_preferences.global.section'
+    section_url_namespace = 'dynamic_preferences:global.section'
 
     def populate(self, **kwargs):
         return self.models(**kwargs)

@@ -128,7 +128,7 @@ class TestViews(BaseTest, LiveServerTestCase):
                 name='is_zombie')[0].value)
 
         url = reverse(
-            "dynamic_preferences.user.section", kwargs={'section': 'misc'})
+            "dynamic_preferences:user.section", kwargs={'section': 'misc'})
         response = self.client.post(
             url, {
                 'misc__favourite_colour':
