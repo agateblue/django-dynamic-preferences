@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+from django.conf import settings
 
 
 class Migration(migrations.Migration):
@@ -13,17 +14,5 @@ class Migration(migrations.Migration):
         ('dynamic_preferences', '0003_auto_20151223_1407'),
     ]
 
-    database_operations = [
-        migrations.AlterModelTable(
-            'UserPreferenceModel', 'dynamic_preferences_users_userpreferencemodel')
-    ]
-
-    state_operations = [
-        migrations.DeleteModel('UserPreferenceModel')
-    ]
-
-    operations = [
-        migrations.SeparateDatabaseAndState(
-            database_operations=database_operations,
-            state_operations=state_operations)
-    ]
+    # cf https://github.com/EliotBerriot/django-dynamic-preferences/pull/142
+    operations = []

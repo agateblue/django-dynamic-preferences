@@ -26,28 +26,6 @@ class Migration(migrations.Migration):
             },
             bases=(models.Model,),
         ),
-        migrations.CreateModel(
-            name='UserPreferenceModel',
-            fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
-                ('section', models.CharField(blank=True, default=None, null=True, max_length=150, db_index=True)),
-                ('name', models.CharField(max_length=150, db_index=True)),
-                ('raw_value', models.TextField(blank=True, null=True)),
-                ('instance', models.ForeignKey(to=settings.AUTH_USER_MODEL, 
-                                               on_delete=models.CASCADE, 
-                                               related_name='preferences')),
-            ],
-            options={
-                'verbose_name_plural': 'user preferences',
-                'abstract': False,
-                'verbose_name': 'user preference',
-            },
-            bases=(models.Model,),
-        ),
-        migrations.AlterUniqueTogether(
-            name='userpreferencemodel',
-            unique_together=set([('instance', 'section', 'name')]),
-        ),
         migrations.AlterUniqueTogether(
             name='globalpreferencemodel',
             unique_together=set([('section', 'name')]),
