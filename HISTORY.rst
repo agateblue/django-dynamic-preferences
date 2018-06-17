@@ -3,7 +3,7 @@
 Changelog
 =========
 
-1.6 (Unreleased)
+1.6 (2018-06-17)
 ****************
 
 - Fixed #141 and #141: migrations issues (see below)
