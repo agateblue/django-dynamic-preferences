@@ -56,7 +56,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'dynamic_preferences',
     'dynamic_preferences.users.apps.UserPreferencesConfig',
-    'debug_toolbar',
     'example',
 )
 

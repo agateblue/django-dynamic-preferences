@@ -22,19 +22,4 @@ class Migration(migrations.Migration):
             name='section',
             field=models.CharField(max_length=150, blank=True, db_index=True, default=None, null=True),
         ),
-        migrations.AlterField(
-            model_name='userpreferencemodel',
-            name='instance',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
-        ),
-        migrations.AlterField(
-            model_name='userpreferencemodel',
-            name='name',
-            field=models.CharField(max_length=150, db_index=True),
-        ),
-        migrations.AlterField(
-            model_name='userpreferencemodel',
-            name='section',
-            field=models.CharField(max_length=150, blank=True, db_index=True, default=None, null=True),
-        ),
     ]

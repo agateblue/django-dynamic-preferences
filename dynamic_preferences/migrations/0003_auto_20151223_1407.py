@@ -23,16 +23,4 @@ class Migration(migrations.Migration):
             field=models.CharField(max_length=150, null=True, default=None, db_index=True, blank=True),
             preserve_default=True,
         ),
-        migrations.AlterField(
-            model_name='userpreferencemodel',
-            name='name',
-            field=models.CharField(max_length=150, db_index=True),
-            preserve_default=True,
-        ),
-        migrations.AlterField(
-            model_name='userpreferencemodel',
-            name='section',
-            field=models.CharField(max_length=150, null=True, default=None, db_index=True, blank=True),
-            preserve_default=True,
-        ),
     ]
