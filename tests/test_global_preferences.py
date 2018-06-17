@@ -86,7 +86,7 @@ class TestViews(BaseTest, LiveServerTestCase):
         self.assertEqual(len(form.fields), 3)
 
     def test_global_preference_view_requires_staff_member(self):
-        url = reverse("dynamic_preferences.global")
+        url = reverse("dynamic_preferences:global")
         response = self.client.get(url, follow=True)
 
         self.assertRedirects(response, "/admin/login/?next=/global/")
@@ -103,7 +103,7 @@ class TestViews(BaseTest, LiveServerTestCase):
 
     def test_global_preference_view_display_form(self):
 
-        url = reverse("dynamic_preferences.global")
+        url = reverse("dynamic_preferences:global")
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
         self.assertEqual(len(response.context['form'].fields), 14)
@@ -123,7 +123,7 @@ class TestViews(BaseTest, LiveServerTestCase):
 
     def test_formview_includes_section_in_context(self):
         url = reverse(
-            "dynamic_preferences.global.section", kwargs={"section": 'user'})
+            "dynamic_preferences:global.section", kwargs={"section": 'user'})
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
         self.assertEqual(
@@ -131,7 +131,7 @@ class TestViews(BaseTest, LiveServerTestCase):
 
     def test_formview_with_bad_section_returns_404(self):
         url = reverse(
-            "dynamic_preferences.global.section", kwargs={"section": 'nope'})
+            "dynamic_preferences:global.section", kwargs={"section": 'nope'})
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
@@ -139,14 +139,14 @@ class TestViews(BaseTest, LiveServerTestCase):
     def test_global_preference_filters_by_section(self):
         self.client.login(username='admin', password="test")
         url = reverse(
-            "dynamic_preferences.global.section", kwargs={"section": 'user'})
+            "dynamic_preferences:global.section", kwargs={"section": 'user'})
         response = self.client.get(url)
         self.assertEqual(len(response.context['form'].fields), 3)
 
     def test_preference_are_updated_on_form_submission(self):
         blog_entry = BlogEntry.objects.create(title='test', content='test')
         self.client.login(username='admin', password="test")
-        url = reverse("dynamic_preferences.global")
+        url = reverse("dynamic_preferences:global")
         data = {
             'user__max_users': 67,
             'user__registration_allowed': True,
@@ -180,7 +180,7 @@ class TestViews(BaseTest, LiveServerTestCase):
     def test_preference_are_updated_on_form_submission_by_section(self):
         self.client.login(username='admin', password="test")
         url = reverse(
-            "dynamic_preferences.global.section", kwargs={"section": 'user'})
+            "dynamic_preferences:global.section", kwargs={"section": 'user'})
         response = self.client.post(
             url,
             {'user__max_users': 95,
@@ -208,7 +208,7 @@ class TestViews(BaseTest, LiveServerTestCase):
             "logo.png", content, content_type="image/png")
         self.client.login(username='admin', password="test")
         url = reverse(
-            "dynamic_preferences.global.section", kwargs={"section": 'blog'})
+            "dynamic_preferences:global.section", kwargs={"section": 'blog'})
         response = self.client.post(
             url,
             {'blog__featured_entry': blog_entry.pk,

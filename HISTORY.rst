@@ -3,6 +3,66 @@
 Changelog
 =========
 
+1.6 (Unreleased)
+****************
+
+- Fixed #141 and #141: migrations issues (see below)
+- Dropped support for django < 1.11
+- Dropped support for Python 3.4
+- Better namespaces for urls
+
+Better namespaces for urls
+--------------------------
+
+Historically, the package included multiple urls. To ensure compatibility with django 2
+and better namespacing, you should update any references to those urls as described below:
+
++-------------------------------------+-------------------------------------+
+| Old url                             | New url                             |
++=====================================+=====================================+
+| dynamic_preferences.global          | dynamic_preferences:global          |
++-------------------------------------+-------------------------------------+
+| dynamic_preferences.global.section  | dynamic_preferences:global.section  |
++-------------------------------------+-------------------------------------+
+| dynamic_preferences.user            | dynamic_preferences:user            |
++-------------------------------------+-------------------------------------+
+| dynamic_preferences.user.section    | dynamic_preferences:user.section    |
++-------------------------------------+-------------------------------------+
+
+
+Migration cleanup
+-----------------
+
+This version includes a proper fix for migration issues.
+Full background is available at https://github.com/EliotBerriot/django-dynamic-preferences/pull/142,
+but here is the gist of it:
+
+1. Early versions of dynamic_preferences included the user and global preferences models
+   in the same app
+2. The community requested a way to disable user preferences. The only way to do that
+   was to move the user preference model in a dedicated app (dynamic_preferences_user
+3. A migration was written to handle that transparently, but this was not actually possible
+   to have something that worked for both existing and new installations
+4. Thus, we ended up with issues such as #140 or #141, inconsistent db state, tables
+   lying around in the database, etc.
+
+I'd like to apologize to everyone impacted. By trying to make 3. completely transparent to everyone and
+avoid a manual migration step for new installations, I actually made things worse.
+
+This release should fix all that: any remains of the user app was removed from the main
+app migrations. For any new user, it will be like nothing happened.
+
+For existing installations with user preferences disabled, there is nothing to do,
+apart from deleting the `dynamic_preferences_users_userpreferencemodel` table in your database.
+
+For existing installations with user preferences enabled, there is nothing to do. You should have
+``'dynamic_preferences.users.apps.UserPreferencesConfig'`` in your installed apps. If ``python manage.py migrate``
+fails with ``django.db.utils.ProgrammingError: relation "dynamic_preferences_users_userpreferencemodel" already exists``,
+this probably means you are upgrading for a really old release. In such event, simply skip the initial migration for the
+``dynamic_preferences_user`` app by running ``python manage.py migrate dynamic_preferences_users 0001 --fake``.
+
+Many thanks to all people who helped clearing this mess, especially @czlee.
+
 1.5.1 (06-03-2018)
 ******************
 

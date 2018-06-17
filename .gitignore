@@ -49,3 +49,4 @@ example/*.sqlite*
 .idea/
 .python-version
 .cache
+.pytest_cache
