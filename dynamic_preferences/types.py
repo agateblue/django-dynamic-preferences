@@ -312,7 +312,7 @@ class ModelChoicePreference(BasePreferenceType):
         if not hasattr(self, 'queryset'):
             self.queryset = self.model.objects.all()
 
-        self.serializer = ModelSerializer(self.model)
+        self.serializer = self.serializer_class(self.model)
 
         self._setup_signals()
 
@@ -332,6 +332,37 @@ class ModelChoicePreference(BasePreferenceType):
         if not value:
             return None
         return value.pk
+
+
+class ModelMultipleChoicePreference(ModelChoicePreference):
+    """
+    A preference type that stores a reference list to the model instances.
+
+    :Example:
+
+    .. code-block:: python
+
+        from myapp.blog.models import BlogEntry
+
+        @registry.register
+        class FeaturedEntries(ModelMultipleChoicePreference):
+            section = Section('blog')
+            name = 'featured_entries'
+            queryset = BlogEntry.objects.all()
+
+        blog_entries = BlogEntry.objects.filter(status='published')
+        manager['blog__featured_entries'] = blog_entries
+
+        # accessing the value will return the model queryset
+        assert manager['blog__featured_entries'] == blog_entries
+
+    .. note::
+
+        You should provide either the :py:attr:`queryset` or :py:attr:`model`
+        attribute
+    """
+    serializer_class = ModelMultipleSerializer
+    field_class = forms.ModelMultipleChoiceField
 
 
 class FilePreference(BasePreferenceType):

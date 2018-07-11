@@ -16,10 +16,14 @@ from django.db.models.fields.files import FieldFile
 
 class UnsetValue(object):
     pass
+
+
 UNSET = UnsetValue()
+
 
 class SerializationError(Exception):
     pass
+
 
 class BaseSerializer:
     """
@@ -77,7 +81,6 @@ class InstanciatedSerializer(BaseSerializer):
 
 
 class BooleanSerializer(BaseSerializer):
-
     true = (
         "True",
         "true",
@@ -97,7 +100,6 @@ class BooleanSerializer(BaseSerializer):
         "no",
         "NO",
     )
-
 
     @classmethod
     def clean_to_db_value(cls, value):
@@ -133,7 +135,9 @@ class IntegerSerializer(BaseSerializer):
         except:
             raise cls.exception("Value {0} cannot be converted to int".format(value))
 
+
 IntSerializer = IntegerSerializer
+
 
 class DecimalSerializer(BaseSerializer):
 
@@ -166,7 +170,9 @@ class FloatSerializer(BaseSerializer):
         except float.InvalidOperation:
             raise cls.exception("Value {0} cannot be converted to float".format(value))
 
+
 from django.template import defaultfilters
+
 
 class StringSerializer(BaseSerializer):
 
@@ -187,32 +193,57 @@ class StringSerializer(BaseSerializer):
             return ''
         try:
             return str(value)
-        except: pass
+        except:
+            pass
         try:
             return value.encode('utf-8')
-        except: pass
+        except:
+            pass
         raise cls.exception("Cannot deserialize value {0} tostring".format(value))
 
 
-def ModelSerializer(model):
+class ModelSerializer(InstanciatedSerializer):
+    model = None
 
-    class S(BaseSerializer):
-        @classmethod
-        def to_db(cls, value, **kwargs):
-            if not value or (value == UNSET):
-                return None
-            return str(value.pk)
+    def __init__(self, model):
+        self.model = model
 
-        @classmethod
-        def to_python(cls, value, **kwargs):
-            if value is None:
-                return
-            try:
-                pk = int(value)
-            except:
-                raise cls.exception("Value {0} cannot be converted to pk".format(value))
-            return model.objects.get(pk=value)
-    return S
+    def to_db(self, value, **kwargs):
+        if not value or (value == UNSET):
+            return None
+        return str(value.pk)
+
+    def to_python(self, value, **kwargs):
+        if value is None:
+            return
+        try:
+            pk = int(value)
+            return self.model.objects.get(pk=pk)
+        except:
+            raise self.exception("Value {0} cannot be converted to pk".format(value))
+
+
+class ModelMultipleSerializer(ModelSerializer):
+    separator = ","
+    sort = True
+
+    def to_db(self, value, **kwargs):
+        if not value:
+            return
+
+        value = list(value.values_list('pk', flat=True))
+
+        if self.sort:
+            value = sorted(value)
+
+        return self.separator.join(map(str, value))
+
+    def to_python(self, value, **kwargs):
+        if value is None:
+            return
+
+        pks = value.split(",")
+        return self.model.objects.filter(pk__in=pks)
 
 
 class PreferenceFieldFile(FieldFile):
@@ -232,6 +263,7 @@ class PreferenceFieldFile(FieldFile):
             FieldFile needs a model instance to update when file is persisted
             or deleted
             """
+
             def save(self):
                 return
 
@@ -249,6 +281,7 @@ class PreferenceFieldFile(FieldFile):
                 return os.path.join(
                     self.preference.get_upload_path(),
                     f.name)
+
         self.field = FakeField()
         self.storage = storage
         self._committed = True
@@ -264,6 +297,7 @@ class FileSerializer(InstanciatedSerializer):
     it is therefore designed to be explicitely instanciated by the preference
     object.
     """
+
     def __init__(self, preference):
         self.preference = preference
 
