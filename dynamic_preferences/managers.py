@@ -9,9 +9,7 @@ class PreferencesManager(collections.Mapping):
     """Handle retrieving / caching of preferences"""
 
     def __init__(self, model, registry, **kwargs):
-
         self.model = model
-
         self.registry = registry
         self.instance = kwargs.get('instance')
 
@@ -96,7 +94,6 @@ class PreferencesManager(collections.Mapping):
             if k in cached
         }
 
-
     def to_cache(self, pref):
         """
         Update/create the cache value for the given preference model instance
@@ -144,7 +141,6 @@ class PreferencesManager(collections.Mapping):
     def get_db_pref(self, section, name):
         try:
             pref = self.queryset.get(section=section, name=name)
-
         except self.model.DoesNotExist:
             pref_obj = self.pref_obj(section=section, name=name)
             pref = self.create_db_pref(
