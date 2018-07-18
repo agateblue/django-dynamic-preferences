@@ -6,6 +6,7 @@ from django.template import defaultfilters
 from django.utils.timezone import FixedOffset
 
 from dynamic_preferences import serializers
+from .test_app.models import BlogEntry
 
 
 class TestSerializers(TestCase):
@@ -133,7 +134,7 @@ class TestSerializers(TestCase):
                 "<span>Please, I don't wanna disappear</span>")
         )
 
-    def test_duarion_serialization(self):
+    def test_duration_serialization(self):
         s = serializers.DurationSerializer
 
         self.assertEqual(s.serialize(timedelta(minutes=1)), '00:01:00')
@@ -143,7 +144,7 @@ class TestSerializers(TestCase):
         with self.assertRaises(s.exception):
             s.serialize('Not a timedelta')
 
-    def test_duarion_deserialization(self):
+    def test_duration_deserialization(self):
         s = serializers.DurationSerializer
 
         self.assertEqual(s.deserialize('7 00:00:00'), timedelta(weeks=1))
@@ -191,3 +192,26 @@ class TestSerializers(TestCase):
         with self.assertRaises(s.exception) as ex:
             s.deserialize('abcd')
             self.assertEqual(ex.exception.args, ('Value abcd cannot be converted to a datetime object',))
+
+
+class TestModelSerializers(TestCase):
+
+    def setUp(self):
+        super(TestModelSerializers, self).setUp()
+        BlogEntry.objects.bulk_create([
+            BlogEntry(title='This is a test', content='Hello World'),
+            BlogEntry(title='This is only a test', content='Hello World'),
+        ])
+
+    def test_model_multiple_serialization(self):
+        s = serializers.ModelMultipleSerializer(BlogEntry)
+        blog_entries = BlogEntry.objects.all()
+
+        self.assertEqual(s.serialize(blog_entries), s.separator.join(map(str, sorted(list(blog_entries.values_list('pk', flat=True))))))
+
+    def test_model_multiple_deserialization(self):
+        s = serializers.ModelMultipleSerializer(BlogEntry)
+        blog_entries = BlogEntry.objects.all()
+        pks = s.separator.join(map(str, sorted(list(blog_entries.values_list('pk', flat=True)))))
+
+        self.assertEqual(list(s.deserialize(pks)), list(blog_entries))
