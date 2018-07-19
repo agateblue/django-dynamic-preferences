@@ -5,6 +5,7 @@ import os
 from datetime import date, timedelta, datetime
 
 from django.conf import settings
+from django.core.validators import EMPTY_VALUES
 from django.utils.dateparse import parse_duration, parse_datetime, parse_date
 from django.utils.duration import duration_string
 from django.utils.encoding import force_text
@@ -239,8 +240,8 @@ class ModelMultipleSerializer(ModelSerializer):
         return self.separator.join(map(str, value))
 
     def to_python(self, value, **kwargs):
-        if value is None:
-            return
+        if value in EMPTY_VALUES:
+            return self.model.objects.none()
 
         pks = value.split(",")
         return self.model.objects.filter(pk__in=pks)
