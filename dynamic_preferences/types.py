@@ -308,7 +308,7 @@ class ModelChoicePreference(BasePreferenceType):
 
     def __init__(self, *args, **kwargs):
         super(ModelChoicePreference, self).__init__(*args, **kwargs)
-        
+
         if self.model:
             # Set queryset following model attribute
             self.queryset = self.model.objects.all()
