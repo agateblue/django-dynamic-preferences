@@ -23,3 +23,6 @@ class DoesNotExist(DynamicPreferencesException):
 
 class CachedValueNotFound(DynamicPreferencesException):
     detail_default = 'Cached value not found'
+
+class MissingModel(DynamicPreferencesException):
+    detail_default = 'You must define a model choice through "model" or "queryset" attribute'
