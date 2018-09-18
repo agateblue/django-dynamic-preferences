@@ -309,10 +309,10 @@ class ModelChoicePreference(BasePreferenceType):
     def __init__(self, *args, **kwargs):
         super(ModelChoicePreference, self).__init__(*args, **kwargs)
 
-        if self.model:
+        if self.model is not None:
             # Set queryset following model attribute
             self.queryset = self.model.objects.all()
-        elif self.queryset:
+        elif self.queryset is not None:
             # Set model following queryset attribute
             self.model = self.queryset.model
         else:
