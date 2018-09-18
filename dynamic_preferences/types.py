@@ -9,6 +9,7 @@ from django.db.models.signals import pre_delete
 from django.core.files.storage import default_storage
 
 from .preferences import AbstractPreference, Section
+from .exceptions import MissingModel
 from dynamic_preferences.serializers import *
 from dynamic_preferences.settings import preferences_settings
 
@@ -306,11 +307,16 @@ class ModelChoicePreference(BasePreferenceType):
     signals_handlers = {}
 
     def __init__(self, *args, **kwargs):
-
         super(ModelChoicePreference, self).__init__(*args, **kwargs)
-        self.model = self.model or self.queryset.model
-        if not hasattr(self, 'queryset'):
+
+        if self.model is not None:
+            # Set queryset following model attribute
             self.queryset = self.model.objects.all()
+        elif self.queryset is not None:
+            # Set model following queryset attribute
+            self.model = self.queryset.model
+        else:
+            raise MissingModel
 
         self.serializer = self.serializer_class(self.model)
 

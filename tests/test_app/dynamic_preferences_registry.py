@@ -42,6 +42,12 @@ class MaxUsers(IntPreference):
 class NoDefault(IntPreference):
     section = "user"
     name = "no_default"
+    
+    
+class NoModel(ModelChoicePreference):
+    section = "blog"
+    name = "no_model"
+    default = None
 
 
 @global_preferences_registry.register
