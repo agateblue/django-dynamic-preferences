@@ -51,7 +51,15 @@ List
 - Methods: GET
 - Returns a list of preferences
 - Reverse example: ``reverse('api:preferences:global-list')``
-- URL example: ``/api/preferences/global/``
+- URL examples:
+
+  - List all preferences
+
+    ``/api/preferences/global/``
+
+  - List all preferences under ``blog`` section
+
+    ``/api/preferences/global/?section=blog``
 
 Detail
 ^^^^^^^
