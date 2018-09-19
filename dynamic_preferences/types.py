@@ -92,11 +92,14 @@ class BasePreferenceType(AbstractPreference):
         - :py:attr:`instance.verbose_name` for the field label
         - :py:attr:`instance.help_text` for the field help text
         - :py:attr:`instance.widget` for the field widget
+        - :py:attr:`instance.required` defined if the value is required or not
+        - :py:attr:`instance.initial` defined if the initial value
         """
         kwargs = self.field_kwargs.copy()
         kwargs.setdefault('label', self.get('verbose_name'))
         kwargs.setdefault('help_text', self.get('help_text'))
         kwargs.setdefault('widget', self.get('widget'))
+        kwargs.setdefault('required', self.get('required'))
         kwargs.setdefault('initial', self.initial)
         kwargs.setdefault('validators', [])
         kwargs['validators'].append(self.validate)
@@ -159,11 +162,7 @@ class BooleanPreference(BasePreferenceType):
     """
     field_class = forms.BooleanField
     serializer = BooleanSerializer
-
-    def get_field_kwargs(self):
-        kwargs = super(BooleanPreference, self).get_field_kwargs()
-        kwargs['required'] = False
-        return kwargs
+    required = False
 
 
 class IntegerPreference(BasePreferenceType):
