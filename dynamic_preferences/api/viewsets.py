@@ -33,7 +33,13 @@ class PreferenceViewSet(
         from db
         """
         self.init_preferences()
-        return super(PreferenceViewSet, self).get_queryset()
+        queryset = super(PreferenceViewSet, self).get_queryset()
+
+        section = self.request.query_params.get('section')
+        if section:
+            queryset = queryset.filter(section=section)
+
+        return queryset
 
     def get_manager(self):
         return self.queryset.model.registry.manager()
