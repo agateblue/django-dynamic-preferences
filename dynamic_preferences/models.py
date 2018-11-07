@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models.query import QuerySet
 from django.conf import settings
 from django.utils.functional import cached_property
-
+from django.utils.translation import gettext_lazy as _
 from dynamic_preferences.registries import preference_models, global_preferences_registry
 from .utils import update
 
@@ -79,8 +79,8 @@ class GlobalPreferenceModel(BasePreferenceModel):
         unique_together = ('section', 'name')
         app_label = 'dynamic_preferences'
 
-        verbose_name = "global preference"
-        verbose_name_plural = "global preferences"
+        verbose_name = _("global preference")
+        verbose_name_plural = _("global preferences")
 
 
 class PerInstancePreferenceModel(BasePreferenceModel):
