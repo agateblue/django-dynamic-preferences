@@ -64,7 +64,6 @@ class DynamicPreferenceAdmin(admin.ModelAdmin):
 
     section_name.short_description = _("Section Name")
 
-
 class GlobalPreferenceAdmin(DynamicPreferenceAdmin):
     form = GlobalSinglePreferenceForm
     changelist_form = GlobalSinglePreferenceForm

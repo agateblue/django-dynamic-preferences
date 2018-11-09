@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-11-08 10:37+0100\n"
-"PO-Revision-Date: 2018-11-08 10:38+0100\n"
+"PO-Revision-Date: 2018-11-09 17:14+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -47,17 +47,13 @@ msgid "Help Text"
 msgstr "Texte d'Aide"
 
 #: .\models.py:84
-#, fuzzy
-#| msgid "global preference"
 msgid "Global preference"
-msgstr "préférence globale"
+msgstr "Préférence globale"
 
 #: .\models.py:85
-#, fuzzy
-#| msgid "global preferences"
 msgid "Global preferences"
-msgstr "préférences globales"
+msgstr "Préférences globales"
 
 #: .\templates\dynamic_preferences\form.html:11
 msgid "Submit"
-msgstr ""
+msgstr "Valider"
