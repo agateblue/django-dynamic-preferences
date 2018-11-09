@@ -28,8 +28,8 @@ pip-log.txt
 .tox
 nosetests.xml
 
-# Translations
-*.mo
+# Translations we need it for the localization to work
+# *.mo
 
 # Mr Developer
 .mr.developer.cfg
