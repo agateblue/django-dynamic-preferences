@@ -5,7 +5,7 @@ from .settings import preferences_settings
 from .registries import global_preferences_registry
 from .models import GlobalPreferenceModel
 from .forms import GlobalSinglePreferenceForm, SinglePerInstancePreferenceForm
-
+from django.utils.translation import gettext_lazy as _
 
 class SectionFilter(admin.AllValuesFieldListFilter):
 
@@ -53,6 +53,7 @@ class DynamicPreferenceAdmin(admin.ModelAdmin):
 
     def default_value(self, obj):
         return obj.preference.default
+    default_value.short_description = _("Default Value")
 
     def section_name(self, obj):
         try:
@@ -61,6 +62,7 @@ class DynamicPreferenceAdmin(admin.ModelAdmin):
             pass
         return obj.section
 
+    section_name.short_description = _("Section Name")
 
 class GlobalPreferenceAdmin(DynamicPreferenceAdmin):
     form = GlobalSinglePreferenceForm

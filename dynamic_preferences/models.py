@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models.query import QuerySet
 from django.conf import settings
 from django.utils.functional import cached_property
-
+from django.utils.translation import gettext_lazy as _
 from dynamic_preferences.registries import preference_models, global_preferences_registry
 from .utils import update
 
@@ -22,10 +22,10 @@ class BasePreferenceModel(models.Model):
         max_length=150, db_index=True, blank=True, null=True, default=None)
 
     #: a name for the preference
-    name = models.CharField(max_length=150, db_index=True)
+    name = models.CharField(_("Name"), max_length=150, db_index=True)
 
     #: a value, serialized to a string. This field should not be accessed directly, use :py:attr:`BasePreferenceModel.value` instead
-    raw_value = models.TextField(null=True, blank=True)
+    raw_value = models.TextField(_("Raw Value"), null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -39,10 +39,12 @@ class BasePreferenceModel(models.Model):
     @property
     def verbose_name(self):
         return self.preference.get('verbose_name', self.preference.identifier)
+    verbose_name.fget.short_description = _('Verbose Name')
 
     @property
     def help_text(self):
         return self.preference.get('help_text', '')
+    help_text.fget.short_description = _('Help Text')
 
     def set_value(self, value):
         """
@@ -79,8 +81,8 @@ class GlobalPreferenceModel(BasePreferenceModel):
         unique_together = ('section', 'name')
         app_label = 'dynamic_preferences'
 
-        verbose_name = "global preference"
-        verbose_name_plural = "global preferences"
+        verbose_name = _("Global preference")
+        verbose_name_plural = _("Global preferences")
 
 
 class PerInstancePreferenceModel(BasePreferenceModel):

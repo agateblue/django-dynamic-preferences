@@ -1,12 +1,12 @@
 from django.apps import AppConfig, apps
 from django.conf import settings
-
+from django.utils.translation import gettext_lazy as _
 from .registries import preference_models, global_preferences_registry
 
 
 class DynamicPreferencesConfig(AppConfig):
     name = 'dynamic_preferences'
-    verbose_name = "Dynamic Preferences"
+    verbose_name = _("Dynamic Preferences")
 
     def ready(self):
         GlobalPreferenceModel = self.get_model('GlobalPreferenceModel')
