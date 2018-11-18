@@ -163,6 +163,10 @@ class TestPreferences(BaseTest, TestCase):
         with self.assertRaises(exceptions.MissingDefault):
             preference = prefs.NoDefault()
 
+    def test_modelchoicepreference_requires_model_value(self):
+        with self.assertRaises(exceptions.MissingModel):
+            preference = prefs.NoModel()
+
     def test_get_field_uses_field_kwargs(self):
         class P(StringPreference):
             name = 'test'

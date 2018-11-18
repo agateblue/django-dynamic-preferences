@@ -174,7 +174,6 @@ class PreferenceRegistry(persisting_theory.Registry):
             raise NotFoundInRegistry("No such preference in {0} with section={1} and name={2}".format(
                 self.__class__.__name__, section, name))
 
-
     def get_by_name(self, name):
         """Get a preference by name only (no section)"""
         for section in self.values():
@@ -182,7 +181,8 @@ class PreferenceRegistry(persisting_theory.Registry):
                 if preference.name == name:
                     return preference
         raise NotFoundInRegistry("No such preference in {0} with name={1}".format(
-            name))
+            self.__class__.__name__, name))
+
     def manager(self, **kwargs):
         """Return a preference manager that can be used to retrieve preference values"""
         return PreferencesManager(registry=self, model=self.preference_model, **kwargs)

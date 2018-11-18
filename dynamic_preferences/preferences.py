@@ -15,8 +15,10 @@ from .settings import preferences_settings
 from .exceptions import MissingDefault
 from .serializers import UNSET
 
+
 class InvalidNameError(ValueError):
     pass
+
 
 def check_name(name, obj):
     error = None
@@ -29,8 +31,8 @@ def check_name(name, obj):
         full_message = 'Invalid name "{0}" while instanciating {1} object: {2}'.format(name, obj, error)
         raise InvalidNameError(full_message)
 
-class Section(object):
 
+class Section(object):
     def __init__(self, name, verbose_name=None):
         self.name = name
         self.verbose_name = verbose_name or name

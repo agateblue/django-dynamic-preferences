@@ -17,6 +17,16 @@ django-dynamic-preferences
 .. image:: https://img.shields.io/codecov/c/github/EliotBerriot/django-dynamic-preferences/master.svg
     :target: https://codecov.io/github/EliotBerriot/django-dynamic-preferences?branch=master
 
+.. image:: https://opencollective.com/django-dynamic-preferences/backers/badge.svg
+    :alt: Backers on Open Collective
+    :target: #backers
+
+.. image:: https://opencollective.com/django-dynamic-preferences/sponsors/badge.svg
+    :alt: Sponsors on Open Collective
+    :target: #sponsors
+
+
+
 .. warning::
 
     There is a critical bug in version 1.2 that can result in dataloss. Please upgrade to 1.3 as
@@ -55,3 +65,41 @@ Contributing
 ------------
 
 See http://django-dynamic-preferences.readthedocs.org/en/latest/contributing.html
+
+Credits
+
++++++++
+
+Contributors
+
+------------
+
+This project exists thanks to all the people who contribute! 
+
+.. image:: https://opencollective.com/django-dynamic-preferences/contributors.svg?width=890&button=false
+
+Backers
+
+-------
+
+Thank you to all our backers! `Become a backer`__.
+
+.. image:: https://opencollective.com/django-dynamic-preferences/backers.svg?width=890
+    :target: https://opencollective.com/django-dynamic-preferences#backers
+
+__ Backer_
+.. _Backer: https://opencollective.com/django-dynamic-preferences#backer
+
+Sponsors
+
+--------
+
+Support us by becoming a sponsor. Your logo will show up here with a link to your website. `Become a sponsor`__.
+
+.. image:: https://opencollective.com/django-dynamic-preferences/sponsor/0/avatar.svg
+    :target: https://opencollective.com/django-dynamic-preferences/sponsor/0/website
+
+__ Sponsor_
+.. _Sponsor: https://opencollective.com/django-dynamic-preferences#sponsor
+
+

@@ -4,3 +4,4 @@ include HISTORY.rst
 include LICENSE
 include README.rst
 recursive-include dynamic_preferences *.html *.png *.gif *js *.css *jpg *jpeg *svg *py
+recursive-include dynamic_preferences/locale django.mo django.po

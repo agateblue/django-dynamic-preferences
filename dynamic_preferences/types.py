@@ -9,6 +9,7 @@ from django.db.models.signals import pre_delete
 from django.core.files.storage import default_storage
 
 from .preferences import AbstractPreference, Section
+from .exceptions import MissingModel
 from dynamic_preferences.serializers import *
 from dynamic_preferences.settings import preferences_settings
 
@@ -91,11 +92,14 @@ class BasePreferenceType(AbstractPreference):
         - :py:attr:`instance.verbose_name` for the field label
         - :py:attr:`instance.help_text` for the field help text
         - :py:attr:`instance.widget` for the field widget
+        - :py:attr:`instance.required` defined if the value is required or not
+        - :py:attr:`instance.initial` defined if the initial value
         """
         kwargs = self.field_kwargs.copy()
         kwargs.setdefault('label', self.get('verbose_name'))
         kwargs.setdefault('help_text', self.get('help_text'))
         kwargs.setdefault('widget', self.get('widget'))
+        kwargs.setdefault('required', self.get('required'))
         kwargs.setdefault('initial', self.initial)
         kwargs.setdefault('validators', [])
         kwargs['validators'].append(self.validate)
@@ -158,11 +162,7 @@ class BooleanPreference(BasePreferenceType):
     """
     field_class = forms.BooleanField
     serializer = BooleanSerializer
-
-    def get_field_kwargs(self):
-        kwargs = super(BooleanPreference, self).get_field_kwargs()
-        kwargs['required'] = False
-        return kwargs
+    required = False
 
 
 class IntegerPreference(BasePreferenceType):
@@ -306,13 +306,18 @@ class ModelChoicePreference(BasePreferenceType):
     signals_handlers = {}
 
     def __init__(self, *args, **kwargs):
-
         super(ModelChoicePreference, self).__init__(*args, **kwargs)
-        self.model = self.model or self.queryset.model
-        if not hasattr(self, 'queryset'):
-            self.queryset = self.model.objects.all()
 
-        self.serializer = ModelSerializer(self.model)
+        if self.model is not None:
+            # Set queryset following model attribute
+            self.queryset = self.model.objects.all()
+        elif self.queryset is not None:
+            # Set model following queryset attribute
+            self.model = self.queryset.model
+        else:
+            raise MissingModel
+
+        self.serializer = self.serializer_class(self.model)
 
         self._setup_signals()
 
@@ -332,6 +337,37 @@ class ModelChoicePreference(BasePreferenceType):
         if not value:
             return None
         return value.pk
+
+
+class ModelMultipleChoicePreference(ModelChoicePreference):
+    """
+    A preference type that stores a reference list to the model instances.
+
+    :Example:
+
+    .. code-block:: python
+
+        from myapp.blog.models import BlogEntry
+
+        @registry.register
+        class FeaturedEntries(ModelMultipleChoicePreference):
+            section = Section('blog')
+            name = 'featured_entries'
+            queryset = BlogEntry.objects.all()
+
+        blog_entries = BlogEntry.objects.filter(status='published')
+        manager['blog__featured_entries'] = blog_entries
+
+        # accessing the value will return the model queryset
+        assert manager['blog__featured_entries'] == blog_entries
+
+    .. note::
+
+        You should provide either the :py:attr:`queryset` or :py:attr:`model`
+        attribute
+    """
+    serializer_class = ModelMultipleSerializer
+    field_class = forms.ModelMultipleChoiceField
 
 
 class FilePreference(BasePreferenceType):
