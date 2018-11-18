@@ -3,6 +3,29 @@
 Changelog
 =========
 
+1.7 (2018-11-19)
+****************
+
+- Fix string format arguments in get_by_name error (#157)
+- Fix UserPreferenceRegistry and its 'section_url_namespace' attribute (#152)
+- Handle 'required' attribute for all inherited BasePreferenceType class (#153)
+- add section filter in query string for DRF list endpoint (#154)
+- Fix ModelChoicePreference when using with model attribute and not queryset (#151)
+- Update outdated context_processors documentation (#149)
+- Update README.rst (#147)
+- Fixed ModelMultipleSerializer.to_python() (#146)
+- Added ModelMultipleChoicePreference
+
+Contributors:
+
+- @eriktelepovsky
+- @monkeywithacupcake
+- @ptrstn
+- @jordiromera
+- @calvin620707
+- @czlee
+- @ElManaa
+
 1.6 (2018-06-17)
 ****************
 
