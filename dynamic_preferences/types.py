@@ -451,7 +451,7 @@ class DatePreference(BasePreferenceType):
     def api_repr(self, value):
         return value.isoformat()
 
-    
+
 class DateTimePreference(BasePreferenceType):
     """
         A preference type that stores a datetime.
@@ -472,3 +472,13 @@ class TimePreference(BasePreferenceType):
 
     def api_repr(self, value):
         return value.isoformat()
+
+
+class ChoiceMultiplePreference(ChoicePreference):
+    widget = forms.CheckboxSelectMultiple
+    field_class = forms.MultipleChoiceField
+    serializer = ChoiceMultipleSerializer
+
+    def validate(self, value):
+        for v in value:
+            super().validate(v)
