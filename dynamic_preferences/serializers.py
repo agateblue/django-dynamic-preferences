@@ -390,3 +390,28 @@ class DateTimeSerializer(BaseSerializer):
         if parsed is None:
             raise cls.exception("Value {0} cannot be converted to a datetime object".format(value))
         return parsed
+
+
+class ChoiceMultipleSerializer(StringSerializer):
+    separator = ","
+    sort = True
+
+    @classmethod
+    def to_db(self, value, **kwargs):
+        if not value:
+            return
+
+        value = list(value)
+
+        if self.sort:
+            value = sorted(value)
+
+        return self.separator.join(map(StringSerializer.to_db, value))
+
+    @classmethod
+    def to_python(self, value, **kwargs):
+        if value in EMPTY_VALUES:
+            return ''
+
+        values = value.split(",")
+        return list(map(StringSerializer.to_python, values))

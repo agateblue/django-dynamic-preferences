@@ -57,6 +57,18 @@ class FavoriteVegetable(ChoicePreference):
     default = "C"
 
 
+@global_preferences_registry.register
+class AdminUsers(ChoiceMultiplePreference):
+    name = 'admin_users'
+    section = 'auth'
+    default = None
+    choices = (
+        ("0", "Serge"),
+        ("1", "Alina"),
+        ("2", "Anand")
+    )
+
+
 @user_preferences_registry.register
 class FavouriteColour(StringPreference):
     """
