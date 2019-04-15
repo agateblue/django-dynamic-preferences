@@ -23,7 +23,7 @@ class SectionFilter(admin.AllValuesFieldListFilter):
             registry_name_set.add(preferenceModel.registry.__class__.__name__)
             if len(registry_name_set) != l:
                 self.registries.append(preferenceModel.registry)
-        
+
 
     def choices(self, changelist):
         choices = super(SectionFilter, self).choices(changelist)
