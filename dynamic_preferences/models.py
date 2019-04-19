@@ -19,7 +19,7 @@ class BasePreferenceModel(models.Model):
 
     #: The section under which the preference is declared
     section = models.CharField(
-        max_length=150, db_index=True, blank=True, null=True, default=None)
+        max_length=150, db_index=True, blank=True, null=True, default=None, verbose_name=_('Section Name'))
 
     #: a name for the preference
     name = models.CharField(_("Name"), max_length=150, db_index=True)
