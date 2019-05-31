@@ -230,7 +230,7 @@ class ChoicePreference(BasePreferenceType):
 
     def get_field_kwargs(self):
         field_kwargs = super(ChoicePreference, self).get_field_kwargs()
-        field_kwargs['choices'] = self.choices or self.field_attribute['initial']
+        field_kwargs['choices'] = self.get('choices') or self.field_attribute['initial']
         return field_kwargs
 
     def get_api_additional_data(self):
