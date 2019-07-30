@@ -61,10 +61,15 @@ Documentation
 
 The full documentation is at https://django-dynamic-preferences.readthedocs.org.
 
+Changelog
+---------
+
+See https://django-dynamic-preferences.readthedocs.io/en/latest/history.html
+
 Contributing
 ------------
 
-See http://django-dynamic-preferences.readthedocs.org/en/latest/contributing.html
+See https://django-dynamic-preferences.readthedocs.org/en/latest/contributing.html
 
 Credits
 
@@ -74,7 +79,7 @@ Contributors
 
 ------------
 
-This project exists thanks to all the people who contribute! 
+This project exists thanks to all the people who contribute!
 
 .. image:: https://opencollective.com/django-dynamic-preferences/contributors.svg?width=890&button=false
 
@@ -101,5 +106,3 @@ Support us by becoming a sponsor. Your logo will show up here with a link to you
 
 __ Sponsor_
 .. _Sponsor: https://opencollective.com/django-dynamic-preferences#sponsor
-
-
