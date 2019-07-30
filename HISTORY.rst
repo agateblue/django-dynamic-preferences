@@ -3,6 +3,24 @@
 Changelog
 =========
 
+
+1.7.1 (2019-07-30)
+******************
+
+- Added djangorestframework 3.10.x compatibility (#180)
+- Fixed direct access to ChoicePreference.choice (#177)
+- German and missing translations (#175)
+- Run makemigrations to add missing migrations file (#161)
+
+
+Contributors:
+
+- @JITdev
+- @izimobil
+- @jwaschkau
+- @exequiel09
+
+
 1.7 (2018-11-19)
 ****************
 
