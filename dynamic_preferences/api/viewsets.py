@@ -5,7 +5,7 @@ from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.response import Response
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 
 from dynamic_preferences import models
@@ -77,7 +77,7 @@ class PreferenceViewSet(
 
         return section, name
 
-    @list_route(methods=['post'])
+    @action(detail=False, methods=['post'])
     @transaction.atomic
     def bulk(self, request, *args, **kwargs):
         """
