@@ -38,7 +38,7 @@ setup(
     install_requires=[
         'django>=1.11',
         'six',
-        'persisting_theory==0.2.1',
+        'persisting_theory>=0.2.1',
     ],
     license="BSD",
     zip_safe=False,
