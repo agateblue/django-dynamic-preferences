@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='globalpreferencemodel',
             name='section',
-            field=models.CharField(max_length=150, null=True, default=None, db_index=True, blank=True),
+            field=models.CharField(max_length=150, null=True, default=None, db_index=True, blank=True, verbose_name='Section Name'),
             preserve_default=True,
         ),
     ]
