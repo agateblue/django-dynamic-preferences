@@ -1,7 +1,7 @@
 import os
 import decimal
 
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, time
 from django import forms
 from django.test import TestCase
 from django.db.models import signals
@@ -135,6 +135,15 @@ class TestTypes(BaseTest, TestCase):
         preference = P()
 
         self.assertEqual(preference.field.initial, initial_date_time)
+
+    @override_settings(DYNAMIC_PREFERENCES={'VALIDATE_NAMES': False})
+    def test_time_preference(self):
+        class P(types.TimePreference):
+            default = time(0)
+
+        preference = P()
+
+        self.assertEqual(preference.field.initial, time(0))
 
 
 class TestFilePreference(BaseTest, TestCase):
