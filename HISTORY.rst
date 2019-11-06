@@ -3,6 +3,22 @@
 Changelog
 =========
 
+1.8 (2019-11-06)
+******************
+
+- Add time preference type (#187)
+- Fix dependency conflict for issue (#183)
+- fix(migrations): add missing `verbose_name` (#184)
+- Fix crash: 'NoneType' object has no attribute 'name' (#190)
+- Test under Django 2.2 and Python 3.7
+
+Contributors:
+
+- @capaci
+- @exequiel09
+- @NeolithEra
+- @nourwolf
+- @treemo
 
 1.7.1 (2019-07-30)
 ******************
