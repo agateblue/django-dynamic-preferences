@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, time
 from django.test import TestCase, override_settings
 from django.template import defaultfilters
 from django.utils.timezone import FixedOffset
@@ -192,6 +192,25 @@ class TestSerializers(TestCase):
         with self.assertRaises(s.exception) as ex:
             s.deserialize('abcd')
             self.assertEqual(ex.exception.args, ('Value abcd cannot be converted to a datetime object',))
+
+
+    def test_time_serialization(self):
+        s = serializers.TimeSerializer
+
+        self.assertEqual(s.serialize(time(hour=5)), '05:00:00')
+        self.assertEqual(s.serialize(time(minute=30)), '00:30:00')
+        self.assertEqual(s.serialize(time(23, 59, 59, 999999)), '23:59:59.999999')
+
+        with self.assertRaises(s.exception):
+            s.serialize('Not a time')
+
+    def test_time_deserialization(self):
+        s = serializers.TimeSerializer
+
+        self.assertEqual(s.deserialize('23:00:00'), time(hour=23))
+
+        with self.assertRaises(s.exception):
+            s.deserialize('Invalid time string')
 
 
 class TestModelSerializers(TestCase):

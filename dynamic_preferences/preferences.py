@@ -90,6 +90,6 @@ class AbstractPreference(object):
         Return the name and the section of the Preference joined with a separator, with the form `section<separator>name`
         """
 
-        if not self.section.name:
+        if not self.section or not self.section.name:
             return self.name
         return preferences_settings.SECTION_KEY_SEPARATOR.join([self.section.name, self.name])

@@ -32,7 +32,11 @@ setup(
     url="https://github.com/EliotBerriot/django-dynamic-preferences",
     packages=["dynamic_preferences"],
     include_package_data=True,
-    install_requires=["django>=1.11", "six", "persisting_theory==0.2.1"],
+    install_requires=[
+        'django>=1.11',
+        'six',
+        'persisting_theory>=0.2.1',
+    ],
     license="BSD",
     zip_safe=False,
     keywords="django-dynamic-preferences",

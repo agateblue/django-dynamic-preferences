@@ -461,3 +461,14 @@ class DateTimePreference(BasePreferenceType):
 
     def api_repr(self, value):
         return value.isoformat()
+
+
+class TimePreference(BasePreferenceType):
+    """
+    A preference type that stores a time.
+    """
+    field_class = forms.TimeField
+    serializer = TimeSerializer
+
+    def api_repr(self, value):
+        return value.isoformat()
