@@ -157,7 +157,6 @@ class TestViews(BaseTest, LiveServerTestCase):
             'test__TestGlobal3': True,
             'no_section': True,
             'blog__featured_entry': blog_entry.pk,
-            'blog__logo': None,
             'company__RegistrationDate': date(1976, 4, 1),
             'child__BirthDateTime': datetime.now(),
             'type__cost': 1,
