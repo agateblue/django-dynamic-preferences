@@ -2,11 +2,11 @@ from __future__ import unicode_literals
 import decimal
 import os
 
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, time
 
 from django.conf import settings
 from django.core.validators import EMPTY_VALUES
-from django.utils.dateparse import parse_duration, parse_datetime, parse_date
+from django.utils.dateparse import parse_duration, parse_datetime, parse_date, parse_time
 from django.utils.duration import duration_string
 from django.utils.encoding import force_text
 from django.utils.timezone import utc, is_aware, make_aware, make_naive, get_default_timezone
@@ -389,4 +389,21 @@ class DateTimeSerializer(BaseSerializer):
         parsed = parse_datetime(force_text(value))
         if parsed is None:
             raise cls.exception("Value {0} cannot be converted to a datetime object".format(value))
+        return parsed
+
+
+class TimeSerializer(BaseSerializer):
+    @classmethod
+    def to_db(cls, value, **kwargs):
+        if not isinstance(value, time):
+            raise cls.exception("Cannot serialize, value {0} is not a time object".format(value))
+
+        return value.isoformat()
+
+    @classmethod
+    def to_python(cls, value, **kwargs):
+        parsed = parse_time(force_text(value))
+        if parsed is None:
+            raise cls.exception("Value {0} cannot be converted to a time object".format(value))
+
         return parsed
