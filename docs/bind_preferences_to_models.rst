@@ -120,3 +120,88 @@ Preferences will be available on your ``Site`` instances using the ``preferences
     my_site = Site.objects.first()
     if my_site.preferences['access__is_public']:
         print('This site is public')
+
+Provide preferences in a Form
+-----------------------------
+
+Optionally, you can provide forms with your custom preferences for the ``Site`` model. Start by creating forms:
+
+.. code-block:: python
+
+    # yourapp/forms.py
+    from dynamic_preferences.forms import preference_form_builder, PreferenceForm, SinglePerInstancePreferenceForm
+
+    class SiteSinglePreferenceForm(SinglePerInstancePreferenceForm):
+
+        class Meta:
+            model = SitePreferenceModel
+            fields = SinglePerInstancePreferenceForm.Meta.fields
+
+
+    def site_preference_form_builder(instance, preferences=[], **kwargs):
+        """
+        A shortcut :py:func:`preference_form_builder(SitePreferenceForm, preferences, **kwargs)`
+        :param site: a :py:class:`Site` instance
+        """
+        return preference_form_builder(
+            SitePreferenceForm,
+            preferences,
+            model={'instance': instance},
+            **kwargs)
+
+
+    class SitePreferenceForm(PreferenceForm):
+        registry = site_preferences_registry
+
+The view for your preferences should extent from PreferenceFormView. For simplicity, this example just retrieves the first Site instance in the database. You will likely want to change this functionality based on the actual model being used and how it is associated to the current request. This example lists all Site Preferences, but you can also limit the preferences to a section as described in :doc:`quickstart </quickstart>`:
+
+.. code-block:: python
+
+    # yourapp/views.py
+    from django.contrib.sites.models import Site
+    from django.urls import reverse_lazy
+    from dynamic_preferences.views import PreferenceFormView
+
+
+    class SitePreferencesBuilder(PreferenceFormView):
+        instance = Site.objects.first()
+
+        template_name = 'yourapp/form.html'
+        form_class = site_preference_form_builder(instance=instance)
+        success_url = reverse_lazy("yourapp:site_preferences")
+
+Include the new view in your app's urls.py:
+
+.. code-block:: python
+
+    # yourapp/urls.py
+    from django.urls import path
+    from yourapp.views import SitePreferencesBuilder
+
+    app_name = "yoursite"
+
+    urlpatterns = [
+        path('site-preferences', SitePreferencesBuilder.as_view(), name='site_preferences'),
+    ]
+
+And create the template for the form:
+
+.. code-block:: html+django
+
+    # yourapp/templates/form.html
+    {% extends "base.html" %}
+
+    {% block content %}
+
+        <form action="." method="POST">
+
+            {% csrf_token %}
+            <table>
+                {{ form.as_table }}
+            </table>
+            <button type="submit">SUBMIT</button>
+
+        </form>
+
+    {% endblock content %}
+
