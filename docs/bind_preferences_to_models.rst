@@ -153,7 +153,7 @@ Optionally, you can provide forms with your custom preferences for the ``Site`` 
     class SitePreferenceForm(PreferenceForm):
         registry = site_preferences_registry
 
-The view for your preferences should extent from PreferenceFormView. For simplicity, this example just retrieves the first Site instance in the database. You will likely want to change this functionality based on the actual model being used and how it is associated to the current request. This example lists all Site Preferences, but you can also limit the preferences to a section as described in :doc:`quickstart </quickstart>`:
+The view for your preferences should extend from PreferenceFormView. For simplicity, this example just retrieves the first Site instance in the database. You will likely want to change this functionality based on the actual model being used and how it is associated to the current request. This example lists all Site Preferences, but you can also limit the preferences to a section as described in :doc:`quickstart </quickstart>`:
 
 .. code-block:: python
 
