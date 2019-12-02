@@ -18,6 +18,7 @@ python:
 env:
   - DJANGO=1.11
   - DJANGO=2.2
+  - DJANGO=3.0
   - DJANGO=master
 
 matrix:
