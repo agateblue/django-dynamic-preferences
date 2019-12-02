@@ -10,8 +10,7 @@ from django.utils.dateparse import parse_duration, parse_datetime, parse_date, p
 from django.utils.duration import duration_string
 from django.utils.encoding import force_text
 from django.utils.timezone import utc, is_aware, make_aware, make_naive, get_default_timezone
-from six import string_types
-from django.utils import six
+from six import string_types, text_type
 from django.db.models.fields.files import FieldFile
 
 
@@ -52,7 +51,7 @@ class BaseSerializer:
 
     @classmethod
     def to_db(cls, value, **kwargs):
-        return six.text_type(cls.clean_to_db_value(value))
+        return text_type(cls.clean_to_db_value(value))
 
     @classmethod
     def clean_to_db_value(cls, value):
@@ -75,7 +74,7 @@ class InstanciatedSerializer(BaseSerializer):
         raise NotImplementedError
 
     def to_db(self, value, **kwargs):
-        return six.text_type(self.clean_to_db_value(value))
+        return text_type(self.clean_to_db_value(value))
 
     def clean_to_db_value(self, value):
         return value
