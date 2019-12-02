@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.validators import EMPTY_VALUES
 from django.utils.dateparse import parse_duration, parse_datetime, parse_date, parse_time
 from django.utils.duration import duration_string
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.timezone import utc, is_aware, make_aware, make_naive, get_default_timezone
 from six import string_types, text_type
 from django.db.models.fields.files import FieldFile
@@ -332,7 +332,7 @@ class DurationSerializer(BaseSerializer):
 
     @classmethod
     def to_python(cls, value, **kwargs):
-        parsed = parse_duration(force_text(value))
+        parsed = parse_duration(force_str(value))
         if parsed is None:
             raise cls.exception("Value {0} cannot be converted to timedelta".format(value))
         return parsed
@@ -348,7 +348,7 @@ class DateSerializer(BaseSerializer):
 
     @classmethod
     def to_python(cls, value, **kwargs):
-        parsed = parse_date(force_text(value))
+        parsed = parse_date(force_str(value))
         if parsed is None:
             raise cls.exception("Value {0} cannot be converted to a date object".format(value))
 
@@ -385,7 +385,7 @@ class DateTimeSerializer(BaseSerializer):
 
     @classmethod
     def to_python(cls, value, **kwargs):
-        parsed = parse_datetime(force_text(value))
+        parsed = parse_datetime(force_str(value))
         if parsed is None:
             raise cls.exception("Value {0} cannot be converted to a datetime object".format(value))
         return parsed
@@ -401,7 +401,7 @@ class TimeSerializer(BaseSerializer):
 
     @classmethod
     def to_python(cls, value, **kwargs):
-        parsed = parse_time(force_text(value))
+        parsed = parse_time(force_str(value))
         if parsed is None:
             raise cls.exception("Value {0} cannot be converted to a time object".format(value))
 
