@@ -3,6 +3,17 @@
 Changelog
 =========
 
+
+1.8.1 (2019-12-29)
+******************
+
+- Django 3.0 and Python 3.8 compatibility (#194)
+
+Contributors:
+
+- @dadoeyad
+
+
 1.8 (2019-11-06)
 ******************
 
