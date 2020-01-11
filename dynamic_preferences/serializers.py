@@ -304,10 +304,12 @@ class FileSerializer(InstanciatedSerializer):
     def to_db(self, f, **kwargs):
         if not f:
             return
-        path = os.path.join(
-            self.preference.get_upload_path(),
-            f.name)
-        saved_path = self.preference.get_file_storage().save(path, f)
+        saved_path = f.name
+        if not hasattr(f, "save"):
+            path = os.path.join(
+                self.preference.get_upload_path(),
+                f.name)
+            saved_path = self.preference.get_file_storage().save(path, f)
 
         return saved_path
 
