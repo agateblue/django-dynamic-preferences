@@ -432,7 +432,7 @@ class FilePreference(BasePreferenceType):
 
 class DurationPreference(BasePreferenceType):
     """
-    A preference type that stores a timdelta.
+    A preference type that stores a timedelta.
     """
     field_class = forms.DurationField
     serializer = DurationSerializer
