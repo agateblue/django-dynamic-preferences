@@ -232,6 +232,9 @@ class ModelMultipleSerializer(ModelSerializer):
         if not value:
             return
 
+        if hasattr(value, 'pk'):
+            return value.pk
+
         value = list(value.values_list('pk', flat=True))
 
         if self.sort:
