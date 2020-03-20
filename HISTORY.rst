@@ -3,6 +3,74 @@
 Changelog
 =========
 
+
+1.8.1 (2019-12-29)
+******************
+
+- Django 3.0 and Python 3.8 compatibility (#194)
+
+Contributors:
+
+- @dadoeyad
+
+
+1.8 (2019-11-06)
+******************
+
+- Add time preference type (#187)
+- Fix dependency conflict for issue (#183)
+- fix(migrations): add missing `verbose_name` (#184)
+- Fix crash: 'NoneType' object has no attribute 'name' (#190)
+- Test under Django 2.2 and Python 3.7
+
+Contributors:
+
+- @capaci
+- @exequiel09
+- @NeolithEra
+- @nourwolf
+- @treemo
+
+1.7.1 (2019-07-30)
+******************
+
+- Added djangorestframework 3.10.x compatibility (#180)
+- Fixed direct access to ChoicePreference.choice (#177)
+- German and missing translations (#175)
+- Run makemigrations to add missing migrations file (#161)
+
+
+Contributors:
+
+- @JITdev
+- @izimobil
+- @jwaschkau
+- @exequiel09
+
+
+1.7 (2018-11-19)
+****************
+
+- Fix string format arguments in get_by_name error (#157)
+- Fix UserPreferenceRegistry and its 'section_url_namespace' attribute (#152)
+- Handle 'required' attribute for all inherited BasePreferenceType class (#153)
+- add section filter in query string for DRF list endpoint (#154)
+- Fix ModelChoicePreference when using with model attribute and not queryset (#151)
+- Update outdated context_processors documentation (#149)
+- Update README.rst (#147)
+- Fixed ModelMultipleSerializer.to_python() (#146)
+- Added ModelMultipleChoicePreference
+
+Contributors:
+
+- @eriktelepovsky
+- @monkeywithacupcake
+- @ptrstn
+- @jordiromera
+- @calvin620707
+- @czlee
+- @ElManaa
+
 1.6 (2018-06-17)
 ****************
 

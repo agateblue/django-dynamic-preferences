@@ -42,6 +42,12 @@ class MaxUsers(IntPreference):
 class NoDefault(IntPreference):
     section = "user"
     name = "no_default"
+    
+    
+class NoModel(ModelChoicePreference):
+    section = "blog"
+    name = "no_model"
+    default = None
 
 
 @global_preferences_registry.register
@@ -186,3 +192,10 @@ class BirthDateTime(DateTimePreference):
     section = Section('child', verbose_name='Child Section Verbose Name')
     name = 'BirthDateTime'
     default = datetime(1992, 5, 4, 3, 4, 10, 150, FixedOffset(offset=330))
+
+
+@global_preferences_registry.register
+class OpenningTime(TimePreference):
+    section = 'company'
+    name = 'OpenningTime'
+    default = time(hour=8, minute=0)

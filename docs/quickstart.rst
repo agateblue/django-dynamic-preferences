@@ -42,6 +42,7 @@ Let's declare a few preferences in this file:
         section = general
         name = 'title'
         default = 'My site'
+        required = False
 
     @global_preferences_registry.register
     class MaintenanceMode(BooleanPreference):
@@ -264,8 +265,9 @@ Both methods are perfectly valid. You can override the following attributes:
 * ``field_kwargs``: kwargs that are passed to the field class upon instantiation. Ensure to call ``super()`` since some default are provided.
 * ``verbose_name``: used in admin and as a label for the field
 * ``help_text``: used in admin and in the field
-* ``default``: the default value for the preference, taht will also be used as initial data for the form field
+* ``default``: the default value for the preference, that will also be used as initial data for the form field
 * ``widget``: the widget used for the form field
+* ``required``: used to define if the value is required
 
 Accessing global preferences within a template
 ----------------------------------------------

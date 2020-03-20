@@ -12,25 +12,26 @@ python:
   - "2.7"
   - "3.5"
   - "3.6"
+  - "3.7"
+  - "3.8"
 
 env:
   - DJANGO=1.11
-  - DJANGO=2.0
-  - DJANGO=2.1
+  - DJANGO=2.2
+  - DJANGO=3.0
   - DJANGO=master
 
 matrix:
   fast_finish: true
   exclude:
     - { python: "2.7", env: DJANGO=master }
-    - { python: "2.7", env: DJANGO=2.0 }
-    - { python: "2.7", env: DJANGO=2.1 }
+    - { python: "2.7", env: DJANGO=2.2 }
     - { python: "3.5", env: DJANGO=master }
-    - { python: "3.5", env: DJANGO=2.1 }
+    - { python: "3.5", env: DJANGO=2.2 }
+    - { python: "3.5", env: DJANGO=3.0 }
 
   allow_failures:
     - env: DJANGO=master
-    - env: DJANGO=2.1
 
 script:
   - tox

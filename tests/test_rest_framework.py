@@ -144,6 +144,22 @@ class TestViewSets(BaseTest, TestCase):
             serializer = serializers.GlobalPreferenceSerializer(pref)
             self.assertEqual(pref.preference.identifier(), e['identifier'])
 
+    def test_can_list_preferences_with_section_filter(self):
+        manager = registry.manager()
+        url = reverse('api:global-list')
+        self.client.login(username='admin', password="test")
+        response = self.client.get(url, {'section': 'user'})
+        self.assertEqual(response.status_code, 200)
+
+        payload = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(len(payload), len(registry.preferences('user')))
+
+        for e in payload:
+            pref = manager.get_db_pref(section=e['section'], name=e['name'])
+            serializers.GlobalPreferenceSerializer(pref)
+            self.assertEqual(pref.preference.identifier(), e['identifier'])
+
     def test_can_detail_preference(self):
         manager = registry.manager()
         pref = manager.get_db_pref(section='user', name='max_users')

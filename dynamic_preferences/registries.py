@@ -181,7 +181,7 @@ class PreferenceRegistry(persisting_theory.Registry):
                 if preference.name == name:
                     return preference
         raise NotFoundInRegistry("No such preference in {0} with name={1}".format(
-            name))
+            self.__class__.__name__, name))
 
     def manager(self, **kwargs):
         """Return a preference manager that can be used to retrieve preference values"""

@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from decimal import Decimal
 
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, time
 from django.test import LiveServerTestCase, TestCase
 from django.urls import reverse
 from django.core.management import call_command
@@ -50,6 +50,7 @@ class TestGlobalPreferences(BaseTest, TestCase):
             u'blog__logo2': None,
             u'company__RegistrationDate': date(1998, 9, 4),
             u'child__BirthDateTime': datetime(1992, 5, 4, 3, 4, 10, 150, tzinfo=FixedOffset(offset=330)),
+            u'company__OpenningTime': time(hour=8, minute=0),
             u'user__registration_allowed': False}
         self.assertDictEqual(manager.all(), expected)
 
@@ -106,7 +107,7 @@ class TestViews(BaseTest, LiveServerTestCase):
         url = reverse("dynamic_preferences:global")
         self.client.login(username='admin', password="test")
         response = self.client.get(url)
-        self.assertEqual(len(response.context['form'].fields), 14)
+        self.assertEqual(len(response.context['form'].fields), 15)
         self.assertEqual(
             response.context['registry'], registry)
 
@@ -156,11 +157,11 @@ class TestViews(BaseTest, LiveServerTestCase):
             'test__TestGlobal3': True,
             'no_section': True,
             'blog__featured_entry': blog_entry.pk,
-            'blog__logo': None,
             'company__RegistrationDate': date(1976, 4, 1),
             'child__BirthDateTime': datetime.now(),
             'type__cost': 1,
             'exam__duration': timedelta(hours=5),
+            'company__OpenningTime': time(hour=8, minute=0),
         }
         response = self.client.post(url, data)
         for key, expected_value in data.items():

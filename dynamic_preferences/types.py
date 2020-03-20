@@ -9,6 +9,7 @@ from django.db.models.signals import pre_delete
 from django.core.files.storage import default_storage
 
 from .preferences import AbstractPreference, Section
+from .exceptions import MissingModel
 from dynamic_preferences.serializers import *
 from dynamic_preferences.settings import preferences_settings
 
@@ -91,11 +92,14 @@ class BasePreferenceType(AbstractPreference):
         - :py:attr:`instance.verbose_name` for the field label
         - :py:attr:`instance.help_text` for the field help text
         - :py:attr:`instance.widget` for the field widget
+        - :py:attr:`instance.required` defined if the value is required or not
+        - :py:attr:`instance.initial` defined if the initial value
         """
         kwargs = self.field_kwargs.copy()
         kwargs.setdefault('label', self.get('verbose_name'))
         kwargs.setdefault('help_text', self.get('help_text'))
         kwargs.setdefault('widget', self.get('widget'))
+        kwargs.setdefault('required', self.get('required'))
         kwargs.setdefault('initial', self.initial)
         kwargs.setdefault('validators', [])
         kwargs['validators'].append(self.validate)
@@ -158,11 +162,7 @@ class BooleanPreference(BasePreferenceType):
     """
     field_class = forms.BooleanField
     serializer = BooleanSerializer
-
-    def get_field_kwargs(self):
-        kwargs = super(BooleanPreference, self).get_field_kwargs()
-        kwargs['required'] = False
-        return kwargs
+    required = False
 
 
 class IntegerPreference(BasePreferenceType):
@@ -230,7 +230,7 @@ class ChoicePreference(BasePreferenceType):
 
     def get_field_kwargs(self):
         field_kwargs = super(ChoicePreference, self).get_field_kwargs()
-        field_kwargs['choices'] = self.choices or self.field_attribute['initial']
+        field_kwargs['choices'] = self.get('choices') or self.field_attribute['initial']
         return field_kwargs
 
     def get_api_additional_data(self):
@@ -306,11 +306,16 @@ class ModelChoicePreference(BasePreferenceType):
     signals_handlers = {}
 
     def __init__(self, *args, **kwargs):
-
         super(ModelChoicePreference, self).__init__(*args, **kwargs)
-        self.model = self.model or self.queryset.model
-        if not hasattr(self, 'queryset'):
+
+        if self.model is not None:
+            # Set queryset following model attribute
             self.queryset = self.model.objects.all()
+        elif self.queryset is not None:
+            # Set model following queryset attribute
+            self.model = self.queryset.model
+        else:
+            raise MissingModel
 
         self.serializer = self.serializer_class(self.model)
 
@@ -427,7 +432,7 @@ class FilePreference(BasePreferenceType):
 
 class DurationPreference(BasePreferenceType):
     """
-    A preference type that stores a timdelta.
+    A preference type that stores a timedelta.
     """
     field_class = forms.DurationField
     serializer = DurationSerializer
@@ -453,6 +458,17 @@ class DateTimePreference(BasePreferenceType):
     """
     field_class = forms.DateTimeField
     serializer = DateTimeSerializer
+
+    def api_repr(self, value):
+        return value.isoformat()
+
+
+class TimePreference(BasePreferenceType):
+    """
+    A preference type that stores a time.
+    """
+    field_class = forms.TimeField
+    serializer = TimeSerializer
 
     def api_repr(self, value):
         return value.isoformat()

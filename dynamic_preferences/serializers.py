@@ -2,16 +2,15 @@ from __future__ import unicode_literals
 import decimal
 import os
 
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, time
 
 from django.conf import settings
 from django.core.validators import EMPTY_VALUES
-from django.utils.dateparse import parse_duration, parse_datetime, parse_date
+from django.utils.dateparse import parse_duration, parse_datetime, parse_date, parse_time
 from django.utils.duration import duration_string
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.timezone import utc, is_aware, make_aware, make_naive, get_default_timezone
-from six import string_types
-from django.utils import six
+from six import string_types, text_type
 from django.db.models.fields.files import FieldFile
 
 
@@ -52,7 +51,7 @@ class BaseSerializer:
 
     @classmethod
     def to_db(cls, value, **kwargs):
-        return six.text_type(cls.clean_to_db_value(value))
+        return text_type(cls.clean_to_db_value(value))
 
     @classmethod
     def clean_to_db_value(cls, value):
@@ -75,7 +74,7 @@ class InstanciatedSerializer(BaseSerializer):
         raise NotImplementedError
 
     def to_db(self, value, **kwargs):
-        return six.text_type(self.clean_to_db_value(value))
+        return text_type(self.clean_to_db_value(value))
 
     def clean_to_db_value(self, value):
         return value
@@ -308,10 +307,12 @@ class FileSerializer(InstanciatedSerializer):
     def to_db(self, f, **kwargs):
         if not f:
             return
-        path = os.path.join(
-            self.preference.get_upload_path(),
-            f.name)
-        saved_path = self.preference.get_file_storage().save(path, f)
+        saved_path = f.name
+        if not hasattr(f, "save"):
+            path = os.path.join(
+                self.preference.get_upload_path(),
+                f.name)
+            saved_path = self.preference.get_file_storage().save(path, f)
 
         return saved_path
 
@@ -336,7 +337,7 @@ class DurationSerializer(BaseSerializer):
 
     @classmethod
     def to_python(cls, value, **kwargs):
-        parsed = parse_duration(force_text(value))
+        parsed = parse_duration(force_str(value))
         if parsed is None:
             raise cls.exception("Value {0} cannot be converted to timedelta".format(value))
         return parsed
@@ -352,7 +353,7 @@ class DateSerializer(BaseSerializer):
 
     @classmethod
     def to_python(cls, value, **kwargs):
-        parsed = parse_date(force_text(value))
+        parsed = parse_date(force_str(value))
         if parsed is None:
             raise cls.exception("Value {0} cannot be converted to a date object".format(value))
 
@@ -389,7 +390,24 @@ class DateTimeSerializer(BaseSerializer):
 
     @classmethod
     def to_python(cls, value, **kwargs):
-        parsed = parse_datetime(force_text(value))
+        parsed = parse_datetime(force_str(value))
         if parsed is None:
             raise cls.exception("Value {0} cannot be converted to a datetime object".format(value))
+        return parsed
+
+
+class TimeSerializer(BaseSerializer):
+    @classmethod
+    def to_db(cls, value, **kwargs):
+        if not isinstance(value, time):
+            raise cls.exception("Cannot serialize, value {0} is not a time object".format(value))
+
+        return value.isoformat()
+
+    @classmethod
+    def to_python(cls, value, **kwargs):
+        parsed = parse_time(force_str(value))
+        if parsed is None:
+            raise cls.exception("Value {0} cannot be converted to a time object".format(value))
+
         return parsed
