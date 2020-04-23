@@ -4,6 +4,16 @@ Changelog
 =========
 
 
+1.9 (unreleased)
+****************
+
+- Emit signal when a preference is updated (#207)
+
+Contributors:
+
+- @Natureshadow
+
+
 1.8.1 (2019-12-29)
 ******************
 
