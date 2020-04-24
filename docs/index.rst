@@ -45,6 +45,7 @@ Contents:
    installation
    quickstart
    bind_preferences_to_models
+   react_to_updates
    preference_types
    rest_api
    lifecycle

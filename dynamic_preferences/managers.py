@@ -2,6 +2,7 @@ import collections
 
 from .settings import preferences_settings
 from .exceptions import CachedValueNotFound, DoesNotExist
+from .signals import preference_updated
 
 
 class PreferencesManager(collections.Mapping):
@@ -151,8 +152,11 @@ class PreferencesManager(collections.Mapping):
     def update_db_pref(self, section, name, value):
         try:
             db_pref = self.queryset.get(section=section, name=name)
+            old_value = dbpref.value
             db_pref.value = value
             db_pref.save()
+            preference_updated.send(
+                sender=self, section=section, name=name, old_value=old_value, new_value=value)
         except self.model.DoesNotExist:
             return self.create_db_pref(section, name, value)
 
