@@ -152,11 +152,11 @@ class PreferencesManager(collections.Mapping):
     def update_db_pref(self, section, name, value):
         try:
             db_pref = self.queryset.get(section=section, name=name)
-            old_value = dbpref.value
+            old_value = db_pref.value
             db_pref.value = value
             db_pref.save()
             preference_updated.send(
-                sender=self, section=section, name=name, old_value=old_value, new_value=value)
+                sender=self.__class__, section=section, name=name, old_value=old_value, new_value=value)
         except self.model.DoesNotExist:
             return self.create_db_pref(section, name, value)
 
