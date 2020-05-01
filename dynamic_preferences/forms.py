@@ -100,8 +100,8 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
 
     fields = OrderedDict()
     instances = []
-    model_kwargs = kwargs.get('model', {})
-    manager = registry.manager(**model_kwargs)
+    manager_kwargs = {"instance": kwargs.get("instance", None)}
+    manager = registry.manager(**manager_kwargs)
 
     for preference in preferences_obj:
         f = preference.field
