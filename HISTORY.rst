@@ -4,6 +4,24 @@ Changelog
 =========
 
 
+1.9 (2020-05-06)
+****************
+
+- Emit signal when a preference is updated (#207)
+- Pass instance provided in form builder to manager (#212)
+- Use PreferencesManager for saving preferences in forms (#211)
+- Fixed wrong filename when using FilePreference and saving multiple times (#198)
+- Fixed broken compat with restframework 3.11 (#200)
+- Fixed typo in documentation (#204)
+
+Contributors:
+
+- @EliotBerriot
+- @hansegucker
+- @Natureshadow
+- @saemideluxe
+- @timgates42
+
 1.8.1 (2019-12-29)
 ******************
 

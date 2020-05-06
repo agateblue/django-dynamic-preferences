@@ -9,9 +9,15 @@ from dynamic_preferences.registries import (
     global_preferences_registry)
 from dynamic_preferences import preferences, exceptions
 from dynamic_preferences.types import IntegerPreference, StringPreference
+from dynamic_preferences.signals import preference_updated
 
 from .test_app import dynamic_preferences_registry as prefs
 from .test_app.models import BlogEntry
+
+try:
+    from unittest.mock import MagicMock
+except ImportError:
+    from mock import MagicMock
 
 
 class BaseTest(object):
@@ -179,3 +185,22 @@ class TestPreferences(BaseTest, TestCase):
 
         kwargs = p.get_field_kwargs()
         self.assertEqual(kwargs['required'], False)
+
+    def test_preferences_manager_signal(self):
+        global_preferences = global_preferences_registry.manager()
+        global_preferences['no_section'] = False
+        receiver = MagicMock()
+        preference_updated.connect(receiver)
+        global_preferences['no_section'] = True
+        self.assertEqual(receiver.call_count, 1)
+        call_args = receiver.call_args[1]
+        self.assertDictContainsSubset(
+            {
+                "sender": global_preferences.__class__,
+                "section": None,
+                "name": "no_section",
+                "old_value": False,
+                "new_value": True,
+            },
+            call_args,
+        )

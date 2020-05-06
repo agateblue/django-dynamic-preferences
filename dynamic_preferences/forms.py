@@ -100,8 +100,12 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
 
     fields = OrderedDict()
     instances = []
-    model_kwargs = kwargs.get('model', {})
-    manager = registry.manager(**model_kwargs)
+    if "model" in kwargs:
+        # backward compat, see #212
+        manager_kwargs = kwargs.get("model")
+    else:
+        manager_kwargs = {"instance": kwargs.get("instance", None)}
+    manager = registry.manager(**manager_kwargs)
 
     for preference in preferences_obj:
         f = preference.field
@@ -116,6 +120,7 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
     form_class.base_fields = fields
     form_class.preferences = preferences_obj
     form_class.instances = instances
+    form_class.manager = manager
     return form_class
 
 
@@ -132,9 +137,12 @@ class PreferenceForm(forms.Form):
 
     def update_preferences(self, **kwargs):
         for instance in self.instances:
-            instance.value = self.cleaned_data[
-                instance.preference.identifier()]
-            instance.save()
+            self.manager.update_db_pref(
+                instance.preference.section.name,
+                instance.preference.name,
+                self.cleaned_data[instance.preference.identifier()],
+            )
+
 
 
 class GlobalPreferenceForm(PreferenceForm):
