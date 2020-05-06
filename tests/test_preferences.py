@@ -190,7 +190,17 @@ class TestPreferences(BaseTest, TestCase):
         global_preferences = global_preferences_registry.manager()
         global_preferences['no_section'] = False
         receiver = MagicMock()
+        preference_updated.connect(receiver)
         global_preferences['no_section'] = True
-        receiver.assert_called_once_with(
-            sender=global_preferences, section=None, name="no_section",
-            old_value=False, new_value=True)
+        self.assertEqual(receiver.call_count, 1)
+        call_args = receiver.call_args[1]
+        self.assertDictContainsSubset(
+            {
+                "sender": global_preferences.__class__,
+                "section": None,
+                "name": "no_section",
+                "old_value": False,
+                "new_value": True,
+            },
+            call_args,
+        )

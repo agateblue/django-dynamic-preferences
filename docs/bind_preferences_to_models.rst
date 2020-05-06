@@ -146,7 +146,7 @@ Optionally, you can provide forms with your custom preferences for the ``Site`` 
         return preference_form_builder(
             SitePreferenceForm,
             preferences,
-            model={'instance': instance},
+            instance=instance,
             **kwargs)
 
 
@@ -204,4 +204,3 @@ And create the template for the form:
         </form>
 
     {% endblock content %}
-

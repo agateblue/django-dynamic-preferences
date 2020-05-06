@@ -28,7 +28,7 @@ def user_preference_form_builder(instance, preferences=[], **kwargs):
     return preference_form_builder(
         UserPreferenceForm,
         preferences,
-        model={'instance': instance},
+        instance=instance,
         **kwargs)
 
 
