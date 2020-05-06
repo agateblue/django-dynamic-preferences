@@ -116,6 +116,7 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
     form_class.base_fields = fields
     form_class.preferences = preferences_obj
     form_class.instances = instances
+    form_class.manager = manager
     return form_class
 
 
@@ -132,9 +133,12 @@ class PreferenceForm(forms.Form):
 
     def update_preferences(self, **kwargs):
         for instance in self.instances:
-            instance.value = self.cleaned_data[
-                instance.preference.identifier()]
-            instance.save()
+            self.manager.update_db_pref(
+                instance.preference.section.name,
+                instance.preference.name, 
+                self.cleaned_data[instance.preference.identifier()],
+            )
+
 
 
 class GlobalPreferenceForm(PreferenceForm):
