@@ -419,17 +419,27 @@ class MultipleSerializer(BaseSerializer):
         if not value:
             return
 
-        value = list(value)
+        # This makes the use of the separator in choices safe by duplicating
+        # it in each value before they are joined later on
+        # Contract: choices keys cannot be empty
+        value = [str(v).replace(cls.separator, cls.separator*2) for v in value]
+        if '' in value:
+            raise cls.exception('Choices must not be empty')
 
         if cls.sort:
             value = sorted(value)
 
-        return cls.separator.join(map(str, value))
+        return cls.separator.join(value)
 
     @classmethod
     def to_python(cls, value, **kwargs):
         if value in EMPTY_VALUES:
             return []
 
-        values = value.split(cls.separator)
-        return list(map(str, values))
+        ret = value.split(cls.separator)
+        # Duplication of separator is reverted (cf. to_db)
+        while '' in ret:
+            pos = ret.index('')
+            val = ret[pos-1] + cls.separator + ret[pos+1]
+            ret = ret[0:pos-1] + [val] + ret[pos+2:]
+        return ret
