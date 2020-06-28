@@ -410,26 +410,26 @@ class TimeSerializer(BaseSerializer):
         return parsed
 
 
-class MultipleSerializer(StringSerializer):
+class MultipleSerializer(BaseSerializer):
     separator = ","
     sort = True
 
     @classmethod
-    def to_db(self, value, **kwargs):
+    def to_db(cls, value, **kwargs):
         if not value:
             return
 
         value = list(value)
 
-        if self.sort:
+        if cls.sort:
             value = sorted(value)
 
-        return self.separator.join(map(StringSerializer.to_db, value))
+        return cls.separator.join(map(str, value))
 
     @classmethod
-    def to_python(self, value, **kwargs):
+    def to_python(cls, value, **kwargs):
         if value in EMPTY_VALUES:
-            return ''
+            return []
 
-        values = value.split(",")
-        return list(map(StringSerializer.to_python, values))
+        values = value.split(cls.separator)
+        return list(map(str, values))
