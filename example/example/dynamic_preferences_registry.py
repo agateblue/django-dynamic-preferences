@@ -58,7 +58,7 @@ class FavoriteVegetable(ChoicePreference):
 
 
 @global_preferences_registry.register
-class AdminUsers(ChoiceMultiplePreference):
+class AdminUsers(MultipleChoicePreference):
     name = 'admin_users'
     section = 'auth'
     default = None

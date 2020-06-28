@@ -474,10 +474,10 @@ class TimePreference(BasePreferenceType):
         return value.isoformat()
 
 
-class ChoiceMultiplePreference(ChoicePreference):
+class MultipleChoicePreference(ChoicePreference):
     widget = forms.CheckboxSelectMultiple
     field_class = forms.MultipleChoiceField
-    serializer = ChoiceMultipleSerializer
+    serializer = MultipleSerializer
 
     def validate(self, value):
         for v in value:

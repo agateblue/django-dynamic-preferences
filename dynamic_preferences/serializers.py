@@ -410,7 +410,7 @@ class TimeSerializer(BaseSerializer):
         return parsed
 
 
-class ChoiceMultipleSerializer(StringSerializer):
+class MultipleSerializer(StringSerializer):
     separator = ","
     sort = True
 
