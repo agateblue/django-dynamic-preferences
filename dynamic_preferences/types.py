@@ -475,6 +475,29 @@ class TimePreference(BasePreferenceType):
 
 
 class MultipleChoicePreference(ChoicePreference):
+    """
+    A preference type that stores multiple strings among a list of choices.
+
+    :Example:
+
+    .. code-block:: python
+
+        @registry.register
+        class FeaturedEntries(MultipleChoicePreference):
+            section = Section('blog')
+            name = 'featured_entries'
+            choices = [
+                ('c', 'Carrot'),
+                ('t', 'Tomato'),
+            ]
+
+    .. note::
+
+       Internally, the selected choices are stored as a string, separated by a
+       separator. The separator defaults to ','. The way this is implemented still
+       is sae also on keys that cotain the separator, but if in doubt, you can still
+       set the :py:attr:`separator` to any other character.
+    """
     widget = forms.CheckboxSelectMultiple
     field_class = forms.MultipleChoiceField
     serializer = MultipleSerializer
