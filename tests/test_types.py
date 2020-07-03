@@ -260,6 +260,17 @@ class TestChoicePreference(BaseTest, TestCase):
         with self.assertRaises(forms.ValidationError):
             self.user.preferences['user__favorite_vegetable'] = 'Nope'
 
+    def test_multiple_choice_preference(self):
+        self.user.preferences['user__favorite_vegetables'] = ['C', 'T']
+        self.assertEqual(
+            self.user.preferences['user__favorite_vegetables'], ['C', 'T'])
+        self.user.preferences['user__favorite_vegetables'] = ['P']
+        self.assertEqual(
+            self.user.preferences['user__favorite_vegetables'], ['P'])
+
+        with self.assertRaises(forms.ValidationError):
+            self.user.preferences['user__favorite_vegetables'] = ['Nope', 'C']
+
 
 class TestModelChoicePreference(BaseTest, TestCase):
 
