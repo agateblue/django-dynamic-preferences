@@ -80,6 +80,7 @@ class TestDynamicPreferences(BaseTest, TestCase):
             u'misc__favourite_colour': u'Green',
             u'misc__is_zombie': True,
             u'user__favorite_vegetable': 'C',
+            u'user__favorite_vegetables': ['C', 'P'],
             u'test__SUserStringPref': u'Hello world!',
             u'test__SiteBooleanPref': False,
             u'test__TestUserPref1': u'default value',
@@ -201,7 +202,7 @@ class TestViewSets(BaseTest, TestCase):
         payload = json.loads(response.content.decode('utf-8'))
 
         # This should be 7 because each user gets 7 preferences by default.
-        self.assertEqual(len(payload), 7)
+        self.assertEqual(len(payload), 8)
 
         for e in payload:
             pref = manager.get_db_pref(section=e['section'], name=e['name'])

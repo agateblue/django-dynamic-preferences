@@ -3,6 +3,14 @@
 Changelog
 =========
 
+1.10 (2020-07-03)
+*****************
+
+- Add MultipleChoicePreference (#21)
+
+Contributors:
+
+- @Natureshadow
 
 1.9 (2020-05-06)
 ****************

@@ -99,6 +99,18 @@ class FavoriteVegetable(ChoicePreference):
 
 
 @user_preferences_registry.register
+class FavoriteVegetables(MultipleChoicePreference):
+    choices = (
+        ("C", "Carrot"),
+        ("T", "Tomato. I know, it's not a vegetable"),
+        ("P", "Potato")
+    )
+    section = "user"
+    name = "favorite_vegetables"
+    default = ["C", "P"]
+
+
+@user_preferences_registry.register
 class FavouriteColour(StringPreference):
     """
     What's your favourite colour ?

@@ -212,6 +212,23 @@ class TestSerializers(TestCase):
         with self.assertRaises(s.exception):
             s.deserialize('Invalid time string')
 
+    def test_multiple_serialization(self):
+        s = serializers.MultipleSerializer
+
+        self.assertEqual(s.serialize(['a', 'b', 'c']), 'a,b,c')
+        self.assertEqual(s.serialize(['key,with,comma', 'b', 'another,key,with,comma']),
+            'another,,key,,with,,comma,b,key,,with,,comma')
+
+        with self.assertRaises(s.exception):
+            s.serialize(['a', '', 'c'])
+
+    def test_multiple_deserialization(self):
+        s = serializers.MultipleSerializer
+
+        self.assertEqual(s.deserialize('a,b,c'), ['a', 'b', 'c'])
+        self.assertEqual(s.deserialize('key,,with,,comma,b,another,,key,,with,,comma'),
+            ['key,with,comma', 'b', 'another,key,with,comma'])
+
 
 class TestModelSerializers(TestCase):
 
