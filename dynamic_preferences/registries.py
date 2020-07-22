@@ -1,4 +1,4 @@
-from django.db.models.fields import FieldDoesNotExist
+from django.core.exceptions.FieldDoesNotExist import FieldDoesNotExist
 from django.apps import apps
 # import the logging library
 import warnings
