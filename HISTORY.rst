@@ -3,6 +3,19 @@
 Changelog
 =========
 
+1.10.1 (2020-08-21)
+*******************
+
+- Fix django 3.0 and 3.1 compat (#218)
+- Generated missing user migrations (#221)
+- Dropped support for python 2 and Django 1.11
+- Updated test matrix
+
+Contributors:
+
+- @Natureshadow
+- @EliotBerriot
+
 1.10 (2020-07-03)
 *****************
 
