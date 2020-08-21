@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from datetime import timezone
 from decimal import Decimal
 
 from datetime import date, timedelta, datetime, time
@@ -9,7 +10,7 @@ from django.core.management import call_command
 from django.core.cache import caches
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.utils.timezone import FixedOffset, make_aware
+from django.utils.timezone import make_aware
 
 from dynamic_preferences.registries import (
     global_preferences_registry as registry
@@ -49,7 +50,7 @@ class TestGlobalPreferences(BaseTest, TestCase):
             u'blog__logo': None,
             u'blog__logo2': None,
             u'company__RegistrationDate': date(1998, 9, 4),
-            u'child__BirthDateTime': datetime(1992, 5, 4, 3, 4, 10, 150, tzinfo=FixedOffset(offset=330)),
+            u'child__BirthDateTime': datetime(1992, 5, 4, 3, 4, 10, 150, tzinfo=timezone.utc),
             u'company__OpenningTime': time(hour=8, minute=0),
             u'user__registration_allowed': False}
         self.assertDictEqual(manager.all(), expected)
