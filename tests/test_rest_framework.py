@@ -54,7 +54,7 @@ class TestSerializers(BaseTest, TestCase):
         pref = manager.get_db_pref(section='child', name='BirthDateTime')
         serializer = serializers.GlobalPreferenceSerializer(pref)
         data = serializer.data
-        self.assertEqual(data['value'], '1992-05-04T03:04:10.000150+05:30')
+        self.assertEqual(data['value'], '1992-05-04T03:04:10.000150+00:00')
 
     def test_can_change_preference_value_using_serializer(self):
         manager = registry.manager()

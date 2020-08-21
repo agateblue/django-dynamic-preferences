@@ -9,8 +9,8 @@ from dynamic_preferences.users.viewsets import UserPreferencesViewSet
 admin.autodiscover()
 
 router = routers.SimpleRouter()
-router.register(r'global', GlobalPreferencesViewSet, base_name='global')
-router.register(r'user', UserPreferencesViewSet, base_name='user')
+router.register(r'global', GlobalPreferencesViewSet, 'global')
+router.register(r'user', UserPreferencesViewSet, 'user')
 # router.register(r'user', AccountViewSet)
 
 

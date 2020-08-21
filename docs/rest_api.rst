@@ -22,10 +22,10 @@ bundled viewsets in your ``urs.py``:
 
 
     router = routers.SimpleRouter()
-    router.register(r'global', GlobalPreferencesViewSet, base_name='global')
+    router.register(r'global', GlobalPreferencesViewSet, 'global')
 
     # Uncomment this one if you use user preferences
-    # router.register(r'user', UserPreferencesViewSet, base_name='user')
+    # router.register(r'user', UserPreferencesViewSet, 'user')
 
     api_patterns = [
         url(r'^preferences/', include(router.urls, namespace='preferences'))
