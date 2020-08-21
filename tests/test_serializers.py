@@ -1,9 +1,9 @@
+from datetime import timezone
 from decimal import Decimal
 
 from datetime import date, timedelta, datetime, time
 from django.test import TestCase, override_settings
 from django.template import defaultfilters
-from django.utils.timezone import FixedOffset
 
 from dynamic_preferences import serializers
 from .test_app.models import BlogEntry
@@ -186,8 +186,7 @@ class TestSerializers(TestCase):
         s = serializers.DateTimeSerializer
 
         self.assertEqual(s.deserialize('2017-10-05T23:45:01.792346'), datetime(2017, 10, 5, 23, 45, 1, 792346))
-        self.assertEqual(s.deserialize('2017-10-05T23:45:01.792346+12:00'), datetime(2017, 10, 5, 23, 45, 1, 792346, tzinfo=FixedOffset(offset=720)))
-        self.assertEqual(s.deserialize('2017-10-05T23:45:01.792346-08:00'), datetime(2017, 10, 5, 23, 45, 1, 792346, tzinfo=FixedOffset(offset=-480)))
+        self.assertEqual(s.deserialize('2017-10-05T23:45:01.792346+00:00'), datetime(2017, 10, 5, 23, 45, 1, 792346, tzinfo=timezone.utc))
 
         with self.assertRaises(s.exception) as ex:
             s.deserialize('abcd')
