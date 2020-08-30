@@ -198,7 +198,7 @@ Getting a form for a specific instance preferences works similarly, except that 
 
 .. code-block:: python
 
-    from dynamic_preferences.forms import user_preference_form_builder
+    from dynamic_preferences.users.forms import user_preference_form_builder
 
     form_class = user_preference_form_builder(instance=request.user)
     form_class = user_preference_form_builder(instance=request.user, section='discussion')
