@@ -175,6 +175,6 @@ class PerInstancePreferenceViewSet(PreferenceViewSet):
 
     def get_related_instance(self):
         """
-        Override this to  the instance binded to the preferences
+        Override this to the instance bound to the preferences
         """
         raise NotImplementedError
