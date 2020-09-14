@@ -12,7 +12,7 @@ Deletion
 
 If you remove preferences from your registry, corresponding data rows won't be deleted automatically.
 
-In order to keep a clean database and delete obsolete rows, you can use the `checkpreferences` management command. This command will check all preferences in database, ensure they match a registered preference class and delete rows that do not match any registerd preference.
+In order to keep a clean database and delete obsolete rows, you can use the `checkpreferences` management command. This command will check all preferences in database, ensure they match a registered preference class and delete rows that do not match any registered preference.
 
 .. warning::
 

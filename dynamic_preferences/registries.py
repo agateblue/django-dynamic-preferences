@@ -59,8 +59,8 @@ class PreferenceModelsRegistry(persisting_theory.Registry):
 
     def get_by_instance(self, instance):
         """Return a preference registry using a model instance"""
-        # we iterate throught registered preference models in order to get the instance class
-        # and check if instance is and instance of this class
+        # we iterate through registered preference models in order to get the instance class
+        # and check if instance is an instance of this class
         for model, registry in self.items():
             try:
                 instance_class = model._meta.get_field('instance').remote_field.model

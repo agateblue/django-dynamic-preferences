@@ -1,7 +1,7 @@
 REST API
 ========
 
-Dynamic preferences provides an optionnal integration with Django REST Framework:
+Dynamic preferences provides an optional integration with Django REST Framework:
 
 - Serializers you can use for global and user preferences (or to extend for your own preferences)
 - Viewsets you can use for global and user preferences (or to extend for your own preferences)

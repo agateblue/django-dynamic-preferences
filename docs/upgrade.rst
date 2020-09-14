@@ -66,7 +66,7 @@ Run the migrations
 
 User preferences were stored on the ``UserPreferenceModel`` model class.
 
-The migrations only rename the old table to match the fact that the modle was moved in another app. Otherwise, nothing should be deleted or altered at all, and you can inspect the two related migrations to see what we're doing:
+The migrations only rename the old table to match the fact that the model was moved in another app. Otherwise, nothing should be deleted or altered at all, and you can inspect the two related migrations to see what we're doing:
 
 - dynamic_preferences.0004_move_user_model
 - dynamic_preferences.users.0001_initial
@@ -86,7 +86,7 @@ Once you're ready, just run::
 Remove useless setting
 ------------------------
 
-In previous versions, to partially adress #33, a ``ENABLE_USER_PREFERENCES`` setting was added to enable / disable the admin endpoints for user preferences. Since you can now opt into user preferences via ``INSTALLED_APPS``, this setting is now obsolete and can be safely removed from your settings file.
+In previous versions, to partially address #33, a ``ENABLE_USER_PREFERENCES`` setting was added to enable / disable the admin endpoints for user preferences. Since you can now opt into user preferences via ``INSTALLED_APPS``, this setting is now obsolete and can be safely removed from your settings file.
 
 
 0.8
@@ -94,7 +94,7 @@ In previous versions, to partially adress #33, a ``ENABLE_USER_PREFERENCES`` set
 
 .. warning::
 
-    there is a backward incompatbile change in this release.
+    there is a backward incompatible change in this release.
 
 To address #45 and #46, an import statement was removed from __init__.py.
 Because of that, every file containing the following:
