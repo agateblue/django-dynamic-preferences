@@ -10,7 +10,7 @@ Getting started
 ---------------
 
 The easiest way to offer API endpoints to manage preferences in your project is to use
-bundled viewsets in your ``urs.py``:
+bundled viewsets in your ``urls.py``:
 
 .. code-block:: python
 
