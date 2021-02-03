@@ -341,29 +341,6 @@ class ModelChoicePreference(BasePreferenceType):
         return value.pk
 
 
-def create_multiple_deletion_handler(preference):
-    """
-    Will generate a dynamic handler to purge related preference
-    on instance deletion
-    """
-    def delete_related_preferences(sender, instance, *args, **kwargs):
-        queryset = preference.registry.preference_model.objects\
-                                      .filter(name=preference.name,
-                                              section=preference.section)
-        related_preferences = queryset.filter(
-            raw_value__contains=instance.pk)
-        related_preferences.update(
-            raw_value=Replace("raw_value", Value(f",{instance.pk}"), Value(""))
-        )
-        related_preferences.update(
-            raw_value=Replace("raw_value", Value(f"{instance.pk},"), Value(""))
-        )
-        related_preferences.update(
-            raw_value=Replace("raw_value", Value(f"{instance.pk}"), Value(""))
-        )
-    return delete_related_preferences
-
-
 class ModelMultipleChoicePreference(ModelChoicePreference):
     """
     A preference type that stores a reference list to the model instances.
@@ -395,11 +372,7 @@ class ModelMultipleChoicePreference(ModelChoicePreference):
     field_class = forms.ModelMultipleChoiceField
 
     def _setup_signals(self):
-        handler = create_multiple_deletion_handler(self)
-        # We need to keep a reference to the handler or it will cause
-        # weakref to die and our handler will not be called
-        self.signals_handlers['pre_delete'] = [handler]
-        pre_delete.connect(handler, sender=self.model)
+        pass
 
 
 class FilePreference(BasePreferenceType):
