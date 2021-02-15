@@ -1,11 +1,14 @@
-import collections
+try:
+    from collections.abc import Mapping
+except ImportError:
+    from collections import Mapping
 
 from .settings import preferences_settings
 from .exceptions import CachedValueNotFound, DoesNotExist
 from .signals import preference_updated
 
 
-class PreferencesManager(collections.Mapping):
+class PreferencesManager(Mapping):
 
     """Handle retrieving / caching of preferences"""
 
