@@ -14,7 +14,7 @@ bundled viewsets in your ``urls.py``:
 
 .. code-block:: python
 
-    from django.conf.urls import include, url
+    from django.urls import include, re_path
     from rest_framework import routers
 
     from dynamic_preferences.api.viewsets import GlobalPreferencesViewSet
@@ -28,12 +28,12 @@ bundled viewsets in your ``urls.py``:
     # router.register(r'user', UserPreferencesViewSet, 'user')
 
     api_patterns = [
-        url(r'^preferences/', include(router.urls, namespace='preferences'))
+        re_path(r'^preferences/', include(router.urls, namespace='preferences'))
 
     ]
     urlpatterns = [
         # your other urls here
-        url(r'^api/', include(api_patterns, namespace='api'))
+        re_path(r'^api/', include(api_patterns, namespace='api'))
     ]
 
 

@@ -1,3 +1,4 @@
 from django.dispatch import Signal
 
-preference_updated = Signal(providing_args=("section", "name", "old_value", "new_value"))
+# Arguments provided to listeners: "section", "name", "old_value" and "new_value"
+preference_updated = Signal()

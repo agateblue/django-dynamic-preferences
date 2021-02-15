@@ -296,7 +296,7 @@ Example views and urls are bundled for global and per-user preferences updating.
 
     urlpatterns = [
         # your project urls here
-        url(r'^preferences/', include('dynamic_preferences.urls')),
+        re_path(r'^preferences/', include('dynamic_preferences.urls')),
     ]
 
 Then, in your code:

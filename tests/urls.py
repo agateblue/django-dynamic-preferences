@@ -1,4 +1,8 @@
-from django.conf.urls import include, url
+try:
+    from django.urls import include, re_path
+except ImportError:
+    from django.conf.urls import include, url as re_path
+
 from django.contrib import admin
 from rest_framework import routers
 
@@ -15,10 +19,10 @@ router.register(r'user', UserPreferencesViewSet, 'user')
 
 
 urlpatterns = [
-    url(r'^', include("dynamic_preferences.urls")),
-    url(r'^admin/', admin.site.urls),
-    url(r'^test/template$',
-        views.RegularTemplateView.as_view(),
-        name="dynamic_preferences.test.templateview"),
-    url(r'^api', include((router.urls, 'api'), namespace='api'))
+    re_path(r'^', include("dynamic_preferences.urls")),
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'^test/template$',
+            views.RegularTemplateView.as_view(),
+            name="dynamic_preferences.test.templateview"),
+    re_path(r'^api', include((router.urls, 'api'), namespace='api'))
 ]
