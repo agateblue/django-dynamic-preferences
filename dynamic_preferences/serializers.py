@@ -275,6 +275,7 @@ class PreferenceFieldFile(FieldFile):
             and delete files, so we are effectively mocking that.
             """
             name = 'noop'
+            attname = 'noop'
             max_length = 10000
 
             def generate_filename(field, instance, name):
