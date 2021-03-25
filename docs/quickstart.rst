@@ -203,6 +203,34 @@ Getting a form for a specific instance preferences works similarly, except that 
     form_class = user_preference_form_builder(instance=request.user)
     form_class = user_preference_form_builder(instance=request.user, section='discussion')
 
+Form builder with DjangoFormView 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Be careful about instance registry cache, and use form.update_preferences() instead of form.save() (see #120)
+
+.. code-block:: python
+
+    from django.contrib import messages
+    from django.urls import reverse
+    from django.views.generic.edit import FormView
+    
+    class SectionFormView(FormView):
+        template_name = 'my_template.html'
+        def get_form_class(self):
+            from dynamic_preferences.forms import global_preference_form_builder
+            return global_preference_form_builder(section='foo')
+    
+        def get_success_url(self):
+            messages.add_message(self.request, messages.INFO, 'Saved !')
+            return reverse('...')
+    
+        def form_valid(self, form):
+            form.update_preferences()
+            form = self.get_form()
+            return super(SectionFormView, self).form_valid(form)
+
+
+
 
 Form fields
 ^^^^^^^^^^^
