@@ -242,8 +242,12 @@ class ModelMultipleSerializer(ModelSerializer):
         if value in EMPTY_VALUES:
             return self.model.objects.none()
 
-        pks = value.split(",")
-        return self.model.objects.filter(pk__in=pks)
+        try:
+            pks = value.split(",")
+            pks = [int(i) for i in pks]
+            return self.model.objects.filter(pk__in=pks)    
+        except:
+            raise self.exception("Array {0} cannot be converted to int".format(value))
 
 
 class PreferenceFieldFile(FieldFile):
