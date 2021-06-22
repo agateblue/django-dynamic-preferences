@@ -250,3 +250,9 @@ class TestModelSerializers(TestCase):
         pks = s.separator.join(map(str, sorted(list(blog_entries.values_list('pk', flat=True)))))
 
         self.assertEqual(list(s.deserialize(pks)), list(blog_entries))
+
+    def test_model_multiple_single_serialization(self):
+        s = serializers.ModelMultipleSerializer(BlogEntry)
+        blog_entry = BlogEntry.objects.all().first()
+
+        self.assertEqual(s.serialize(blog_entry), s.separator.join(map(str, [blog_entry.pk])))
