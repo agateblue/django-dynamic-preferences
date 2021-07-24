@@ -230,8 +230,12 @@ class ModelMultipleSerializer(ModelSerializer):
     def to_db(self, value, **kwargs):
         if not value:
             return
-
-        value = list(value.values_list('pk', flat=True))
+        if hasattr(value, "pk"):
+            # Support single instances in this serializer to allow
+            # create_deletion_handler to work for model multiple choice preferences
+            value = [value.pk]
+        else:
+            value = list(value.values_list('pk', flat=True))
 
         if self.sort:
             value = sorted(value)
