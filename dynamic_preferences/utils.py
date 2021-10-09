@@ -1,4 +1,7 @@
-import collections
+try:
+    from collections.abc import Mapping
+except ImportError:
+    from collections import Mapping
 
 
 def update(d, u):
@@ -7,7 +10,7 @@ def update(d, u):
         from http://stackoverflow.com/questions/3232943/update-value-of-a-nested-dictionary-of-varying-depth
     """
     for k, v in u.iteritems():
-        if isinstance(v, collections.Mapping):
+        if isinstance(v, Mapping):
             r = update(d.get(k, {}), v)
             d[k] = r
         else:

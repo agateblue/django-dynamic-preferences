@@ -369,6 +369,9 @@ class ModelMultipleChoicePreference(ModelChoicePreference):
     serializer_class = ModelMultipleSerializer
     field_class = forms.ModelMultipleChoiceField
 
+    def _setup_signals(self):
+        pass
+
 
 class FilePreference(BasePreferenceType):
     """

@@ -1,7 +1,7 @@
 REST API
 ========
 
-Dynamic preferences provides an optionnal integration with Django REST Framework:
+Dynamic preferences provides an optional integration with Django REST Framework:
 
 - Serializers you can use for global and user preferences (or to extend for your own preferences)
 - Viewsets you can use for global and user preferences (or to extend for your own preferences)
@@ -10,11 +10,11 @@ Getting started
 ---------------
 
 The easiest way to offer API endpoints to manage preferences in your project is to use
-bundled viewsets in your ``urs.py``:
+bundled viewsets in your ``urls.py``:
 
 .. code-block:: python
 
-    from django.conf.urls import include, url
+    from django.urls import include, re_path
     from rest_framework import routers
 
     from dynamic_preferences.api.viewsets import GlobalPreferencesViewSet
@@ -28,12 +28,12 @@ bundled viewsets in your ``urs.py``:
     # router.register(r'user', UserPreferencesViewSet, 'user')
 
     api_patterns = [
-        url(r'^preferences/', include(router.urls, namespace='preferences'))
+        re_path(r'^preferences/', include(router.urls, namespace='preferences'))
 
     ]
     urlpatterns = [
         # your other urls here
-        url(r'^api/', include(api_patterns, namespace='api'))
+        re_path(r'^api/', include(api_patterns, namespace='api'))
     ]
 
 
