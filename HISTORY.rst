@@ -3,6 +3,19 @@
 Changelog
 =========
 
+1.11.0 (2021-10-09)
+*******************
+
+- Update quickstart.rst (#240)
+- Fix model multiple choice preference to react correctly to deletion handler (#244)
+- fix #234 (#235)
+- Fix compatibility issues with python 3.10 and django 4.0 (#236)
+- Fixed a typo in documentation (#229)
+- Add polish translation (#227)
+- Fix the typos in the comments and documents (#225)
+- Update forms docs (#224)
+
+
 1.10.1 (2020-08-21)
 *******************
 
