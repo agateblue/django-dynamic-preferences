@@ -336,6 +336,8 @@ class ModelChoicePreference(BasePreferenceType):
     def api_repr(self, value):
         if not value:
             return None
+        if value.__class__.__name__=='QuerySet':
+            return [val.pk for val in value]
         return value.pk
 
 
