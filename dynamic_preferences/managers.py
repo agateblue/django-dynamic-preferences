@@ -5,7 +5,7 @@ from .exceptions import CachedValueNotFound, DoesNotExist
 from .signals import preference_updated
 
 
-class PreferencesManager(collections.Mapping):
+class PreferencesManager(collections.abc.Mapping):
 
     """Handle retrieving / caching of preferences"""
 
