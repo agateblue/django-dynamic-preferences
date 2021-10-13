@@ -47,3 +47,6 @@ example/*.sqlite*
 .python-version
 .cache
 .pytest_cache
+
+# coverage
+htmlcov/
