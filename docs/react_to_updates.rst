@@ -28,7 +28,7 @@ below.
 
     # yourapp/util.py
 
-    def notify_on_preference_update(sender, section, name, old, new):
+    def notify_on_preference_update(sender, section, name, old_value, new_value, **kwargs):
         print("Preference {} in section {} changed from {} to {}".format(
             name, section, old, new))
 
