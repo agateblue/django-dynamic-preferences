@@ -109,7 +109,7 @@ class PreferencesManager(Mapping):
             # resulting in more DB queries, so we cache an arbitrary value
             # to ensure the cache is hot (even with empty values)
             value = preferences_settings.CACHE_NONE_VALUE
-        self.cache.set(key, value, None)
+        self.cache.set(key, value)
 
     def pref_obj(self, section, name):
         return self.registry.get(section=section, name=name)
