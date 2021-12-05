@@ -7,6 +7,7 @@ from .models import GlobalPreferenceModel
 from .forms import GlobalSinglePreferenceForm, SinglePerInstancePreferenceForm
 from django.utils.translation import gettext_lazy as _
 
+
 class SectionFilter(admin.AllValuesFieldListFilter):
 
     def __init__(self, field, request, params, model, model_admin, field_path):
@@ -23,7 +24,6 @@ class SectionFilter(admin.AllValuesFieldListFilter):
             registry_name_set.add(preferenceModel.registry.__class__.__name__)
             if len(registry_name_set) != l:
                 self.registries.append(preferenceModel.registry)
-
 
     def choices(self, changelist):
         choices = super(SectionFilter, self).choices(changelist)
@@ -46,6 +46,12 @@ class DynamicPreferenceAdmin(admin.ModelAdmin):
         list_editable = ('raw_value',)
     search_fields = ['name', 'section', 'raw_value']
     list_filter = (('section',  SectionFilter),)
+    
+    def has_add_permission(self, request, obj=None):
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     if preferences_settings.ADMIN_ENABLE_CHANGELIST_FORM:
         def get_changelist_form(self, request, **kwargs):
@@ -64,6 +70,7 @@ class DynamicPreferenceAdmin(admin.ModelAdmin):
 
     section_name.short_description = _("Section Name")
 
+
 class GlobalPreferenceAdmin(DynamicPreferenceAdmin):
     form = GlobalSinglePreferenceForm
     changelist_form = GlobalSinglePreferenceForm
@@ -73,6 +80,7 @@ class GlobalPreferenceAdmin(DynamicPreferenceAdmin):
         manager = global_preferences_registry.manager()
         manager.all()
         return super(GlobalPreferenceAdmin, self).get_queryset(*args, **kwargs)
+
 
 admin.site.register(GlobalPreferenceModel, GlobalPreferenceAdmin)
 
