@@ -33,3 +33,12 @@ class TestCheckPreferencesCommand(BaseTest, TestCase):
             "Creating missing preferences for User model...",
         ])
         self.assertEqual(out, expected_output)
+
+    def test_skip_create(self):
+        out = self.call_command("--skip_create", verbosity=0)
+        expected_output = "\n".join([
+            "Deleted 0 global preferences",
+            "Deleted 0 GlobalPreferenceModel preferences",
+            "Deleted 0 UserPreferenceModel preferences",
+        ])
+        self.assertEqual(out, expected_output)

@@ -29,15 +29,25 @@ class Command(BaseCommand):
     help = (
         "Find and delete preferences from database if they don't exist in "
         "registries. Create preferences that are not present in database"
+        "(except when invoked with --skip_create)."
     )
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--skip_create",
+            action="store_true",
+            help="Forces to skip the creation step for missing preferences",
+        )
+
     def handle(self, *args, **options):
+        skip_create = options["skip_create"]
 
         # Create needed preferences
         # Global
-        self.stdout.write("Creating missing global preferences...")
-        manager = global_preferences_registry.manager()
-        manager.all()
+        if not skip_create:
+            self.stdout.write("Creating missing global preferences...")
+            manager = global_preferences_registry.manager()
+            manager.all()
 
         deleted = delete_preferences(GlobalPreferenceModel.objects.all())
         message = "Deleted {deleted} global preferences".format(
@@ -55,6 +65,9 @@ class Command(BaseCommand):
             )
             self.stdout.write(message)
             if not hasattr(preference_model, 'get_instance_model'):
+                continue
+
+            if skip_create:
                 continue
 
             message = (
