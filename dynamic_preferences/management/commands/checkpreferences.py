@@ -3,6 +3,7 @@ from dynamic_preferences.exceptions import NotFoundInRegistry
 from dynamic_preferences.models import GlobalPreferenceModel
 from dynamic_preferences.registries import (global_preferences_registry,
                                             preference_models)
+from dynamic_preferences.settings import preferences_settings
 
 
 def delete_preferences(queryset):
@@ -77,4 +78,4 @@ class Command(BaseCommand):
             )
             self.stdout.write(message)
             for instance in preference_model.get_instance_model().objects.all():
-                instance.preferences.all()
+                getattr(instance, preferences_settings.MANAGER_ATTRIBUTE).all()
