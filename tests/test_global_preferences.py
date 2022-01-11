@@ -4,7 +4,9 @@ from datetime import timezone
 from decimal import Decimal
 
 from datetime import date, timedelta, datetime, time
+from django.apps import apps
 from django.test import LiveServerTestCase, TestCase
+from django.test.utils import override_settings
 from django.urls import reverse
 from django.core.management import call_command
 from django.core.cache import caches
@@ -54,6 +56,17 @@ class TestGlobalPreferences(BaseTest, TestCase):
             u'company__OpenningTime': time(hour=8, minute=0),
             u'user__registration_allowed': False}
         self.assertDictEqual(manager.all(), expected)
+
+    def test_registry_default_preference_model(self):
+        app_config = apps.app_configs["dynamic_preferences"]
+        registry.preference_model = None
+
+        with override_settings(DYNAMIC_PREFERENCES={'ENABLE_GLOBAL_MODEL_AUTO_REGISTRATION': False}):
+            app_config.ready()
+            self.assertIs(registry.preference_model, None)
+
+        app_config.ready()
+        self.assertIs(registry.preference_model, GlobalPreferenceModel)
 
 
 class TestViews(BaseTest, LiveServerTestCase):

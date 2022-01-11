@@ -65,6 +65,10 @@ Also, take some time to look at provided settings if you want to customize the p
             # want to change, but it's here just in case
             'SECTION_KEY_SEPARATOR': '__',
 
+            # Use this to disable auto registration of the GlobalPreferenceModel.
+            # This can be useful to register your own model in the global_preferences_registry.
+            'ENABLE_GLOBAL_MODEL_AUTO_REGISTRATION': True,
+
             # Use this to disable caching of preference. This can be useful to debug things
             'ENABLE_CACHE': True,
 

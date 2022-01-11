@@ -19,6 +19,7 @@ DEFAULTS = {
     'SECTION_KEY_SEPARATOR': '__',
     'REGISTRY_MODULE': 'dynamic_preferences_registry',
     'ADMIN_ENABLE_CHANGELIST_FORM': False,
+    'ENABLE_GLOBAL_MODEL_AUTO_REGISTRATION': True,
     'ENABLE_USER_PREFERENCES': True,
     'ENABLE_CACHE': True,
     'VALIDATE_NAMES': True,
