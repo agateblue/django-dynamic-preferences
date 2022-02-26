@@ -94,7 +94,7 @@ For per-instance preferences it's even easier. You can access each instance pref
 
     from django.contrib.auth import get_user_model
 
-    user = get_user_model().objects.get(username='eliot')
+    user = get_user_model().objects.get(username='bob')
 
     assert user.preferences['discussion__comment_notifications_enabled'] == True
 

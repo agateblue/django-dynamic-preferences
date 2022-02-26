@@ -27,7 +27,7 @@ Changelog
 Contributors:
 
 - @Natureshadow
-- @EliotBerriot
+- @agateblue
 
 1.10 (2020-07-03)
 *****************
@@ -50,7 +50,7 @@ Contributors:
 
 Contributors:
 
-- @EliotBerriot
+- @agateblue
 - @hansegucker
 - @Natureshadow
 - @saemideluxe
@@ -154,7 +154,7 @@ Migration cleanup
 -----------------
 
 This version includes a proper fix for migration issues.
-Full background is available at https://github.com/EliotBerriot/django-dynamic-preferences/pull/142,
+Full background is available at https://github.com/agateblue/django-dynamic-preferences/pull/142,
 but here is the gist of it:
 
 1. Early versions of dynamic_preferences included the user and global preferences models
@@ -289,7 +289,7 @@ Contributors:
 
 This release fix a critical bug in 1.2 that can result in data loss.
 
-Please upgrade to 1.3 as soon as possible and never use 1.2 in production. See `#81 <https://github.com/EliotBerriot/django-dynamic-preferences/pull/81>`_ for more details.
+Please upgrade to 1.3 as soon as possible and never use 1.2 in production. See `#81 <https://github.com/agateblue/django-dynamic-preferences/pull/81>`_ for more details.
 
 1.2 (06-07-2017)
 *******************
@@ -297,7 +297,7 @@ Please upgrade to 1.3 as soon as possible and never use 1.2 in production. See `
 .. warning::
 
     There is a critical bug in this that can result in dataloss. Please upgrade to 1.3 as
-    soon as possible and never use 1.2 in production. See `#81 <https://github.com/EliotBerriot/django-dynamic-preferences/pull/81>`_ for more details.
+    soon as possible and never use 1.2 in production. See `#81 <https://github.com/agateblue/django-dynamic-preferences/pull/81>`_ for more details.
 
 - important performance improvements (less database and cache queries)
 - A brand new `REST API <https://django-dynamic-preferences.readthedocs.io/en/latest/rest_api.html>`_ based on Django REST Framework, to interact with preferences (this is an optionnal, opt-in feature)

@@ -27,9 +27,9 @@ setup(
     version=version,
     description="""Dynamic global and instance settings for your django project""",
     long_description=readme,
-    author="Eliot Berriot",
-    author_email="contact@eliotberriot.com",
-    url="https://github.com/EliotBerriot/django-dynamic-preferences",
+    author="Agate Blue",
+    author_email="me+github@agate.blue",
+    url="https://github.com/agateblue/django-dynamic-preferences",
     packages=["dynamic_preferences"],
     include_package_data=True,
     install_requires=[

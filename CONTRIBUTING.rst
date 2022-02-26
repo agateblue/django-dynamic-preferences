@@ -15,7 +15,7 @@ Types of Contributions
 Report Bugs
 ~~~~~~~~~~~
 
-Report bugs at https://github.com/EliotBerriot/django-dynamic-preferences/issues.
+Report bugs at https://github.com/agateblue/django-dynamic-preferences/issues.
 
 If you are reporting a bug, please include:
 
@@ -49,7 +49,7 @@ articles, and such.
 Submit Feedback
 ~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://github.com/EliotBerriot/django-dynamic-preferences/issues.
+The best way to send feedback is to file an issue at https://github.com/agateblue/django-dynamic-preferences/issues.
 
 If you are proposing a feature:
 
@@ -107,7 +107,7 @@ Before you submit a pull request, check that it meets these guidelines:
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
 3. The pull request should work for Python, 2.7, and 3.4. Check
-   https://travis-ci.org/EliotBerriot/django-dynamic-preferences/pull_requests
+   https://travis-ci.org/agateblue/django-dynamic-preferences/pull_requests
    and make sure that the tests pass for all supported Python versions.
 4. The pull request must target the `develop` branch, since the project relies on `git-flow branching model`_
 

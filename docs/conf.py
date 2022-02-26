@@ -50,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'django-dynamic-preferences'
-copyright = u'2014, Eliot Berriot'
+copyright = u'2014, Agate Blue'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -196,7 +196,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'django-dynamic-preferences.tex', u'django-dynamic-preferences Documentation',
-   u'Eliot Berriot', 'manual'),
+   u'Agate Blue', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -226,7 +226,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'django-dynamic-preferences', u'django-dynamic-preferences Documentation',
-     [u'Eliot Berriot'], 1)
+     [u'Agate Blue'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -240,7 +240,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'django-dynamic-preferences', u'django-dynamic-preferences Documentation',
-   u'Eliot Berriot', 'django-dynamic-preferences', 'One line description of project.',
+   u'Agate Blue', 'django-dynamic-preferences', 'One line description of project.',
    'Miscellaneous'),
 ]
 

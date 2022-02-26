@@ -8,14 +8,14 @@ django-dynamic-preferences
 .. image:: https://readthedocs.org/projects/django-dynamic-preferences/badge/?version=latest
     :target: http://django-dynamic-preferences.readthedocs.org/en/latest/
 
-.. image:: https://travis-ci.org/EliotBerriot/django-dynamic-preferences.svg?branch=master
-    :target: https://travis-ci.org/EliotBerriot/django-dynamic-preferences
+.. image:: https://travis-ci.org/agateblue/django-dynamic-preferences.svg?branch=master
+    :target: https://travis-ci.org/agateblue/django-dynamic-preferences
 
-.. image:: https://travis-ci.org/EliotBerriot/django-dynamic-preferences.svg?branch=develop
-    :target: https://travis-ci.org/EliotBerriot/django-dynamic-preferences
+.. image:: https://travis-ci.org/agateblue/django-dynamic-preferences.svg?branch=develop
+    :target: https://travis-ci.org/agateblue/django-dynamic-preferences
 
-.. image:: https://img.shields.io/codecov/c/github/EliotBerriot/django-dynamic-preferences/master.svg
-    :target: https://codecov.io/github/EliotBerriot/django-dynamic-preferences?branch=master
+.. image:: https://img.shields.io/codecov/c/github/agateblue/django-dynamic-preferences/master.svg
+    :target: https://codecov.io/github/agateblue/django-dynamic-preferences?branch=master
 
 .. image:: https://opencollective.com/django-dynamic-preferences/backers/badge.svg
     :alt: Backers on Open Collective
@@ -30,7 +30,7 @@ django-dynamic-preferences
 .. warning::
 
     There is a critical bug in version 1.2 that can result in dataloss. Please upgrade to 1.3 as
-    soon as possible and do not use 1.2 in production. See `#81 <https://github.com/EliotBerriot/django-dynamic-preferences/pull/81>`_ for more details.
+    soon as possible and do not use 1.2 in production. See `#81 <https://github.com/agateblue/django-dynamic-preferences/pull/81>`_ for more details.
 
 Dynamic-preferences is a Django app, BSD-licensed, designed to help you manage your project settings. While most of the time,
 a `settings.py` file is sufficient, there are some situations where you need something more flexible such as:

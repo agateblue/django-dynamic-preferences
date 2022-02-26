@@ -35,7 +35,7 @@ If you're still interested, head over :doc:`installation`.
 
 .. warning::
     There is a critical bug in version 1.2 that can result in dataloss. Please upgrade to 1.3 as
-    soon as possible and do not use 1.2 in production. See `#81 <https://github.com/EliotBerriot/django-dynamic-preferences/pull/81>`_ for more details.
+    soon as possible and do not use 1.2 in production. See `#81 <https://github.com/agateblue/django-dynamic-preferences/pull/81>`_ for more details.
 
 Contents:
 

@@ -14,5 +14,5 @@ class Migration(migrations.Migration):
         ('dynamic_preferences', '0003_auto_20151223_1407'),
     ]
 
-    # cf https://github.com/EliotBerriot/django-dynamic-preferences/pull/142
+    # cf https://github.com/agateblue/django-dynamic-preferences/pull/142
     operations = []
