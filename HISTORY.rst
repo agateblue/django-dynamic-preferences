@@ -3,6 +3,18 @@
 Changelog
 =========
 
+1.12.0 (2022-02-26)
+*******************
+
+- Add ENABLE_GLOBAL_MODEL_AUTO_REGISTRATION setting (#259)
+- fix: checkpreferences command failed if MANAGER_ATTRIBUTE is changed (#258)
+- Allow to skip preference creation when checkpreferences is invoked (#257)
+- Use default django cache timeoout (#253)
+- Fix signal handler doc (#250)
+- Added htmlcov in .gitignore (#251)
+- Use stdout in checkpreferences (#252)
+- MAINT:dynamic_preferences serializers.py  - Exception handling for class ModelMultipleSerializer; types.py - handle queryset in api_reprs of ModelChoicePreference (#243)
+
 1.11.0 (2021-10-09)
 *******************
 
