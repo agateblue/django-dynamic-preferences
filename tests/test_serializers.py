@@ -63,6 +63,8 @@ class TestSerializers(TestCase):
 
         self.assertEqual(s.serialize(1.0), "1.0")
         self.assertEqual(s.serialize(-1.0), "-1.0")
+        self.assertEqual(s.serialize(1), "1.0")
+        self.assertEqual(s.serialize(-1), "-1.0")
         self.assertEqual(s.serialize(-666.6), "-666.6")
         self.assertEqual(s.serialize(666.6), "666.6")
 
