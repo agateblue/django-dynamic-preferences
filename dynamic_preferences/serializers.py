@@ -159,9 +159,9 @@ class FloatSerializer(BaseSerializer):
 
     @classmethod
     def clean_to_db_value(cls, value):
-        if not isinstance(value, float):
-            raise cls.exception('FloatSerializer can only serialize Float instances')
-        return value
+        if not isinstance(value, (int, float)):
+            raise cls.exception('FloatSerializer can only serialize float or int values')
+        return float(value)
 
     @classmethod
     def to_python(cls, value, **kwargs):
