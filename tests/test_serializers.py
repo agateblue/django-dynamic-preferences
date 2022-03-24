@@ -6,7 +6,7 @@ from django.test import TestCase, override_settings
 from django.template import defaultfilters
 
 from dynamic_preferences import serializers
-from .test_app.models import BlogEntry
+from .test_app.models import BlogEntry, BlogEntryWithNonIntPk
 
 
 class TestSerializers(TestCase):
@@ -169,7 +169,7 @@ class TestSerializers(TestCase):
 
         with self.assertRaises(s.exception):
             s.deserialize('Invalid date string')
-            
+
     def test_datetime_serialization(self):
         s = serializers.DateTimeSerializer
 
@@ -239,6 +239,11 @@ class TestModelSerializers(TestCase):
             BlogEntry(title='This is a test', content='Hello World'),
             BlogEntry(title='This is only a test', content='Hello World'),
         ])
+        BlogEntryWithNonIntPk.objects.bulk_create([
+            BlogEntryWithNonIntPk(title='This is a test', content='Hello World'),
+            BlogEntryWithNonIntPk(title='This is only a test', content='Hello World'),
+
+        ])
 
     def test_model_multiple_serialization(self):
         s = serializers.ModelMultipleSerializer(BlogEntry)
@@ -250,11 +255,32 @@ class TestModelSerializers(TestCase):
         s = serializers.ModelMultipleSerializer(BlogEntry)
         blog_entries = BlogEntry.objects.all()
         pks = s.separator.join(map(str, sorted(list(blog_entries.values_list('pk', flat=True)))))
-
         self.assertEqual(list(s.deserialize(pks)), list(blog_entries))
 
     def test_model_multiple_single_serialization(self):
         s = serializers.ModelMultipleSerializer(BlogEntry)
         blog_entry = BlogEntry.objects.all().first()
+
+        self.assertEqual(s.serialize(blog_entry), s.separator.join(map(str, [blog_entry.pk])))
+
+
+    def test_model_multiple_serialization_with_non_int_pk(self):
+        s = serializers.ModelMultipleSerializer(BlogEntryWithNonIntPk)
+        blog_entries = BlogEntryWithNonIntPk.objects.all()
+
+        self.assertEqual(s.serialize(blog_entries), s.separator.join(map(str, sorted(list(blog_entries.values_list('pk', flat=True))))))
+
+    def test_model_multiple_deserialization_with_non_int_pk(self):
+        s = serializers.ModelMultipleSerializer(BlogEntryWithNonIntPk)
+        blog_entries = BlogEntryWithNonIntPk.objects.all()
+        pks = s.separator.join(map(str, sorted(list(blog_entries.values_list('pk', flat=True)))))
+
+        deserialized_ids = sorted([instance.pk for instance in s.deserialize(pks)])
+        blog_entries_ids = sorted([entry.pk for entry in blog_entries])
+        self.assertEqual(deserialized_ids, blog_entries_ids)
+
+    def test_model_multiple_single_serialization_with_non_int_pk(self):
+        s = serializers.ModelMultipleSerializer(BlogEntryWithNonIntPk)
+        blog_entry = BlogEntryWithNonIntPk.objects.all().first()
 
         self.assertEqual(s.serialize(blog_entry), s.separator.join(map(str, [blog_entry.pk])))
