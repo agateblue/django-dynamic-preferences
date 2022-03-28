@@ -1,56 +1,37 @@
 from __future__ import unicode_literals
+import pytest
 
-from django.test import TestCase
 from django.contrib.auth.models import User
-from django.core.cache import caches
 
 from dynamic_preferences.registries import global_preferences_registry
 from dynamic_preferences.models import GlobalPreferenceModel
 from dynamic_preferences.users.models import UserPreferenceModel
 
 
-class BaseTest(object):
+def test_quickstart(henri):
+    global_preferences = global_preferences_registry.manager()
 
-    def tearDown(self):
-        caches['default'].clear()
+    assert global_preferences["user__registration_allowed"] is False
 
+    global_preferences["user__registration_allowed"] = True
 
-class TestTutorial(BaseTest, TestCase):
+    assert global_preferences["user__registration_allowed"] is True
+    assert (
+        GlobalPreferenceModel.objects.get(
+            section="user", name="registration_allowed"
+        ).value
+        is True
+    )
 
-    """
-    Test everything from the tutorial
-    """
+    assert henri.preferences["misc__favourite_colour"] == "Green"
 
-    def setUp(self):
-        self.henri = User(
-            username="henri", password="test", email="henri@henri.com")
-        self.henri.save()
+    henri.preferences["misc__favourite_colour"] = "Blue"
 
-    def test_quickstart(self):
-        global_preferences = global_preferences_registry.manager()
+    assert henri.preferences["misc__favourite_colour"] == "Blue"
 
-        self.assertFalse(global_preferences['user__registration_allowed'])
-
-        global_preferences['user__registration_allowed'] = True
-
-        self.assertTrue(global_preferences['user__registration_allowed'])
-        self.assertTrue(
-            GlobalPreferenceModel.objects.get(
-                section="user", name="registration_allowed").value)
-
-        self.assertEqual(
-            self.henri.preferences['misc__favourite_colour'],
-            'Green')
-
-        self.henri.preferences['misc__favourite_colour'] = 'Blue'
-
-        self.assertEqual(
-            self.henri.preferences['misc__favourite_colour'],
-            'Blue')
-
-        self.assertEqual(
-            UserPreferenceModel.objects.get(
-                section="misc",
-                name="favourite_colour",
-                instance=self.henri).value,
-            'Blue')
+    assert (
+        UserPreferenceModel.objects.get(
+            section="misc", name="favourite_colour", instance=henri
+        ).value
+        == "Blue"
+    )

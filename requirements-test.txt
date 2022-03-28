@@ -10,3 +10,4 @@ pytest-cov
 pytest-django
 pytest-sugar
 django-nose
+ipdb
