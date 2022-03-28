@@ -248,8 +248,8 @@ class ModelMultipleSerializer(ModelSerializer):
 
         try:
             pks = value.split(",")
-            pks = [int(i) for i in pks]
-            return self.model.objects.filter(pk__in=pks)    
+            pks = [int(i) if str(i).isdigit() else str(i) for i in pks]
+            return self.model.objects.filter(pk__in=pks)
         except:
             raise self.exception("Array {0} cannot be converted to int".format(value))
 
