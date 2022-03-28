@@ -72,6 +72,9 @@ Also, take some time to look at provided settings if you want to customize the p
             # Use this to disable caching of preference. This can be useful to debug things
             'ENABLE_CACHE': True,
 
+            # Use this to select which chache should be used to cache preferences. Defaults to default.
+            'CACHE_NAME': 'default',
+
             # Use this to disable checking preferences names. This can be useful to debug things
             'VALIDATE_NAMES': True,
         }

@@ -27,7 +27,7 @@ class PreferencesManager(Mapping):
     @property
     def cache(self):
         from django.core.cache import caches
-        return caches['default']
+        return caches[preferences_settings.CACHE_NAME]
 
     def __getitem__(self, key):
         return self.get(key)

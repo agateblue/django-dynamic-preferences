@@ -22,6 +22,7 @@ DEFAULTS = {
     'ENABLE_GLOBAL_MODEL_AUTO_REGISTRATION': True,
     'ENABLE_USER_PREFERENCES': True,
     'ENABLE_CACHE': True,
+    'CACHE_NAME': 'default',
     'VALIDATE_NAMES': True,
     'FILE_PREFERENCE_UPLOAD_DIR': 'dynamic_preferences',
     # this will be used to cache empty values, since some cache backends
