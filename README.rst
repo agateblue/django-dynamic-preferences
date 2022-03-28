@@ -8,14 +8,8 @@ django-dynamic-preferences
 .. image:: https://readthedocs.org/projects/django-dynamic-preferences/badge/?version=latest
     :target: http://django-dynamic-preferences.readthedocs.org/en/latest/
 
-.. image:: https://travis-ci.org/agateblue/django-dynamic-preferences.svg?branch=master
-    :target: https://travis-ci.org/agateblue/django-dynamic-preferences
-
-.. image:: https://travis-ci.org/agateblue/django-dynamic-preferences.svg?branch=develop
-    :target: https://travis-ci.org/agateblue/django-dynamic-preferences
-
-.. image:: https://img.shields.io/codecov/c/github/agateblue/django-dynamic-preferences/master.svg
-    :target: https://codecov.io/github/agateblue/django-dynamic-preferences?branch=master
+.. image:: https://github.com/agateblue/django-dynamic-preferences/actions/workflows/tests.yml/badge.svg
+    :target: https://github.com/agateblue/django-dynamic-preferences/actions/workflows/tests.yml
 
 .. image:: https://opencollective.com/django-dynamic-preferences/backers/badge.svg
     :alt: Backers on Open Collective
@@ -24,8 +18,6 @@ django-dynamic-preferences
 .. image:: https://opencollective.com/django-dynamic-preferences/sponsors/badge.svg
     :alt: Sponsors on Open Collective
     :target: #sponsors
-
-
 
 .. warning::
 
