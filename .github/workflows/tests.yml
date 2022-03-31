@@ -1,6 +1,11 @@
 name: Run tests with tox
 
-on: [push, pull_request]
+on: 
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
 
 
 jobs:
