@@ -31,8 +31,8 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: |
-            ~/.cache/pip
-            .tox
+            # ~/.cache/pip
+            # .tox
           key: ${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('requirements-test.txt') }}
 
       - name: Upgrade packaging tools
