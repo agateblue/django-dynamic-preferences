@@ -1,8 +1,3 @@
-from __future__ import unicode_literals
-import pytest
-
-from django.contrib.auth.models import User
-
 from dynamic_preferences.registries import global_preferences_registry
 from dynamic_preferences.models import GlobalPreferenceModel
 from dynamic_preferences.users.models import UserPreferenceModel

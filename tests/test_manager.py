@@ -1,8 +1,4 @@
-from __future__ import unicode_literals
-from django.test import TestCase
-from django.core.cache import caches
 from django.urls import reverse
-from django.contrib.auth.models import User
 
 from dynamic_preferences.registries import global_preferences_registry as registry
 from dynamic_preferences.models import GlobalPreferenceModel
@@ -72,7 +68,9 @@ def test_invalidates_cache_when_saving_from_admin(admin_client):
     assert manager.cache.get(key) == "reset1"
     assert manager.all()["test__TestGlobal1"] == "reset1"
 
-    response = admin_client.post(url, {"raw_value": "reset2"})
+    response = admin_client.post(url, {"raw_value": "reset2"}, follow=True)
+
+    assert response.status_code == 200
 
     assert manager.cache.get(key) == "reset2"
     assert manager.all()["test__TestGlobal1"] == "reset2"

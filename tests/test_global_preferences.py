@@ -1,19 +1,10 @@
-from __future__ import unicode_literals
-
-import pytest
-
-
 from datetime import timezone
 from decimal import Decimal
 
 from datetime import date, timedelta, datetime, time
 from django.apps import apps
-from django.test import LiveServerTestCase, TestCase
-from django.test.utils import override_settings
 from django.urls import reverse
 from django.core.management import call_command
-from django.core.cache import caches
-from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.timezone import make_aware
 
@@ -164,7 +155,7 @@ def test_preference_are_updated_on_form_submission(admin_client):
         "exam__duration": timedelta(hours=5),
         "company__OpenningTime": time(hour=8, minute=0),
     }
-    response = admin_client.post(url, data)
+    admin_client.post(url, data)
     for key, expected_value in data.items():
         try:
             section, name = key.split("__")
@@ -189,7 +180,9 @@ def test_preference_are_updated_on_form_submission_by_section(admin_client):
             "user__registration_allowed": True,
             "user__items_per_page": 12,
         },
+        follow=True,
     )
+    assert response.status_code == 200
     assert (
         GlobalPreferenceModel.objects.get(section="user", name="max_users").value == 95
     )
@@ -218,8 +211,9 @@ def test_file_preference(admin_client):
     logo = SimpleUploadedFile("logo.png", content, content_type="image/png")
     url = reverse("dynamic_preferences:global.section", kwargs={"section": "blog"})
     response = admin_client.post(
-        url, {"blog__featured_entry": blog_entry.pk, "blog__logo": logo}
+        url, {"blog__featured_entry": blog_entry.pk, "blog__logo": logo}, follow=True
     )
+    assert response.status_code == 200
     assert (
         GlobalPreferenceModel.objects.get(section="blog", name="featured_entry").value
         == blog_entry

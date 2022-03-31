@@ -1,9 +1,3 @@
-from __future__ import unicode_literals
-from django.test import TestCase
-from django.test.utils import override_settings
-from django.contrib.auth.models import User
-from django.core.cache import caches
-
 import pytest
 
 from dynamic_preferences.registries import (
@@ -75,11 +69,11 @@ def test_preferences_manager_set(db):
 def test_can_cache_single_preference(db, django_assert_num_queries):
 
     manager = global_preferences_registry.manager()
-    v = manager["no_section"]
+    manager["no_section"]
     with django_assert_num_queries(0):
-        v = manager["no_section"]
-        v = manager["no_section"]
-        v = manager["no_section"]
+        manager["no_section"]
+        manager["no_section"]
+        manager["no_section"]
 
 
 def test_can_bypass_cache_in_get(db, settings, django_assert_num_queries):
@@ -108,7 +102,7 @@ def test_can_bypass_cache_in_get_all(db, settings):
 
 
 def test_can_cache_all_preferences(db, django_assert_num_queries):
-    blog_entry = BlogEntry.objects.create(title="test", content="test")
+    BlogEntry.objects.create(title="test", content="test")
     manager = global_preferences_registry.manager()
     manager.all()
     with django_assert_num_queries(3):
@@ -175,12 +169,12 @@ def test_can_get_to_string_notation(db):
 
 def test_preference_requires_default_value():
     with pytest.raises(exceptions.MissingDefault):
-        preference = prefs.NoDefault()
+        prefs.NoDefault()
 
 
 def test_modelchoicepreference_requires_model_value():
     with pytest.raises(exceptions.MissingModel):
-        preference = prefs.NoModel()
+        prefs.NoModel()
 
 
 def test_get_field_uses_field_kwargs():

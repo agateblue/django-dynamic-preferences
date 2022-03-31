@@ -4,13 +4,9 @@ import pytest
 
 from datetime import date, timedelta, datetime, time
 from django import forms
-from django.test import TestCase
 from django.db.models import signals
-from django.test.utils import override_settings
-from django.core.cache import caches
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
-from django.contrib.auth.models import User
 
 from dynamic_preferences.models import GlobalPreferenceModel
 from dynamic_preferences.settings import preferences_settings
@@ -74,7 +70,7 @@ def test_boolean_field_class_instantiation(no_validate_names):
         default = False
 
     preference = P()
-    assert preference.field.initial == False
+    assert preference.field.initial is False
 
 
 def test_char_field_class_instantiation(no_validate_names):
@@ -204,7 +200,6 @@ def test_file_preference_conflicting_file_names(db):
         "test_file_c95d02ef-0e5d-4d36-98c0-1b54505860d0.txt",
         "hello world 2".encode("utf-8"),
     )
-    p = global_preferences_registry.get(section="blog", name="logo")
     manager = global_preferences_registry.manager()
 
     manager["blog__logo"] = f

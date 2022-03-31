@@ -1,13 +1,13 @@
-from dynamic_preferences.types import *
+from dynamic_preferences import types
 
 # For testing field instantiation
 
 
-class TestBooleanPreference(BooleanPreference):
+class TestBooleanPreference(types.BooleanPreference):
     pass
 
 
-class TestStringPreference(StringPreference):
+class TestStringPreference(types.StringPreference):
 
     field_attributes = {"initial": "hello world!"}
 

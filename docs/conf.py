@@ -50,8 +50,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"django-dynamic-preferences"
-copyright = u"2014, Agate Blue"
+project = "django-dynamic-preferences"
+copyright = "2014, Agate Blue"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -197,8 +197,8 @@ latex_documents = [
     (
         "index",
         "django-dynamic-preferences.tex",
-        u"django-dynamic-preferences Documentation",
-        u"Agate Blue",
+        "django-dynamic-preferences Documentation",
+        "Agate Blue",
         "manual",
     ),
 ]
@@ -232,8 +232,8 @@ man_pages = [
     (
         "index",
         "django-dynamic-preferences",
-        u"django-dynamic-preferences Documentation",
-        [u"Agate Blue"],
+        "django-dynamic-preferences Documentation",
+        ["Agate Blue"],
         1,
     )
 ]
@@ -251,8 +251,8 @@ texinfo_documents = [
     (
         "index",
         "django-dynamic-preferences",
-        u"django-dynamic-preferences Documentation",
-        u"Agate Blue",
+        "django-dynamic-preferences Documentation",
+        "Agate Blue",
         "django-dynamic-preferences",
         "One line description of project.",
         "Miscellaneous",
