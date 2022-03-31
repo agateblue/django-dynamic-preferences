@@ -1,8 +1,13 @@
 import pytest
 
 from django.core import cache as django_cache
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
+
+
+@pytest.fixture
+def user_model(db):
+    return get_user_model()
 
 @pytest.fixture(autouse=True)
 def cache():
@@ -20,15 +25,15 @@ def assert_redirect():
 
 
 @pytest.fixture
-def fake_user(db):
-    return User.objects.create_user(
+def fake_user(user_model):
+    return user_model.objects.create_user(
         username="test", password="test", email="test@test.com"
     )
 
 
 @pytest.fixture
-def fake_admin(db):
-    return User.objects.create_user(
+def fake_admin(user_model):
+    return user_model.objects.create_user(
         username="admin",
         email="admin@admin.com",
         password="test",
@@ -50,8 +55,8 @@ def user_client(client, fake_user):
 
 
 @pytest.fixture
-def henri(db):
-    return User.objects.create_user(
+def henri(user_model):
+    return user_model.objects.create_user(
         username="henri", password="test", email="henri@henri.com"
     )
 

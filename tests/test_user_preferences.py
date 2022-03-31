@@ -2,7 +2,6 @@ import json
 import pytest
 
 from django.urls import reverse
-from django.contrib.auth.models import User
 from django.db import IntegrityError
 
 from dynamic_preferences.users.registries import user_preferences_registry as registry
@@ -12,9 +11,9 @@ from dynamic_preferences.managers import PreferencesManager
 from dynamic_preferences.users.forms import user_preference_form_builder
 
 
-def test_adding_user_create_default_preferences(db):
+def test_adding_user_create_default_preferences(user_model):
 
-    u = User.objects.create(username="post_create")
+    u = user_model.objects.create(username="post_create")
 
     assert len(u.preferences) == len(registry.preferences())
 
@@ -125,8 +124,8 @@ def test_can_list_preferences(user_client, fake_user):
         assert pref.preference.identifier() == e["identifier"]
 
 
-def test_can_list_preference_of_requesting_user(fake_user, user_client):
-    second_user = User(
+def test_can_list_preference_of_requesting_user(user_model, fake_user, user_client):
+    second_user = user_model(
         username="user2", email="user2@user.com", is_superuser=True, is_staff=True
     )
     second_user.set_password("test")
