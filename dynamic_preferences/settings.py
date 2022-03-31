@@ -4,9 +4,8 @@
 
 from django.conf import settings
 
-SETTINGS_ATTR = 'DYNAMIC_PREFERENCES'
+SETTINGS_ATTR = "DYNAMIC_PREFERENCES"
 USER_SETTINGS = None
-
 
 
 DEFAULTS = {
@@ -15,19 +14,19 @@ DEFAULTS = {
     # 'SECTIONS_PREFIX': 'sections',
     # 'PREFERENCES_PREFIX': 'preferences',
     # 'PERMISSIONS_PREFIX': 'permissions',
-    'MANAGER_ATTRIBUTE': 'preferences',
-    'SECTION_KEY_SEPARATOR': '__',
-    'REGISTRY_MODULE': 'dynamic_preferences_registry',
-    'ADMIN_ENABLE_CHANGELIST_FORM': False,
-    'ENABLE_GLOBAL_MODEL_AUTO_REGISTRATION': True,
-    'ENABLE_USER_PREFERENCES': True,
-    'ENABLE_CACHE': True,
-    'CACHE_NAME': 'default',
-    'VALIDATE_NAMES': True,
-    'FILE_PREFERENCE_UPLOAD_DIR': 'dynamic_preferences',
+    "MANAGER_ATTRIBUTE": "preferences",
+    "SECTION_KEY_SEPARATOR": "__",
+    "REGISTRY_MODULE": "dynamic_preferences_registry",
+    "ADMIN_ENABLE_CHANGELIST_FORM": False,
+    "ENABLE_GLOBAL_MODEL_AUTO_REGISTRATION": True,
+    "ENABLE_USER_PREFERENCES": True,
+    "ENABLE_CACHE": True,
+    "CACHE_NAME": "default",
+    "VALIDATE_NAMES": True,
+    "FILE_PREFERENCE_UPLOAD_DIR": "dynamic_preferences",
     # this will be used to cache empty values, since some cache backends
     # does not support it on get_many
-    'CACHE_NONE_VALUE': '__dynamic_preferences_empty_value'
+    "CACHE_NONE_VALUE": "__dynamic_preferences_empty_value",
 }
 
 
@@ -42,6 +41,7 @@ class PreferenceSettings(object):
     Any setting with string import paths will be automatically resolved
     and return the class, rather than the string literal.
     """
+
     def __init__(self, defaults=None):
         self.defaults = defaults or DEFAULTS
 
@@ -62,7 +62,7 @@ class PreferenceSettings(object):
 
         # Cache the result
         # We sometimes need to bypass that, like in tests
-        if getattr(settings, 'CACHE_DYNAMIC_PREFERENCES_SETTINGS', True):
+        if getattr(settings, "CACHE_DYNAMIC_PREFERENCES_SETTINGS", True):
             setattr(self, attr, val)
         return val
 

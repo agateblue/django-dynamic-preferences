@@ -7,12 +7,11 @@ from .registries import user_preferences_registry
 
 
 class UserPreferencesConfig(AppConfig):
-    name = 'dynamic_preferences.users'
+    name = "dynamic_preferences.users"
     verbose_name = _("Preferences - Users")
-    label = 'dynamic_preferences_users'
+    label = "dynamic_preferences_users"
 
     def ready(self):
-        UserPreferenceModel = self.get_model('UserPreferenceModel')
+        UserPreferenceModel = self.get_model("UserPreferenceModel")
 
-        preference_models.register(
-            UserPreferenceModel, user_preferences_registry)
+        preference_models.register(UserPreferenceModel, user_preferences_registry)

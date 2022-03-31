@@ -1,5 +1,6 @@
 from django.core.exceptions import FieldDoesNotExist
 from django.apps import apps
+
 # import the logging library
 import warnings
 import logging
@@ -25,6 +26,7 @@ class MissingPreference(StringPreference):
     This can happen for example when you delete a preference in the code,
     but don't remove the corresponding entries in database
     """
+
     pass
 
 
@@ -36,24 +38,25 @@ class PreferenceModelsRegistry(persisting_theory.Registry):
     def register(self, preference_model, preference_registry):
         self[preference_model] = preference_registry
         preference_registry.preference_model = preference_model
-        if not hasattr(preference_model, 'registry'):
-            setattr(preference_model, 'registry', preference_registry)
+        if not hasattr(preference_model, "registry"):
+            setattr(preference_model, "registry", preference_registry)
         self.attach_manager(preference_model, preference_registry)
 
     def attach_manager(self, model, registry):
-        if not hasattr(model, 'instance'):
+        if not hasattr(model, "instance"):
             return
 
         def instance_getter(self):
             return registry.manager(instance=self)
 
         getter = property(instance_getter)
-        instance_class = model._meta.get_field('instance').remote_field.model
+        instance_class = model._meta.get_field("instance").remote_field.model
         setattr(instance_class, preferences_settings.MANAGER_ATTRIBUTE, getter)
 
     def get_by_preference(self, preference):
         return self[
-            preference._meta.proxy_for_model if preference._meta.proxy
+            preference._meta.proxy_for_model
+            if preference._meta.proxy
             else preference.__class__
         ]
 
@@ -63,7 +66,7 @@ class PreferenceModelsRegistry(persisting_theory.Registry):
         # and check if instance is an instance of this class
         for model, registry in self.items():
             try:
-                instance_class = model._meta.get_field('instance').remote_field.model
+                instance_class = model._meta.get_field("instance").remote_field.model
                 if isinstance(instance, instance_class):
                     return registry
 
@@ -127,19 +130,20 @@ class PreferenceRegistry(persisting_theory.Registry):
         any registered preferences, see #41
         """
         message = (
-            'Creating a fallback preference with ' +
-            'section "{}" and name "{}".' +
-            'This means you have preferences in your database that ' +
-            'don\'t match any registered preference. ' +
-            'If you want to delete these entries, please refer to the ' +
-            'documentation: https://django-dynamic-preferences.readthedocs.io/en/latest/lifecycle.html')  # NOQA
+            "Creating a fallback preference with "
+            + 'section "{}" and name "{}".'
+            + "This means you have preferences in your database that "
+            + "don't match any registered preference. "
+            + "If you want to delete these entries, please refer to the "
+            + "documentation: https://django-dynamic-preferences.readthedocs.io/en/latest/lifecycle.html"
+        )  # NOQA
         warnings.warn(message.format(section_name, pref_name))
 
         class Fallback(MissingPreference):
             section = Section(name=section_name) if section_name else None
             name = pref_name
-            default = ''
-            help_text = 'Obsolete: missing in registry'
+            default = ""
+            help_text = "Obsolete: missing in registry"
 
         return Fallback()
 
@@ -157,8 +161,7 @@ class PreferenceRegistry(persisting_theory.Registry):
         """
         # try dotted notation
         try:
-            _section, name = name.split(
-                preferences_settings.SECTION_KEY_SEPARATOR)
+            _section, name = name.split(preferences_settings.SECTION_KEY_SEPARATOR)
             return self[_section][name]
 
         except ValueError:
@@ -171,8 +174,11 @@ class PreferenceRegistry(persisting_theory.Registry):
         except KeyError:
             if fallback:
                 return self._fallback(section_name=section, pref_name=name)
-            raise NotFoundInRegistry("No such preference in {0} with section={1} and name={2}".format(
-                self.__class__.__name__, section, name))
+            raise NotFoundInRegistry(
+                "No such preference in {0} with section={1} and name={2}".format(
+                    self.__class__.__name__, section, name
+                )
+            )
 
     def get_by_name(self, name):
         """Get a preference by name only (no section)"""
@@ -180,8 +186,11 @@ class PreferenceRegistry(persisting_theory.Registry):
             for preference in section.values():
                 if preference.name == name:
                     return preference
-        raise NotFoundInRegistry("No such preference in {0} with name={1}".format(
-            self.__class__.__name__, name))
+        raise NotFoundInRegistry(
+            "No such preference in {0} with name={1}".format(
+                self.__class__.__name__, name
+            )
+        )
 
     def manager(self, **kwargs):
         """Return a preference manager that can be used to retrieve preference values"""
@@ -216,9 +225,10 @@ class PerInstancePreferenceRegistry(PreferenceRegistry):
 
 
 class GlobalPreferenceRegistry(PreferenceRegistry):
-    section_url_namespace = 'dynamic_preferences:global.section'
+    section_url_namespace = "dynamic_preferences:global.section"
 
     def populate(self, **kwargs):
         return self.models(**kwargs)
+
 
 global_preferences_registry = GlobalPreferenceRegistry()

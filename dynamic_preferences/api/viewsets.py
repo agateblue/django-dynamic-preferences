@@ -16,10 +16,11 @@ from . import serializers
 
 
 class PreferenceViewSet(
-        mixins.UpdateModelMixin,
-        mixins.ListModelMixin,
-        mixins.RetrieveModelMixin,
-        viewsets.GenericViewSet):
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
     """
     - list preferences
     - detail given preference
@@ -35,7 +36,7 @@ class PreferenceViewSet(
         self.init_preferences()
         queryset = super(PreferenceViewSet, self).get_queryset()
 
-        section = self.request.query_params.get('section')
+        section = self.request.query_params.get("section")
         if section:
             queryset = queryset.filter(section=section)
 
@@ -59,7 +60,7 @@ class PreferenceViewSet(
         lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
         identifier = self.kwargs[lookup_url_kwarg]
         section, name = self.get_section_and_name(identifier)
-        filter_kwargs = {'section': section, 'name': name}
+        filter_kwargs = {"section": section, "name": name}
         obj = get_object_or_404(queryset, **filter_kwargs)
 
         # May raise a permission denied
@@ -69,15 +70,14 @@ class PreferenceViewSet(
 
     def get_section_and_name(self, identifier):
         try:
-            section, name = identifier.split(
-                preferences_settings.SECTION_KEY_SEPARATOR)
+            section, name = identifier.split(preferences_settings.SECTION_KEY_SEPARATOR)
         except ValueError:
             # no section given
             section, name = None, identifier
 
         return section, name
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     @transaction.atomic
     def bulk(self, request, *args, **kwargs):
         """
@@ -95,22 +95,18 @@ class PreferenceViewSet(
         try:
             for identifier, value in payload.items():
                 try:
-                    preferences.append(
-                        self.queryset.model.registry.get(identifier))
+                    preferences.append(self.queryset.model.registry.get(identifier))
                 except exceptions.NotFoundInRegistry:
-                    errors[identifier] = 'invalid preference'
+                    errors[identifier] = "invalid preference"
         except (TypeError, AttributeError):
-            return Response('invalid payload', status=400)
+            return Response("invalid payload", status=400)
 
         if errors:
             return Response(errors, status=400)
 
         # now, we generate an optimized Q objects to retrieve all matching
         # preferences at once from database
-        queries = [
-            Q(section=p.section.name, name=p.name)
-            for p in preferences
-        ]
+        queries = [Q(section=p.section.name, name=p.name) for p in preferences]
 
         query = queries[0]
         for q in queries[1:]:
@@ -121,7 +117,8 @@ class PreferenceViewSet(
         serializer_objects = []
         for p in preferences_qs:
             s = self.get_serializer_class()(
-                p, data={'value': payload[p.preference.identifier()]})
+                p, data={"value": payload[p.preference.identifier()]}
+            )
             serializer_objects.append(s)
 
         validation_errors = {}
@@ -146,13 +143,13 @@ class PreferenceViewSet(
 
 class GlobalPreferencePermission(permissions.DjangoModelPermissions):
     perms_map = {
-        'GET': ['%(app_label)s.change_%(model_name)s'],
-        'OPTIONS': ['%(app_label)s.change_%(model_name)s'],
-        'HEAD': ['%(app_label)s.change_%(model_name)s'],
-        'POST': ['%(app_label)s.change_%(model_name)s'],
-        'PUT': ['%(app_label)s.change_%(model_name)s'],
-        'PATCH': ['%(app_label)s.change_%(model_name)s'],
-        'DELETE': ['%(app_label)s.change_%(model_name)s'],
+        "GET": ["%(app_label)s.change_%(model_name)s"],
+        "OPTIONS": ["%(app_label)s.change_%(model_name)s"],
+        "HEAD": ["%(app_label)s.change_%(model_name)s"],
+        "POST": ["%(app_label)s.change_%(model_name)s"],
+        "PUT": ["%(app_label)s.change_%(model_name)s"],
+        "PATCH": ["%(app_label)s.change_%(model_name)s"],
+        "DELETE": ["%(app_label)s.change_%(model_name)s"],
     }
 
 
@@ -169,8 +166,10 @@ class PerInstancePreferenceViewSet(PreferenceViewSet):
         )
 
     def get_queryset(self):
-        return super(PerInstancePreferenceViewSet, self).get_queryset().filter(
-            instance=self.get_related_instance()
+        return (
+            super(PerInstancePreferenceViewSet, self)
+            .get_queryset()
+            .filter(instance=self.get_related_instance())
         )
 
     def get_related_instance(self):

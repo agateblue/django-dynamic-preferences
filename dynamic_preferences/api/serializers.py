@@ -7,9 +7,7 @@ class PreferenceValueField(serializers.Field):
         return o
 
     def to_representation(self, o):
-        return o.preference.api_repr(
-            o.value
-        )
+        return o.preference.api_repr(o.value)
 
     def to_internal_value(self, data):
         return data
@@ -29,25 +27,23 @@ class PreferenceSerializer(serializers.Serializer):
 
     class Meta:
         fields = [
-            'default',
-            'value',
-            'verbose_name',
-            'help_text',
+            "default",
+            "value",
+            "verbose_name",
+            "help_text",
         ]
 
     def get_default(self, o):
-        return o.preference.api_repr(
-            o.preference.get('default')
-        )
+        return o.preference.api_repr(o.preference.get("default"))
 
     def get_verbose_name(self, o):
-        return o.preference.get('verbose_name')
+        return o.preference.get("verbose_name")
 
     def get_identifier(self, o):
         return o.preference.identifier()
 
     def get_help_text(self, o):
-        return o.preference.get('help_text')
+        return o.preference.get("help_text")
 
     def get_additional_data(self, o):
         return o.preference.get_api_additional_data()
@@ -66,7 +62,7 @@ class PreferenceSerializer(serializers.Serializer):
         return value
 
     def update(self, instance, validated_data):
-        instance.value = validated_data['value']
+        instance.value = validated_data["value"]
         instance.save()
         return instance
 

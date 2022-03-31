@@ -22,13 +22,17 @@ class InvalidNameError(ValueError):
 
 def check_name(name, obj):
     error = None
-    if not re.match('^\w+$', name):
-        error = 'Non-alphanumeric / underscore characters are forbidden in section and preferences names'
+    if not re.match("^\w+$", name):
+        error = "Non-alphanumeric / underscore characters are forbidden in section and preferences names"
     if preferences_settings.SECTION_KEY_SEPARATOR in name:
-        error = 'Sequence "{0}" is forbidden in section and preferences name, since it is used to access values via managers'.format(preferences_settings.SECTION_KEY_SEPARATOR)
+        error = 'Sequence "{0}" is forbidden in section and preferences name, since it is used to access values via managers'.format(
+            preferences_settings.SECTION_KEY_SEPARATOR
+        )
 
     if error:
-        full_message = 'Invalid name "{0}" while instanciating {1} object: {2}'.format(name, obj, error)
+        full_message = 'Invalid name "{0}" while instanciating {1} object: {2}'.format(
+            name, obj, error
+        )
         raise InvalidNameError(full_message)
 
 
@@ -41,7 +45,7 @@ class Section(object):
 
     def __str__(self):
         if not self.verbose_name:
-            return ''
+            return ""
         return str(self.verbose_name)
 
 
@@ -65,18 +69,21 @@ class AbstractPreference(object):
     def __init__(self, registry=None):
         if preferences_settings.VALIDATE_NAMES:
             check_name(self.name, self)
-        if self.section and not hasattr(self.section, 'name'):
+        if self.section and not hasattr(self.section, "name"):
             self.section = Section(name=self.section)
-            warnings.warn("Implicit section instanciation is deprecated and "
-                          "will be removed in future versions of django-dynamic-preferences",
-                          DeprecationWarning, stacklevel=2)
+            warnings.warn(
+                "Implicit section instanciation is deprecated and "
+                "will be removed in future versions of django-dynamic-preferences",
+                DeprecationWarning,
+                stacklevel=2,
+            )
 
         self.registry = registry
-        if self.default == UNSET and not getattr(self, 'get_default', None):
+        if self.default == UNSET and not getattr(self, "get_default", None):
             raise MissingDefault
 
     def get(self, attr, default=None):
-        getter = 'get_{0}'.format(attr)
+        getter = "get_{0}".format(attr)
         if hasattr(self, getter):
             return getattr(self, getter)()
         return getattr(self, attr, default)
@@ -92,4 +99,6 @@ class AbstractPreference(object):
 
         if not self.section or not self.section.name:
             return self.name
-        return preferences_settings.SECTION_KEY_SEPARATOR.join([self.section.name, self.name])
+        return preferences_settings.SECTION_KEY_SEPARATOR.join(
+            [self.section.name, self.name]
+        )

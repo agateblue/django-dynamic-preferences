@@ -4,8 +4,11 @@ from .forms import preference_form_builder
 
 
 """Todo : remove these views and use only context processors"""
+
+
 class RegularTemplateView(TemplateView):
     """Used for testing context"""
+
     template_name = "dynamic_preferences/testcontext.html"
 
 
@@ -26,7 +29,7 @@ class PreferenceFormView(FormView):
     template_name = "dynamic_preferences/form.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.section_name = kwargs.get('section', None)
+        self.section_name = kwargs.get("section", None)
         if self.section_name:
             try:
                 self.section = self.registry.section_objects[self.section_name]
@@ -34,19 +37,16 @@ class PreferenceFormView(FormView):
                 raise Http404
         else:
             self.section = None
-        return super(PreferenceFormView, self).dispatch(
-            request, *args, **kwargs)
+        return super(PreferenceFormView, self).dispatch(request, *args, **kwargs)
 
     def get_form_class(self, *args, **kwargs):
-        form_class = preference_form_builder(
-            self.form_class, section=self.section_name)
+        form_class = preference_form_builder(self.form_class, section=self.section_name)
         return form_class
 
     def get_context_data(self, *args, **kwargs):
-        context = super(PreferenceFormView, self).get_context_data(
-            *args, **kwargs)
-        context['registry'] = self.registry
-        context['section'] = self.section
+        context = super(PreferenceFormView, self).get_context_data(*args, **kwargs)
+        context["registry"] = self.registry
+        context["section"] = self.section
 
         return context
 

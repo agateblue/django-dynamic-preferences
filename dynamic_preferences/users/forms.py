@@ -7,14 +7,13 @@ from .registries import user_preferences_registry
 from ..forms import (
     SinglePerInstancePreferenceForm,
     preference_form_builder,
-    PreferenceForm
+    PreferenceForm,
 )
 from ..exceptions import NotFoundInRegistry
 from .models import UserPreferenceModel
 
 
 class UserSinglePreferenceForm(SinglePerInstancePreferenceForm):
-
     class Meta:
         model = UserPreferenceModel
         fields = SinglePerInstancePreferenceForm.Meta.fields
@@ -26,10 +25,8 @@ def user_preference_form_builder(instance, preferences=[], **kwargs):
     :param user: a :py:class:`django.contrib.auth.models.User` instance
     """
     return preference_form_builder(
-        UserPreferenceForm,
-        preferences,
-        instance=instance,
-        **kwargs)
+        UserPreferenceForm, preferences, instance=instance, **kwargs
+    )
 
 
 class UserPreferenceForm(PreferenceForm):
