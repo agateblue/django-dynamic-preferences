@@ -4,7 +4,7 @@ from datetime import timezone
 from decimal import Decimal
 
 from datetime import date, timedelta, datetime, time
-from django.test import TestCase, override_settings
+from django.test import override_settings
 from django.template import defaultfilters
 
 from dynamic_preferences import serializers
@@ -41,10 +41,10 @@ def test_boolean_deserialization():
     s = serializers.BooleanSerializer
 
     for v in s.true:
-        assert s.deserialize(v) == True
+        assert s.deserialize(v) is True
 
     for v in s.false:
-        assert s.deserialize(v) == False
+        assert s.deserialize(v) is False
 
     with pytest.raises(s.exception):
         s.deserialize("I'm a true value")

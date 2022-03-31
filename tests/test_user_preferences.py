@@ -1,11 +1,8 @@
-from __future__ import unicode_literals
 import json
 import pytest
 
-from django.test import LiveServerTestCase, TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-from django.core.cache import caches
 from django.db import IntegrityError
 
 from dynamic_preferences.users.registries import user_preferences_registry as registry
@@ -30,9 +27,9 @@ def test_preference_is_saved_to_database(fake_user):
 
     fake_user.preferences["test__TestUserPref1"] = "new test value"
 
-    test_user_pref1 = UserPreferenceModel.objects.get(
+    assert UserPreferenceModel.objects.filter(
         section="test", name="TestUserPref1", instance=fake_user
-    )
+    ).exists()
 
     assert fake_user.preferences["test__TestUserPref1"] == "new test value"
 
@@ -55,9 +52,9 @@ def test_preference_value_set_to_default(fake_user):
 
     value = fake_user.preferences["test__TestUserPref1"]
     assert pref.default == value
-    instance = UserPreferenceModel.objects.get(
+    assert UserPreferenceModel.objects.filter(
         section="test", name="TestUserPref1", instance=fake_user
-    )
+    ).exists()
 
 
 def test_user_preference_model_manager_to_dict(fake_user):
@@ -124,7 +121,7 @@ def test_can_list_preferences(user_client, fake_user):
 
     for e in payload:
         pref = manager.get_db_pref(section=e["section"], name=e["name"])
-        serializer = serializers.UserPreferenceSerializer(pref)
+        serializers.UserPreferenceSerializer(pref)
         assert pref.preference.identifier() == e["identifier"]
 
 
@@ -156,7 +153,7 @@ def test_can_list_preference_of_requesting_user(fake_user, user_client):
 
     for e in payload:
         pref = manager.get_db_pref(section=e["section"], name=e["name"])
-        serializer = serializers.UserPreferenceSerializer(pref)
+        serializers.UserPreferenceSerializer(pref)
         assert pref.preference.identifier() == e["identifier"]
 
 
@@ -188,7 +185,7 @@ def test_can_update_preference(fake_user, user_client):
 
 def test_can_update_multiple_preferences(fake_user, user_client):
     manager = registry.manager(instance=fake_user)
-    pref = manager.get_db_pref(section="user", name="favorite_vegetable")
+    manager.get_db_pref(section="user", name="favorite_vegetable")
     url = reverse("api:user-bulk")
     payload = {
         "user__favorite_vegetable": "C",

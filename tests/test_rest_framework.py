@@ -1,11 +1,7 @@
-from __future__ import unicode_literals
 import json
 
 from decimal import Decimal
-from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth.models import User
-from django.core.cache import caches
 
 from dynamic_preferences.registries import global_preferences_registry as registry
 from dynamic_preferences.users.registries import (
@@ -110,7 +106,7 @@ def test_can_list_preferences(admin_client):
 
     for e in payload:
         pref = manager.get_db_pref(section=e["section"], name=e["name"])
-        serializer = serializers.GlobalPreferenceSerializer(pref)
+        serializers.GlobalPreferenceSerializer(pref)
         assert pref.preference.identifier() == e["identifier"]
 
 
@@ -172,7 +168,6 @@ def test_can_update_decimal_preference(admin_client):
 
 def test_can_update_multiple_preferences(admin_client):
     manager = registry.manager()
-    pref = manager.get_db_pref(section="user", name="max_users")
     url = reverse("api:global-bulk")
 
     payload = {
@@ -188,7 +183,7 @@ def test_can_update_multiple_preferences(admin_client):
     pref2 = manager.get_db_pref(section="user", name="registration_allowed")
 
     assert pref1.value == 16
-    assert pref2.value == True
+    assert pref2.value is True
 
 
 def test_update_preference_returns_validation_error(admin_client):

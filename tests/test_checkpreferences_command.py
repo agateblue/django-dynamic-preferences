@@ -1,8 +1,6 @@
 from io import StringIO
 
-from django.core.cache import caches
 from django.core.management import call_command
-from django.test import TestCase
 
 
 def call(*args, **kwargs):
