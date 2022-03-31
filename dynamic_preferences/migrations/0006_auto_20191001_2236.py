@@ -6,13 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dynamic_preferences', '0005_auto_20181120_0848'),
+        ("dynamic_preferences", "0005_auto_20181120_0848"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='globalpreferencemodel',
-            name='section',
-            field=models.CharField(blank=True, db_index=True, default=None, max_length=150, null=True, verbose_name='Section Name'),
+            model_name="globalpreferencemodel",
+            name="section",
+            field=models.CharField(
+                blank=True,
+                db_index=True,
+                default=None,
+                max_length=150,
+                null=True,
+                verbose_name="Section Name",
+            ),
         ),
     ]

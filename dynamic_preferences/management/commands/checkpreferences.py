@@ -1,8 +1,10 @@
 from django.core.management.base import BaseCommand
 from dynamic_preferences.exceptions import NotFoundInRegistry
 from dynamic_preferences.models import GlobalPreferenceModel
-from dynamic_preferences.registries import (global_preferences_registry,
-                                            preference_models)
+from dynamic_preferences.registries import (
+    global_preferences_registry,
+    preference_models,
+)
 from dynamic_preferences.settings import preferences_settings
 
 
@@ -17,8 +19,7 @@ def delete_preferences(queryset):
     # preference object, just delete it
     for p in queryset:
         try:
-            p.registry.get(
-                section=p.section, name=p.name, fallback=False)
+            p.registry.get(section=p.section, name=p.name, fallback=False)
         except NotFoundInRegistry:
             p.delete()
             deleted.append(p)
@@ -51,30 +52,24 @@ class Command(BaseCommand):
             manager.all()
 
         deleted = delete_preferences(GlobalPreferenceModel.objects.all())
-        message = "Deleted {deleted} global preferences".format(
-            deleted=len(deleted)
-        )
+        message = "Deleted {deleted} global preferences".format(deleted=len(deleted))
         self.stdout.write(message)
 
         for preference_model, registry in preference_models.items():
             deleted = delete_preferences(preference_model.objects.all())
-            message = (
-                "Deleted {deleted} {model} preferences".format(
-                    deleted=len(deleted),
-                    model=preference_model.__name__,
-                )
+            message = "Deleted {deleted} {model} preferences".format(
+                deleted=len(deleted),
+                model=preference_model.__name__,
             )
             self.stdout.write(message)
-            if not hasattr(preference_model, 'get_instance_model'):
+            if not hasattr(preference_model, "get_instance_model"):
                 continue
 
             if skip_create:
                 continue
 
-            message = (
-                "Creating missing preferences for {model} model...".format(
-                    model=preference_model.get_instance_model().__name__,
-                )
+            message = "Creating missing preferences for {model} model...".format(
+                model=preference_model.get_instance_model().__name__,
             )
             self.stdout.write(message)
             for instance in preference_model.get_instance_model().objects.all():

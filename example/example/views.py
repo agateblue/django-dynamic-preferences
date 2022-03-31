@@ -9,8 +9,12 @@ global_preferences = global_preferences_registry.manager()
 
 
 def myview(request):
-    presentation = global_preferences['general__presentation']
+    presentation = global_preferences["general__presentation"]
 
-    return render(request, 'example.html', {
-        'presentation': presentation,
-    })
+    return render(
+        request,
+        "example.html",
+        {
+            "presentation": presentation,
+        },
+    )

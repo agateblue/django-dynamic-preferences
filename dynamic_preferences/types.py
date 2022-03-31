@@ -64,7 +64,7 @@ class BasePreferenceType(AbstractPreference):
             initial data for form field
             from field_attribute['initial'] or default
         """
-        return self.field_kwargs.get('initial', self.get('default'))
+        return self.field_kwargs.get("initial", self.get("default"))
 
     @property
     def field(self):
@@ -76,7 +76,7 @@ class BasePreferenceType(AbstractPreference):
         return self.setup_field()
 
     def setup_field(self, **kwargs):
-        field_class = self.get('field_class')
+        field_class = self.get("field_class")
         field_kwargs = self.get_field_kwargs()
         field_kwargs.update(kwargs)
         return field_class(**field_kwargs)
@@ -96,13 +96,13 @@ class BasePreferenceType(AbstractPreference):
         - :py:attr:`instance.initial` defined if the initial value
         """
         kwargs = self.field_kwargs.copy()
-        kwargs.setdefault('label', self.get('verbose_name'))
-        kwargs.setdefault('help_text', self.get('help_text'))
-        kwargs.setdefault('widget', self.get('widget'))
-        kwargs.setdefault('required', self.get('required'))
-        kwargs.setdefault('initial', self.initial)
-        kwargs.setdefault('validators', [])
-        kwargs['validators'].append(self.validate)
+        kwargs.setdefault("label", self.get("verbose_name"))
+        kwargs.setdefault("help_text", self.get("help_text"))
+        kwargs.setdefault("widget", self.get("widget"))
+        kwargs.setdefault("required", self.get("required"))
+        kwargs.setdefault("initial", self.initial)
+        kwargs.setdefault("validators", [])
+        kwargs["validators"].append(self.validate)
         return kwargs
 
     def api_repr(self, value):
@@ -124,18 +124,16 @@ class BasePreferenceType(AbstractPreference):
         """
         field = self.setup_field()
         d = {
-            'class': field.__class__.__name__,
-            'widget': {
-                'class': field.widget.__class__.__name__
-            }
+            "class": field.__class__.__name__,
+            "widget": {"class": field.widget.__class__.__name__},
         }
 
         try:
-            d['input_type'] = field.widget.input_type
+            d["input_type"] = field.widget.input_type
         except AttributeError:
             # some widgets, such as Select do not have an input type
             # in django < 1.11
-            d['input_type'] = None
+            d["input_type"] = None
 
         return d
 
@@ -160,6 +158,7 @@ class BooleanPreference(BasePreferenceType):
     """
     A preference type that stores a boolean.
     """
+
     field_class = forms.BooleanField
     serializer = BooleanSerializer
     required = False
@@ -169,8 +168,10 @@ class IntegerPreference(BasePreferenceType):
     """
     A preference type that stores an integer.
     """
+
     field_class = forms.IntegerField
     serializer = IntegerSerializer
+
 
 IntPreference = IntegerPreference
 
@@ -179,6 +180,7 @@ class DecimalPreference(BasePreferenceType):
     """
     A preference type that stores a :py:class:`decimal.Decimal`.
     """
+
     field_class = forms.DecimalField
     serializer = DecimalSerializer
 
@@ -187,6 +189,7 @@ class FloatPreference(BasePreferenceType):
     """
     A preference type that stores a float.
     """
+
     field_class = forms.FloatField
     serializer = FloatSerializer
 
@@ -195,6 +198,7 @@ class StringPreference(BasePreferenceType):
     """
     A preference type that stores a string.
     """
+
     field_class = forms.CharField
     serializer = StringSerializer
 
@@ -203,6 +207,7 @@ class LongStringPreference(StringPreference):
     """
     A preference type that stores a string, but with a textarea widget.
     """
+
     widget = forms.Textarea
 
 
@@ -230,21 +235,20 @@ class ChoicePreference(BasePreferenceType):
 
     def get_field_kwargs(self):
         field_kwargs = super(ChoicePreference, self).get_field_kwargs()
-        field_kwargs['choices'] = self.get('choices') or self.field_attribute['initial']
+        field_kwargs["choices"] = self.get("choices") or self.field_attribute["initial"]
         return field_kwargs
 
     def get_api_additional_data(self):
         d = super(ChoicePreference, self).get_api_additional_data()
-        d['choices'] = self.get('choices')
+        d["choices"] = self.get("choices")
         return d
 
     def get_choice_values(self):
-        return [c[0] for c in self.get('choices')]
+        return [c[0] for c in self.get("choices")]
 
     def validate(self, value):
         if value not in self.get_choice_values():
-            raise forms.ValidationError(
-                '{} is not a valid choice'.format(value))
+            raise forms.ValidationError("{} is not a valid choice".format(value))
 
 
 def create_deletion_handler(preference):
@@ -252,13 +256,16 @@ def create_deletion_handler(preference):
     Will generate a dynamic handler to purge related preference
     on instance deletion
     """
+
     def delete_related_preferences(sender, instance, *args, **kwargs):
-        queryset = preference.registry.preference_model.objects\
-                                      .filter(name=preference.name,
-                                              section=preference.section)
+        queryset = preference.registry.preference_model.objects.filter(
+            name=preference.name, section=preference.section
+        )
         related_preferences = queryset.filter(
-            raw_value=preference.serializer.serialize(instance))
+            raw_value=preference.serializer.serialize(instance)
+        )
         related_preferences.delete()
+
     return delete_related_preferences
 
 
@@ -325,18 +332,18 @@ class ModelChoicePreference(BasePreferenceType):
         handler = create_deletion_handler(self)
         # We need to keep a reference to the handler or it will cause
         # weakref to die and our handler will not be called
-        self.signals_handlers['pre_delete'] = [handler]
+        self.signals_handlers["pre_delete"] = [handler]
         pre_delete.connect(handler, sender=self.model)
 
     def get_field_kwargs(self):
         kw = super(ModelChoicePreference, self).get_field_kwargs()
-        kw['queryset'] = self.get('queryset')
+        kw["queryset"] = self.get("queryset")
         return kw
 
     def api_repr(self, value):
         if not value:
             return None
-        if value.__class__.__name__=='QuerySet':
+        if value.__class__.__name__ == "QuerySet":
             return [val.pk for val in value]
         return value.pk
 
@@ -368,6 +375,7 @@ class ModelMultipleChoicePreference(ModelChoicePreference):
         You should provide either the :py:attr:`queryset` or :py:attr:`model`
         attribute
     """
+
     serializer_class = ModelMultipleSerializer
     field_class = forms.ModelMultipleChoiceField
 
@@ -401,6 +409,7 @@ class FilePreference(BasePreferenceType):
         manager['blog__logo'].delete()
 
     """
+
     field_class = forms.FileField
     serializer_class = FileSerializer
     default = None
@@ -415,13 +424,12 @@ class FilePreference(BasePreferenceType):
 
     def get_field_kwargs(self):
         kwargs = super(FilePreference, self).get_field_kwargs()
-        kwargs['required'] = self.get('required', False)
+        kwargs["required"] = self.get("required", False)
         return kwargs
 
     def get_upload_path(self):
         return os.path.join(
-            preferences_settings.FILE_PREFERENCE_UPLOAD_DIR,
-            self.identifier()
+            preferences_settings.FILE_PREFERENCE_UPLOAD_DIR, self.identifier()
         )
 
     def get_file_storage(self):
@@ -439,6 +447,7 @@ class DurationPreference(BasePreferenceType):
     """
     A preference type that stores a timedelta.
     """
+
     field_class = forms.DurationField
     serializer = DurationSerializer
 
@@ -448,8 +457,9 @@ class DurationPreference(BasePreferenceType):
 
 class DatePreference(BasePreferenceType):
     """
-        A preference type that stores a date.
+    A preference type that stores a date.
     """
+
     field_class = forms.DateField
     serializer = DateSerializer
 
@@ -459,8 +469,9 @@ class DatePreference(BasePreferenceType):
 
 class DateTimePreference(BasePreferenceType):
     """
-        A preference type that stores a datetime.
+    A preference type that stores a datetime.
     """
+
     field_class = forms.DateTimeField
     serializer = DateTimeSerializer
 
@@ -472,6 +483,7 @@ class TimePreference(BasePreferenceType):
     """
     A preference type that stores a time.
     """
+
     field_class = forms.TimeField
     serializer = TimeSerializer
 
@@ -503,6 +515,7 @@ class MultipleChoicePreference(ChoicePreference):
        is sae also on keys that cotain the separator, but if in doubt, you can still
        set the :py:attr:`separator` to any other character.
     """
+
     widget = forms.CheckboxSelectMultiple
     field_class = forms.MultipleChoiceField
     serializer = MultipleSerializer

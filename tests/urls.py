@@ -13,16 +13,18 @@ from dynamic_preferences.users.viewsets import UserPreferencesViewSet
 admin.autodiscover()
 
 router = routers.SimpleRouter()
-router.register(r'global', GlobalPreferencesViewSet, 'global')
-router.register(r'user', UserPreferencesViewSet, 'user')
+router.register(r"global", GlobalPreferencesViewSet, "global")
+router.register(r"user", UserPreferencesViewSet, "user")
 # router.register(r'user', AccountViewSet)
 
 
 urlpatterns = [
-    re_path(r'^', include("dynamic_preferences.urls")),
-    re_path(r'^admin/', admin.site.urls),
-    re_path(r'^test/template$',
-            views.RegularTemplateView.as_view(),
-            name="dynamic_preferences.test.templateview"),
-    re_path(r'^api', include((router.urls, 'api'), namespace='api'))
+    re_path(r"^", include("dynamic_preferences.urls")),
+    re_path(r"^admin/", admin.site.urls),
+    re_path(
+        r"^test/template$",
+        views.RegularTemplateView.as_view(),
+        name="dynamic_preferences.test.templateview",
+    ),
+    re_path(r"^api", include((router.urls, "api"), namespace="api")),
 ]

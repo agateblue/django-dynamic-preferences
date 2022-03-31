@@ -7,11 +7,10 @@ from django.contrib.auth.decorators import login_required
 from . import views
 
 urlpatterns = [
-
-    re_path(r'^$',
-            login_required(views.UserPreferenceFormView.as_view()),
-            name="user"),
-    re_path(r'^(?P<section>[\w\ ]+)$',
-            login_required(views.UserPreferenceFormView.as_view()),
-            name="user.section"),
+    re_path(r"^$", login_required(views.UserPreferenceFormView.as_view()), name="user"),
+    re_path(
+        r"^(?P<section>[\w\ ]+)$",
+        login_required(views.UserPreferenceFormView.as_view()),
+        name="user.section",
+    ),
 ]

@@ -3,6 +3,7 @@ import pytest
 from django.core import cache as django_cache
 from django.contrib.auth.models import User
 
+
 @pytest.fixture(autouse=True)
 def cache():
     django_cache.cache.clear()
@@ -13,21 +14,26 @@ def cache():
 def assert_redirect():
     def inner(response, expected):
         assert response.status_code == 302
-        assert response['Location'] == expected
-    
+        assert response["Location"] == expected
+
     return inner
-
-
 
 
 @pytest.fixture
 def fake_user(db):
-    return User.objects.create_user(username="test", password="test", email="test@test.com")
+    return User.objects.create_user(
+        username="test", password="test", email="test@test.com"
+    )
+
 
 @pytest.fixture
 def fake_admin(db):
     return User.objects.create_user(
-        username="admin", email="admin@admin.com", password="test", is_superuser=True, is_staff=True
+        username="admin",
+        email="admin@admin.com",
+        password="test",
+        is_superuser=True,
+        is_staff=True,
     )
 
 

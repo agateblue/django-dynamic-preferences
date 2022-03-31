@@ -11,4 +11,4 @@ class MyModel(models.Model):
         global_preferences = global_preferences_registry.manager()
 
         # We can then use our global preferences however we like
-        global_preferences['general__presentation']
+        global_preferences["general__presentation"]

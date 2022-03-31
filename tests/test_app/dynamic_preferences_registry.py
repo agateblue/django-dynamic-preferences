@@ -14,6 +14,7 @@ class RegistrationAllowed(BooleanPreference):
     """
     Are new registrations allowed ?
     """
+
     section = "user"
     name = "registration_allowed"
     default = False
@@ -24,24 +25,25 @@ class MaxUsers(IntPreference):
     """
     Are new registrations allowed ?
     """
+
     section = "user"
     name = "max_users"
     default = 100
-    verbose_name = 'Maximum user count'
-    help_text = 'Be careful with this setting'
+    verbose_name = "Maximum user count"
+    help_text = "Be careful with this setting"
 
     def validate(self, value):
         # value can't be equal to 1001, no no no!
         if value == 1001:
-            raise ValidationError('Wrong value!')
+            raise ValidationError("Wrong value!")
         return value
 
 
 class NoDefault(IntPreference):
     section = "user"
     name = "no_default"
-    
-    
+
+
 class NoModel(ModelChoicePreference):
     section = "blog"
     name = "no_model"
@@ -79,8 +81,8 @@ class BlogLogo2(FilePreference):
 
 @global_preferences_registry.register
 class BlogCost(DecimalPreference):
-    section = 'type'
-    name = 'cost'
+    section = "type"
+    name = "cost"
     default = Decimal(0)
 
 
@@ -89,7 +91,7 @@ class FavoriteVegetable(ChoicePreference):
     choices = (
         ("C", "Carrot"),
         ("T", "Tomato. I know, it's not a vegetable"),
-        ("P", "Potato")
+        ("P", "Potato"),
     )
     section = "user"
     name = "favorite_vegetable"
@@ -101,7 +103,7 @@ class FavoriteVegetables(MultipleChoicePreference):
     choices = (
         ("C", "Carrot"),
         ("T", "Tomato. I know, it's not a vegetable"),
-        ("P", "Potato")
+        ("P", "Potato"),
     )
     section = "user"
     name = "favorite_vegetables"
@@ -113,6 +115,7 @@ class FavouriteColour(StringPreference):
     """
     What's your favourite colour ?
     """
+
     section = "misc"
     name = "favourite_colour"
     default = "Green"
@@ -123,6 +126,7 @@ class IsZombie(BooleanPreference):
     """
     Are you a zombie ?
     """
+
     section = "misc"
     name = "is_zombie"
     default = True
@@ -185,27 +189,27 @@ class TestGlobal3(BaseTestPref, BooleanPreference):
 
 @global_preferences_registry.register
 class ExamDuration(DurationPreference):
-    section = 'exam'
-    name = 'duration'
+    section = "exam"
+    name = "duration"
     default = timedelta(hours=3)
 
 
 @global_preferences_registry.register
 class RegistrationDate(DatePreference):
-    section = 'company'
-    name = 'RegistrationDate'
+    section = "company"
+    name = "RegistrationDate"
     default = date(1998, 9, 4)
 
 
 @global_preferences_registry.register
 class BirthDateTime(DateTimePreference):
-    section = Section('child', verbose_name='Child Section Verbose Name')
-    name = 'BirthDateTime'
+    section = Section("child", verbose_name="Child Section Verbose Name")
+    name = "BirthDateTime"
     default = datetime(1992, 5, 4, 3, 4, 10, 150, tzinfo=timezone.utc)
 
 
 @global_preferences_registry.register
 class OpenningTime(TimePreference):
-    section = 'company'
-    name = 'OpenningTime'
+    section = "company"
+    name = "OpenningTime"
     default = time(hour=8, minute=0)

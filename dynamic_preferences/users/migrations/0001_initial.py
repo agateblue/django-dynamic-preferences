@@ -15,22 +15,45 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='UserPreferenceModel',
+            name="UserPreferenceModel",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('section', models.CharField(blank=True, db_index=True, default=None, max_length=150, null=True)),
-                ('name', models.CharField(db_index=True, max_length=150)),
-                ('raw_value', models.TextField(blank=True, null=True)),
-                ('instance', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "section",
+                    models.CharField(
+                        blank=True,
+                        db_index=True,
+                        default=None,
+                        max_length=150,
+                        null=True,
+                    ),
+                ),
+                ("name", models.CharField(db_index=True, max_length=150)),
+                ("raw_value", models.TextField(blank=True, null=True)),
+                (
+                    "instance",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'user preference',
-                'verbose_name_plural': 'user preferences',
-                'abstract': False,
+                "verbose_name": "user preference",
+                "verbose_name_plural": "user preferences",
+                "abstract": False,
             },
         ),
         migrations.AlterUniqueTogether(
-            name='userpreferencemodel',
-            unique_together={('instance', 'section', 'name')},
+            name="userpreferencemodel",
+            unique_together={("instance", "section", "name")},
         ),
     ]

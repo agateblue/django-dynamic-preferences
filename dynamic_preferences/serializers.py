@@ -6,10 +6,21 @@ from datetime import date, timedelta, datetime, time
 
 from django.conf import settings
 from django.core.validators import EMPTY_VALUES
-from django.utils.dateparse import parse_duration, parse_datetime, parse_date, parse_time
+from django.utils.dateparse import (
+    parse_duration,
+    parse_datetime,
+    parse_date,
+    parse_time,
+)
 from django.utils.duration import duration_string
 from django.utils.encoding import force_str
-from django.utils.timezone import utc, is_aware, make_aware, make_naive, get_default_timezone
+from django.utils.timezone import (
+    utc,
+    is_aware,
+    make_aware,
+    make_naive,
+    get_default_timezone,
+)
 from six import string_types, text_type
 from django.db.models.fields.files import FieldFile
 
@@ -27,8 +38,9 @@ class SerializationError(Exception):
 
 class BaseSerializer:
     """
-        A serializer take a Python variable and returns a string that can be stored safely in database
+    A serializer take a Python variable and returns a string that can be stored safely in database
     """
+
     exception = SerializationError
 
     @classmethod
@@ -41,7 +53,7 @@ class BaseSerializer:
     @classmethod
     def deserialize(cls, value, **kwargs):
         """
-            Convert a python string to a var
+        Convert a python string to a var
         """
         return cls.to_python(value, **kwargs)
 
@@ -104,7 +116,7 @@ class BooleanSerializer(BaseSerializer):
     @classmethod
     def clean_to_db_value(cls, value):
         if not isinstance(value, bool):
-            raise cls.exception('{0} is not a boolean'.format(value))
+            raise cls.exception("{0} is not a boolean".format(value))
         return value
 
     @classmethod
@@ -117,15 +129,16 @@ class BooleanSerializer(BaseSerializer):
             return False
 
         else:
-            raise cls.exception("Value {0} can't be deserialized to a Boolean".format(value))
+            raise cls.exception(
+                "Value {0} can't be deserialized to a Boolean".format(value)
+            )
 
 
 class IntegerSerializer(BaseSerializer):
-
     @classmethod
     def clean_to_db_value(cls, value):
         if not isinstance(value, int):
-            raise cls.exception('IntSerializer can only serialize int values')
+            raise cls.exception("IntSerializer can only serialize int values")
         return value
 
     @classmethod
@@ -140,11 +153,12 @@ IntSerializer = IntegerSerializer
 
 
 class DecimalSerializer(BaseSerializer):
-
     @classmethod
     def clean_to_db_value(cls, value):
         if not isinstance(value, decimal.Decimal):
-            raise cls.exception('DecimalSerializer can only serialize Decimal instances')
+            raise cls.exception(
+                "DecimalSerializer can only serialize Decimal instances"
+            )
         return value
 
     @classmethod
@@ -152,15 +166,18 @@ class DecimalSerializer(BaseSerializer):
         try:
             return decimal.Decimal(value)
         except decimal.InvalidOperation:
-            raise cls.exception("Value {0} cannot be converted to decimal".format(value))
+            raise cls.exception(
+                "Value {0} cannot be converted to decimal".format(value)
+            )
 
 
 class FloatSerializer(BaseSerializer):
-
     @classmethod
     def clean_to_db_value(cls, value):
         if not isinstance(value, (int, float)):
-            raise cls.exception('FloatSerializer can only serialize float or int values')
+            raise cls.exception(
+                "FloatSerializer can only serialize float or int values"
+            )
         return float(value)
 
     @classmethod
@@ -175,11 +192,12 @@ from django.template import defaultfilters
 
 
 class StringSerializer(BaseSerializer):
-
     @classmethod
     def to_db(cls, value, **kwargs):
         if not isinstance(value, string_types):
-            raise cls.exception("Cannot serialize, value {0} is not a string".format(value))
+            raise cls.exception(
+                "Cannot serialize, value {0} is not a string".format(value)
+            )
 
         if kwargs.get("escape_html", False):
             return defaultfilters.force_escape(value)
@@ -190,13 +208,13 @@ class StringSerializer(BaseSerializer):
     def to_python(cls, value, **kwargs):
         """String deserialisation just return the value as a string"""
         if not value:
-            return ''
+            return ""
         try:
             return str(value)
         except:
             pass
         try:
-            return value.encode('utf-8')
+            return value.encode("utf-8")
         except:
             pass
         raise cls.exception("Cannot deserialize value {0} tostring".format(value))
@@ -235,7 +253,7 @@ class ModelMultipleSerializer(ModelSerializer):
             # create_deletion_handler to work for model multiple choice preferences
             value = [value.pk]
         else:
-            value = list(value.values_list('pk', flat=True))
+            value = list(value.values_list("pk", flat=True))
 
         if self.sort:
             value = sorted(value)
@@ -282,14 +300,13 @@ class PreferenceFieldFile(FieldFile):
             FieldFile needs a field object to generate a filename, persist
             and delete files, so we are effectively mocking that.
             """
-            name = 'noop'
-            attname = 'noop'
+
+            name = "noop"
+            attname = "noop"
             max_length = 10000
 
             def generate_filename(field, instance, name):
-                return os.path.join(
-                    self.preference.get_upload_path(),
-                    f.name)
+                return os.path.join(self.preference.get_upload_path(), f.name)
 
         self.field = FakeField()
         self.storage = storage
@@ -315,9 +332,7 @@ class FileSerializer(InstanciatedSerializer):
             return
         saved_path = f.name
         if not hasattr(f, "save"):
-            path = os.path.join(
-                self.preference.get_upload_path(),
-                f.name)
+            path = os.path.join(self.preference.get_upload_path(), f.name)
             saved_path = self.preference.get_file_storage().save(path, f)
 
         return saved_path
@@ -328,16 +343,17 @@ class FileSerializer(InstanciatedSerializer):
         storage = self.preference.get_file_storage()
 
         return PreferenceFieldFile(
-            preference=self.preference,
-            storage=storage,
-            name=value)
+            preference=self.preference, storage=storage, name=value
+        )
 
 
 class DurationSerializer(BaseSerializer):
     @classmethod
     def to_db(cls, value, **kwargs):
         if not isinstance(value, timedelta):
-            raise cls.exception("Cannot serialize, value {0} is not a timedelta".format(value))
+            raise cls.exception(
+                "Cannot serialize, value {0} is not a timedelta".format(value)
+            )
 
         return duration_string(value)
 
@@ -345,7 +361,9 @@ class DurationSerializer(BaseSerializer):
     def to_python(cls, value, **kwargs):
         parsed = parse_duration(force_str(value))
         if parsed is None:
-            raise cls.exception("Value {0} cannot be converted to timedelta".format(value))
+            raise cls.exception(
+                "Value {0} cannot be converted to timedelta".format(value)
+            )
         return parsed
 
 
@@ -353,7 +371,9 @@ class DateSerializer(BaseSerializer):
     @classmethod
     def to_db(cls, value, **kwargs):
         if not isinstance(value, date):
-            raise cls.exception("Cannot serialize, value {0} is not a date object".format(value))
+            raise cls.exception(
+                "Cannot serialize, value {0} is not a date object".format(value)
+            )
 
         return value.isoformat()
 
@@ -361,7 +381,9 @@ class DateSerializer(BaseSerializer):
     def to_python(cls, value, **kwargs):
         parsed = parse_date(force_str(value))
         if parsed is None:
-            raise cls.exception("Value {0} cannot be converted to a date object".format(value))
+            raise cls.exception(
+                "Value {0} cannot be converted to a date object".format(value)
+            )
 
         return parsed
 
@@ -370,7 +392,9 @@ class DateTimeSerializer(BaseSerializer):
     @classmethod
     def to_db(cls, value, **kwargs):
         if not isinstance(value, datetime):
-            raise cls.exception("Cannot serialize, value {0} is not a datetime object".format(value))
+            raise cls.exception(
+                "Cannot serialize, value {0} is not a datetime object".format(value)
+            )
 
         value = cls.enforce_timezone(value)
 
@@ -398,7 +422,9 @@ class DateTimeSerializer(BaseSerializer):
     def to_python(cls, value, **kwargs):
         parsed = parse_datetime(force_str(value))
         if parsed is None:
-            raise cls.exception("Value {0} cannot be converted to a datetime object".format(value))
+            raise cls.exception(
+                "Value {0} cannot be converted to a datetime object".format(value)
+            )
         return parsed
 
 
@@ -406,7 +432,9 @@ class TimeSerializer(BaseSerializer):
     @classmethod
     def to_db(cls, value, **kwargs):
         if not isinstance(value, time):
-            raise cls.exception("Cannot serialize, value {0} is not a time object".format(value))
+            raise cls.exception(
+                "Cannot serialize, value {0} is not a time object".format(value)
+            )
 
         return value.isoformat()
 
@@ -414,7 +442,9 @@ class TimeSerializer(BaseSerializer):
     def to_python(cls, value, **kwargs):
         parsed = parse_time(force_str(value))
         if parsed is None:
-            raise cls.exception("Value {0} cannot be converted to a time object".format(value))
+            raise cls.exception(
+                "Value {0} cannot be converted to a time object".format(value)
+            )
 
         return parsed
 
@@ -431,9 +461,9 @@ class MultipleSerializer(BaseSerializer):
         # This makes the use of the separator in choices safe by duplicating
         # it in each value before they are joined later on
         # Contract: choices keys cannot be empty
-        value = [str(v).replace(cls.separator, cls.separator*2) for v in value]
-        if '' in value:
-            raise cls.exception('Choices must not be empty')
+        value = [str(v).replace(cls.separator, cls.separator * 2) for v in value]
+        if "" in value:
+            raise cls.exception("Choices must not be empty")
 
         if cls.sort:
             value = sorted(value)
@@ -447,8 +477,8 @@ class MultipleSerializer(BaseSerializer):
 
         ret = value.split(cls.separator)
         # Duplication of separator is reverted (cf. to_db)
-        while '' in ret:
-            pos = ret.index('')
-            val = ret[pos-1] + cls.separator + ret[pos+1]
-            ret = ret[0:pos-1] + [val] + ret[pos+2:]
+        while "" in ret:
+            pos = ret.index("")
+            val = ret[pos - 1] + cls.separator + ret[pos + 1]
+            ret = ret[0 : pos - 1] + [val] + ret[pos + 2 :]
         return ret
