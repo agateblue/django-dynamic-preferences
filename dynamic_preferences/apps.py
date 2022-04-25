@@ -8,6 +8,7 @@ from .settings import preferences_settings
 class DynamicPreferencesConfig(AppConfig):
     name = "dynamic_preferences"
     verbose_name = _("Dynamic Preferences")
+    default_auto_field = "django.db.models.AutoField"
 
     def ready(self):
         if preferences_settings.ENABLE_GLOBAL_MODEL_AUTO_REGISTRATION:

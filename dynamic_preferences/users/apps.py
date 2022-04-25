@@ -10,6 +10,7 @@ class UserPreferencesConfig(AppConfig):
     name = "dynamic_preferences.users"
     verbose_name = _("Preferences - Users")
     label = "dynamic_preferences_users"
+    default_auto_field = "django.db.models.AutoField"
 
     def ready(self):
         UserPreferenceModel = self.get_model("UserPreferenceModel")
