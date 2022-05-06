@@ -33,9 +33,9 @@ setup(
     packages=["dynamic_preferences"],
     include_package_data=True,
     install_requires=[
-        "django>=1.11",
+        "django>=2.2",
         "six",
-        "persisting_theory>=0.2.1",
+        "persisting_theory==1.0",
     ],
     license="BSD",
     zip_safe=False,
