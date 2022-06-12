@@ -3,6 +3,25 @@
 Changelog
 =========
 
+1.13.0 (2022-06-12)
+*******************
+
+- Add autofield to avoid unecessary migrations
+- Bumped dependencies
+- updated readme with supported python / django versions
+- Flake, autoflake and various cleanups for tests file
+- Blackified
+- Remove unittest TestCases, switch to pytest style
+- Handle serialization for non interger primary key in ModelMultipleSerializer )#268
+- Updated readme badges
+- Fixed invalid workflow action
+- Ensure tests are run for incoming PRs (#271)
+- Added config option to specify the cache to use (#270)
+- Fix CI pipeline (#269)
+- Setup CI with Gitlab actions (#267)
+- FloatPreference can be initialized with either int or float (#266)
+
+
 1.12.0 (2022-02-26)
 *******************
 
@@ -13,7 +32,8 @@ Changelog
 - Fix signal handler doc (#250)
 - Added htmlcov in .gitignore (#251)
 - Use stdout in checkpreferences (#252)
-- MAINT:dynamic_preferences serializers.py  - Exception handling for class ModelMultipleSerializer; types.py - handle queryset in api_reprs of ModelChoicePreference (#243)
+- MAINT:dynamic_preferences serializers.py
+- - Exception handling for class ModelMultipleSerializer; types.py - handle queryset in api_reprs of ModelChoicePreference (#243)
 
 1.11.0 (2021-10-09)
 *******************
