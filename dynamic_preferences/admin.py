@@ -74,6 +74,11 @@ class DynamicPreferenceAdmin(admin.ModelAdmin):
 
     section_name.short_description = _("Section Name")
 
+    def save_model(self, request, obj, form, change):
+        pref = form.instance
+        manager = pref.registry.manager()
+        manager.update_db_pref(pref.section, pref.name, form.cleaned_data["raw_value"])
+
 
 class GlobalPreferenceAdmin(DynamicPreferenceAdmin):
     form = GlobalSinglePreferenceForm
