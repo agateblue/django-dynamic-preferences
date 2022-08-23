@@ -56,10 +56,12 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "dynamic_preferences",
     "dynamic_preferences.users.apps.UserPreferencesConfig",
+    "debug_toolbar",
     "example",
 )
 
 MIDDLEWARE = (
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -67,6 +69,10 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 )
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 ROOT_URLCONF = "example.urls"
 
