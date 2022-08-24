@@ -3,6 +3,15 @@
 Changelog
 =========
 
+1.14.0 (2022-08-24)
+*******************
+
+- Drop official support for python 3.6 and django < 3.2. Previous versions may continue to work but aren't tested anymore
+- OFficial support for Django 4.1 and Python 3.10
+- Fix #281: ensure preference_updated signal is trigerred when updating preference through admin UI
+- Include signal in example project (#281)
+- Fixed broken documentation build
+
 1.13.0 (2022-06-12)
 *******************
 

@@ -33,7 +33,7 @@ setup(
     packages=["dynamic_preferences"],
     include_package_data=True,
     install_requires=[
-        "django>=2.2",
+        "django>=3.2",
         "six",
         "persisting_theory==1.0",
     ],
@@ -46,9 +46,6 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
     ],
 )
