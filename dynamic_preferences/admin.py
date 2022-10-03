@@ -76,7 +76,7 @@ class DynamicPreferenceAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         pref = form.instance
-        manager = pref.registry.manager()
+        manager = pref.registry.manager(instance=getattr(obj, "instance", None))
         manager.update_db_pref(pref.section, pref.name, form.cleaned_data["raw_value"])
 
 
