@@ -31,7 +31,7 @@ Dynamic-preferences allow you to register settings (a.k.a. preferences) in a dec
 
 With dynamic-preferences, you can update settings on the fly, through django's admin or custom forms, without restarting your application.
 
-The project is tested and work under Python 3.6, 3.7, 3.8 and 3.9 and with django 2.2, 3.0 and 3.1.
+The project is tested and work under Python 3.7, 3.8, 3.9 and 3.10 and with django 3.2 and 4.1.
 
 Features
 --------
