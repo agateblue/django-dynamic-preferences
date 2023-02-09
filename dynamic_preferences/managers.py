@@ -104,18 +104,22 @@ class PreferencesManager(Mapping):
             if k in cached
         }
 
-    def to_cache(self, pref):
+    def to_cache(self, *prefs):
         """
-        Update/create the cache value for the given preference model instance
+        Update/create the cache value for the given preference model instances
         """
-        key = self.get_cache_key(pref.section, pref.name)
-        value = pref.raw_value
-        if value is None or value == "":
-            # some cache backends refuse to cache None or empty values
-            # resulting in more DB queries, so we cache an arbitrary value
-            # to ensure the cache is hot (even with empty values)
-            value = preferences_settings.CACHE_NONE_VALUE
-        self.cache.set(key, value)
+        update_dict = {}
+        for pref in prefs:
+            key = self.get_cache_key(pref.section, pref.name)
+            value = pref.raw_value
+            if value is None or value == "":
+                # some cache backends refuse to cache None or empty values
+                # resulting in more DB queries, so we cache an arbitrary value
+                # to ensure the cache is hot (even with empty values)
+                value = preferences_settings.CACHE_NONE_VALUE
+            update_dict[key] = value
+
+        self.cache.set_many(update_dict)
 
     def pref_obj(self, section, name):
         return self.registry.get(section=section, name=name)
@@ -220,6 +224,8 @@ class PreferencesManager(Mapping):
         """Return a dictionary of preferences by section directly from DB"""
         a = {}
         db_prefs = {p.preference.identifier(): p for p in self.queryset}
+        cache_prefs = []
+
         for preference in self.registry.preferences():
             try:
                 db_pref = db_prefs[preference.identifier()]
@@ -232,8 +238,11 @@ class PreferencesManager(Mapping):
             else:
                 # cache if create_db_pref() hasn't already done so
                 if cache:
-                    self.to_cache(db_pref)
+                    cache_prefs.append(db_pref)
 
             a[preference.identifier()] = db_pref.value
+
+        if cache_prefs:
+            self.to_cache(*cache_prefs)
 
         return a
