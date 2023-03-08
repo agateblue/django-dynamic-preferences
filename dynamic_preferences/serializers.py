@@ -251,10 +251,14 @@ class ModelMultipleSerializer(ModelSerializer):
             # Support single instances in this serializer to allow
             # create_deletion_handler to work for model multiple choice preferences
             value = [value.pk]
-        else:
+        elif hasattr(value, 'values_list'):
             value = list(value.values_list("pk", flat=True))
-
-        if self.sort:
+        elif isinstance(value, list) and len(value) > 0 and isinstance(value[0], self.model):
+            # Handle lists of model instances
+            value = [i.pk for i in value]
+        else:
+            raise ValueError(f'Cannot handle value {value} of type {type(value)}')
+        if value and self.sort:
             value = sorted(value)
 
         return self.separator.join(map(str, value))

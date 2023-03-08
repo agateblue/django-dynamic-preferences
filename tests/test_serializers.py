@@ -335,3 +335,24 @@ def test_model_multiple_single_serialization_with_non_int_pk(blog_entries):
     blog_entry = BlogEntryWithNonIntPk.objects.all().first()
 
     assert s.serialize(blog_entry) == s.separator.join(map(str, [blog_entry.pk]))
+
+
+
+def test_model_multiple_to_db_empty(blog_entries):
+    result = serializers.ModelMultipleSerializer(BlogEntry).to_db([])
+    assert result is None
+
+
+def test_model_multiple_to_db_multiple(blog_entries):
+    entry1 = BlogEntry.objects.get(title="This is a test",)
+    entry2 = BlogEntry.objects.get(title="This is only a test",)
+    result = serializers.ModelMultipleSerializer(BlogEntry).to_db([
+        entry1,
+        entry2,
+    ])
+    assert result == f'{entry1.pk},{entry2.pk}'
+
+
+def test_model_multiple_to_db_invalid(blog_entries):
+    with pytest.raises(ValueError, match=r"Cannot handle value.* of type .*"):
+        serializers.ModelMultipleSerializer(BlogEntry).to_db('invalid')
