@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 import decimal
 import os
 
-from datetime import date, timedelta, datetime, time
+from datetime import date, timedelta, datetime, time, timezone
 
 from django.conf import settings
 from django.core.validators import EMPTY_VALUES
@@ -15,7 +15,6 @@ from django.utils.dateparse import (
 from django.utils.duration import duration_string
 from django.utils.encoding import force_str
 from django.utils.timezone import (
-    utc,
     is_aware,
     make_aware,
     make_naive,
@@ -252,10 +251,14 @@ class ModelMultipleSerializer(ModelSerializer):
             # Support single instances in this serializer to allow
             # create_deletion_handler to work for model multiple choice preferences
             value = [value.pk]
-        else:
+        elif hasattr(value, 'values_list'):
             value = list(value.values_list("pk", flat=True))
-
-        if self.sort:
+        elif isinstance(value, list) and len(value) > 0 and isinstance(value[0], self.model):
+            # Handle lists of model instances
+            value = [i.pk for i in value]
+        else:
+            raise ValueError(f'Cannot handle value {value} of type {type(value)}')
+        if value and self.sort:
             value = sorted(value)
 
         return self.separator.join(map(str, value))
@@ -411,7 +414,7 @@ class DateTimeSerializer(BaseSerializer):
         if (field_timezone is not None) and not is_aware(value):
             return make_aware(value, field_timezone)
         elif (field_timezone is None) and is_aware(value):
-            return make_naive(value, utc)
+            return make_naive(value, timezone.utc)
         return value
 
     @classmethod
