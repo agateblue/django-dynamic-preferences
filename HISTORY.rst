@@ -3,6 +3,15 @@
 Changelog
 =========
 
+
+1.15.0 (2022-04-05)
+*******************
+
+- Run tests against django 4.2 and main
+- Fixed broken PATCH with ModelMultipleSerializer (#291)
+- Fix MultipleObjectsReturned in preference admin (#285)
+- Batch cache updates to improve performances (#292)
+
 1.14.0 (2022-08-24)
 *******************
 
