@@ -18,8 +18,7 @@ jobs:
           - '3.8'
           - '3.9'
           - '3.10'
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+          - '3.11'
     steps:
 
       - uses: actions/checkout@v3
