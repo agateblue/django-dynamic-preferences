@@ -4,7 +4,7 @@ Changelog
 =========
 
 
-1.15.0 (2022-04-05)
+1.15.0 (2023-04-05)
 *******************
 
 - Run tests against django 4.2 and main
