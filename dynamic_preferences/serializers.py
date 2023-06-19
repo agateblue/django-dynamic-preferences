@@ -275,6 +275,30 @@ class ModelMultipleSerializer(ModelSerializer):
             raise self.exception("Array {0} cannot be converted to int".format(value))
 
 
+# FieldFile also needs a model instance to save changes.
+class FakeInstance(object):
+    """
+    FieldFile needs a model instance to update when file is persisted
+    or deleted
+    """
+
+    def save(self):
+        return
+
+class FakeField(object):
+    """
+    FieldFile needs a field object to generate a filename, persist
+    and delete files, so we are effectively mocking that.
+    """
+
+    name = "noop"
+    attname = "noop"
+    max_length = 10000
+
+    def generate_filename(field, instance, name):
+        return os.path.join(self.preference.get_upload_path(), f.name)
+
+
 class PreferenceFieldFile(FieldFile):
     """
     In order to have the same API that we have with models.FileField,
@@ -285,32 +309,7 @@ class PreferenceFieldFile(FieldFile):
 
     def __init__(self, preference, storage, name):
         super(FieldFile, self).__init__(None, name)
-
-        # FieldFile also needs a model instance to save changes.
-        class FakeInstance(object):
-            """
-            FieldFile needs a model instance to update when file is persisted
-            or deleted
-            """
-
-            def save(self):
-                return
-
         self.instance = FakeInstance()
-
-        class FakeField(object):
-            """
-            FieldFile needs a field object to generate a filename, persist
-            and delete files, so we are effectively mocking that.
-            """
-
-            name = "noop"
-            attname = "noop"
-            max_length = 10000
-
-            def generate_filename(field, instance, name):
-                return os.path.join(self.preference.get_upload_path(), f.name)
-
         self.field = FakeField()
         self.storage = storage
         self._committed = True
