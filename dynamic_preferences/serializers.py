@@ -311,6 +311,7 @@ class PreferenceFieldFile(FieldFile):
         super(FieldFile, self).__init__(None, name)
         self.instance = FakeInstance()
         self.field = FakeField()
+        self.field.storage = storage
         self.storage = storage
         self._committed = True
         self.preference = preference
