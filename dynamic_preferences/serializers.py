@@ -285,6 +285,7 @@ class FakeInstance(object):
     def save(self):
         return
 
+
 class FakeField(object):
     """
     FieldFile needs a field object to generate a filename, persist
@@ -294,9 +295,6 @@ class FakeField(object):
     name = "noop"
     attname = "noop"
     max_length = 10000
-
-    def generate_filename(field, instance, name):
-        return os.path.join(self.preference.get_upload_path(), f.name)
 
 
 class PreferenceFieldFile(FieldFile):
@@ -483,5 +481,5 @@ class MultipleSerializer(BaseSerializer):
         while "" in ret:
             pos = ret.index("")
             val = ret[pos - 1] + cls.separator + ret[pos + 1]
-            ret = ret[0 : pos - 1] + [val] + ret[pos + 2 :]
+            ret = ret[0: pos - 1] + [val] + ret[pos + 2:]
         return ret

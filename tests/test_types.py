@@ -1,5 +1,7 @@
 import os
 import decimal
+import pickle
+
 import pytest
 
 from datetime import date, timedelta, datetime, time
@@ -237,6 +239,19 @@ def test_file_preference_api_repr_returns_path(db):
 
     f = manager["blog__logo"]
     assert p.api_repr(f) == f.url
+
+
+def test_file_preference_if_pickleable(db):
+    manager = global_preferences_registry.manager()
+    f = SimpleUploadedFile(
+        "test_file_24485a80-8db9-4191-ae49-da7fe2013794.txt",
+        "hello world".encode("utf-8"),
+    )
+    try:
+        manager["blog__logo"] = f
+        pickle.dumps(manager["blog__logo"])
+    except Exception:
+        pytest.fail("FilePreference not pickleable")
 
 
 def test_choice_preference(fake_user):
