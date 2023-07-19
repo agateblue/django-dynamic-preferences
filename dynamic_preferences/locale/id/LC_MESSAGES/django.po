@@ -1,0 +1,71 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Kira <kiraware@github.com>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-07-19 20:44+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Kira <kiraware@github.com>\n"
+"Language-Team: \n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\dynamic_preferences\admin.py:66
+msgid "Default Value"
+msgstr "Nilai Default"
+
+#: .\dynamic_preferences\admin.py:75 .\dynamic_preferences\models.py:30
+msgid "Section Name"
+msgstr "Nama Bagian"
+
+#: .\dynamic_preferences\apps.py:10
+msgid "Dynamic Preferences"
+msgstr "Preferensi Dinamis"
+
+#: .\dynamic_preferences\models.py:34
+msgid "Name"
+msgstr "Nama"
+
+#: .\dynamic_preferences\models.py:37
+msgid "Raw Value"
+msgstr "Nilai Mentah"
+
+#: .\dynamic_preferences\models.py:51
+msgid "Verbose Name"
+msgstr "Nama Verbose"
+
+#: .\dynamic_preferences\models.py:57
+msgid "Help Text"
+msgstr "Teks Bantuan"
+
+#: .\dynamic_preferences\models.py:94
+msgid "Global preference"
+msgstr "Preferensi global"
+
+#: .\dynamic_preferences\models.py:95
+msgid "Global preferences"
+msgstr "Preferensi global"
+
+#: .\dynamic_preferences\templates\dynamic_preferences\form.html:11
+msgid "Submit"
+msgstr "Kirim"
+
+#: .\dynamic_preferences\users\apps.py:11
+msgid "Preferences - Users"
+msgstr "Preferensi - Pengguna"
+
+#: .\dynamic_preferences\users\models.py:14
+msgid "user preference"
+msgstr "preferensi pengguna"
+
+#: .\dynamic_preferences\users\models.py:15
+msgid "user preferences"
+msgstr "preferensi pengguna"
