@@ -22,7 +22,7 @@ class InvalidNameError(ValueError):
 
 def check_name(name, obj):
     error = None
-    if not re.match("^\w+$", name):
+    if not re.match(r"^\w+$", name):
         error = "Non-alphanumeric / underscore characters are forbidden in section and preferences names"
     if preferences_settings.SECTION_KEY_SEPARATOR in name:
         error = 'Sequence "{0}" is forbidden in section and preferences name, since it is used to access values via managers'.format(
