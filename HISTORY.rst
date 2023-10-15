@@ -3,6 +3,13 @@
 Changelog
 =========
 
+1.16.0 (2023-10-15)
+*******************
+
+- add raw prefix to invalid regex (#299)
+- Add Indonesian Translations (#298)
+- Added ability to pickle FilePreference (#297)
+- Fixed invalid year for 1.15 release
 
 1.15.0 (2023-04-05)
 *******************
