@@ -108,7 +108,10 @@ class PreferenceViewSet(
         # preferences at once from database
         queries = [Q(section=p.section.name, name=p.name) for p in preferences]
 
-        query = queries[0]
+        try:
+            query = queries[0]
+        except IndexError:
+            return Response("empty payload", status=400)
         for q in queries[1:]:
             query |= q
         preferences_qs = self.get_queryset().filter(query)
