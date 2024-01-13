@@ -112,7 +112,7 @@ When you access a preference value (e.g. via ``global_preferences['maintenance_m
 
 Therefore, in the worst-case scenario, accessing a single preference value can trigger up to two database queries. Most of the time, however, dynamic-preferences will only hit the cache.
 
-When you set a preference value (e.g. via``global_preferences['maintenance_mode'] = True``), dynamic-preferences follows these steps:
+When you set a preference value (e.g. via ``global_preferences['maintenance_mode'] = True``), dynamic-preferences follows these steps:
 
 1. The corresponding row is queried from the database (1 query)
 2. The new value is set and persisted in db (1 query)
