@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import decimal
 import os
 
@@ -20,7 +19,6 @@ from django.utils.timezone import (
     make_naive,
     get_default_timezone,
 )
-from six import string_types, text_type
 from django.db.models.fields.files import FieldFile
 
 
@@ -62,7 +60,7 @@ class BaseSerializer:
 
     @classmethod
     def to_db(cls, value, **kwargs):
-        return text_type(cls.clean_to_db_value(value))
+        return str(cls.clean_to_db_value(value))
 
     @classmethod
     def clean_to_db_value(cls, value):
@@ -85,7 +83,7 @@ class InstanciatedSerializer(BaseSerializer):
         raise NotImplementedError
 
     def to_db(self, value, **kwargs):
-        return text_type(self.clean_to_db_value(value))
+        return str(self.clean_to_db_value(value))
 
     def clean_to_db_value(self, value):
         return value
@@ -193,7 +191,7 @@ from django.template import defaultfilters
 class StringSerializer(BaseSerializer):
     @classmethod
     def to_db(cls, value, **kwargs):
-        if not isinstance(value, string_types):
+        if not isinstance(value, str):
             raise cls.exception(
                 "Cannot serialize, value {0} is not a string".format(value)
             )
