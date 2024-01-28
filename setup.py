@@ -34,7 +34,6 @@ setup(
     include_package_data=True,
     install_requires=[
         "django>=3.2",
-        "six",
         "persisting_theory==1.0",
     ],
     license="BSD",

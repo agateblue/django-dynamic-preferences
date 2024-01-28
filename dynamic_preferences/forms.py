@@ -1,4 +1,3 @@
-from six import string_types
 from django import forms
 from django.core.exceptions import ValidationError
 from collections import OrderedDict
@@ -85,7 +84,7 @@ def preference_form_builder(form_base_class, preferences=[], **kwargs):
     if len(preferences) > 0:
         # Preferences have been selected explicitly
         for pref in preferences:
-            if isinstance(pref, string_types):
+            if isinstance(pref, str):
                 preferences_obj.append(registry.get(name=pref))
             elif type(pref) == tuple:
                 preferences_obj.append(registry.get(name=pref[0], section=pref[1]))
