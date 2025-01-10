@@ -11,3 +11,4 @@ pytest-django
 pytest-sugar
 django-nose
 ipdb
+setuptools

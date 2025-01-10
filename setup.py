@@ -33,7 +33,7 @@ setup(
     packages=["dynamic_preferences"],
     include_package_data=True,
     install_requires=[
-        "django>=3.2",
+        "django>=4.2",
         "persisting_theory==1.0",
     ],
     license="BSD",
