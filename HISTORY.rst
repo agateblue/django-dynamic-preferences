@@ -3,6 +3,22 @@
 Changelog
 =========
 
+1.17.0 (2025-01-11)
+*******************
+
+This version includes update to our django/python compatibility table. Tests now run
+against python 3.9, 3.10, 3.11, 3.12, 3.13, Django 4.2 and Django 5.1. These versions are officially supported.
+
+- Drop support for python 3.7, 3.8 and django 3.2. Also run tests on python 3.12, 3.13 and django 5.1 (#312)
+- `preference_updated` is now triggered when the preference is updated by the REST API (#310)
+- Add the preference model instance to the parameters of the `preference_updated` signal's. (#310)
+- Fix conversion of non-integer pk value in ModelSerializer (#307)
+- remove six usage (#306)
+- fix(docs): Fix quote in quickstart guide (#304)
+- fix(docs): Update Python and django versions in docs (#305)
+- return 400 when calling bulk update with an empty payload (#302)
+
+
 1.16.0 (2023-10-15)
 *******************
 
