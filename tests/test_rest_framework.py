@@ -1,14 +1,22 @@
 import json
-
 from decimal import Decimal
+
 from django.urls import reverse
 
-from dynamic_preferences.registries import global_preferences_registry as registry
+from dynamic_preferences.api import serializers
+from dynamic_preferences.api.serializers import GlobalPreferenceSerializer
+from dynamic_preferences.registries import \
+    global_preferences_registry as registry
+from dynamic_preferences.signals import preference_updated
 from dynamic_preferences.users.registries import (
     user_preferences_registry as user_registry,
 )
-from dynamic_preferences.api import serializers
 from dynamic_preferences.users.serializers import UserPreferenceSerializer
+
+try:
+    from unittest.mock import MagicMock
+except ImportError:
+    from mock import MagicMock
 
 
 def test_can_serialize_preference(db):
@@ -78,7 +86,8 @@ def test_serializer_includes_additional_data_if_any(fake_user):
     pref = manager.get_db_pref(section="user", name="favorite_vegetable")
 
     serializer = UserPreferenceSerializer(pref)
-    assert serializer.data["additional_data"]["choices"] == pref.preference.choices
+    assert serializer.data["additional_data"][
+               "choices"] == pref.preference.choices
 
 
 def test_global_preference_list_requires_permission(db, client):
@@ -129,7 +138,8 @@ def test_can_list_preferences_with_section_filter(admin_client):
 def test_can_detail_preference(admin_client):
     manager = registry.manager()
     pref = manager.get_db_pref(section="user", name="max_users")
-    url = reverse("api:global-detail", kwargs={"pk": pref.preference.identifier()})
+    url = reverse("api:global-detail",
+                  kwargs={"pk": pref.preference.identifier()})
     response = admin_client.get(url)
     assert response.status_code == 200
 
@@ -141,7 +151,8 @@ def test_can_detail_preference(admin_client):
 def test_can_update_preference(admin_client):
     manager = registry.manager()
     pref = manager.get_db_pref(section="user", name="max_users")
-    url = reverse("api:global-detail", kwargs={"pk": pref.preference.identifier()})
+    url = reverse("api:global-detail",
+                  kwargs={"pk": pref.preference.identifier()})
     response = admin_client.patch(
         url, json.dumps({"value": 16}), content_type="application/json"
     )
@@ -155,7 +166,8 @@ def test_can_update_preference(admin_client):
 def test_can_update_decimal_preference(admin_client):
     manager = registry.manager()
     pref = manager.get_db_pref(section="type", name="cost")
-    url = reverse("api:global-detail", kwargs={"pk": pref.preference.identifier()})
+    url = reverse("api:global-detail",
+                  kwargs={"pk": pref.preference.identifier()})
     response = admin_client.patch(
         url, json.dumps({"value": "111.11"}), content_type="application/json"
     )
@@ -189,7 +201,8 @@ def test_can_update_multiple_preferences(admin_client):
 def test_update_preference_returns_validation_error(admin_client):
     manager = registry.manager()
     pref = manager.get_db_pref(section="user", name="max_users")
-    url = reverse("api:global-detail", kwargs={"pk": pref.preference.identifier()})
+    url = reverse("api:global-detail",
+                  kwargs={"pk": pref.preference.identifier()})
     response = admin_client.patch(
         url, json.dumps({"value": 1001}), content_type="application/json"
     )
@@ -200,7 +213,8 @@ def test_update_preference_returns_validation_error(admin_client):
     assert payload["value"] == ["Wrong value!"]
 
 
-def test_update_multiple_preferences_with_validation_errors_rollback(admin_client):
+def test_update_multiple_preferences_with_validation_errors_rollback(
+        admin_client):
     manager = registry.manager()
     pref = manager.get_db_pref(section="user", name="max_users")
     url = reverse("api:global-bulk")
@@ -221,3 +235,69 @@ def test_update_multiple_preferences_with_validation_errors_rollback(admin_clien
 
     assert pref1.value == pref1.preference.default
     assert pref2.value == pref2.preference.default
+
+
+def test_update_preference_send_signal(admin_client):
+    manager = registry.manager()
+    pref = manager.get_db_pref(section="user", name="max_users")
+
+    receiver = MagicMock()
+    preference_updated.connect(receiver)
+
+    url = reverse("api:global-detail",
+                  kwargs={"pk": pref.preference.identifier()})
+    response = admin_client.patch(
+        url, json.dumps({"value": 16}), content_type="application/json"
+    )
+    assert response.status_code == 200
+    assert receiver.call_count == 1
+    call_args = receiver.call_args[1]
+    assert {
+               "sender": GlobalPreferenceSerializer,
+               "section": "user",
+               "name": "max_users",
+               "old_value": 100,
+               "new_value": 16,
+               "instance": pref
+           }.items() <= call_args.items()
+
+
+def test_update_multiple_preferences_send_signal(admin_client):
+    manager = registry.manager()
+    max_user_pref = manager.get_db_pref(section="user", name="max_users")
+    registration_allowed_pref = manager.get_db_pref(section="user",
+                                                    name="registration_allowed")
+
+    receiver = MagicMock()
+    preference_updated.connect(receiver)
+
+    url = reverse("api:global-bulk")
+
+    payload = {
+        "user__max_users": 16,
+        "user__registration_allowed": True,
+    }
+    response = admin_client.post(
+        url, json.dumps(payload), content_type="application/json"
+    )
+    assert response.status_code == 200
+    assert receiver.call_count == 2
+    call_args = receiver.call_args_list[0][1]
+    assert {
+               "sender": GlobalPreferenceSerializer,
+               "section": "user",
+               "name": "max_users",
+               "old_value": 100,
+               "new_value": 16,
+               "instance": max_user_pref
+           }.items() <= call_args.items()
+
+    call_args = receiver.call_args_list[1][1]
+    assert {
+               "sender": GlobalPreferenceSerializer,
+               "section": "user",
+               "name": "registration_allowed",
+               "old_value": False,
+               "new_value": True,
+               "instance": registration_allowed_pref
+           }.items() <= call_args.items()

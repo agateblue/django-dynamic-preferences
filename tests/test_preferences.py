@@ -192,6 +192,8 @@ def test_get_field_uses_field_kwargs():
 def test_preferences_manager_signal(db):
     global_preferences = global_preferences_registry.manager()
     global_preferences["no_section"] = False
+    pref = global_preferences.get_db_pref(name="no_section", section=None)
+
     receiver = MagicMock()
     preference_updated.connect(receiver)
     global_preferences["no_section"] = True
@@ -203,4 +205,5 @@ def test_preferences_manager_signal(db):
         "name": "no_section",
         "old_value": False,
         "new_value": True,
+        "instance": pref
     }.items() <= call_args.items()

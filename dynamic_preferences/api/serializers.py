@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from dynamic_preferences.models import GlobalPreferenceModel
+
+from dynamic_preferences.signals import preference_updated
 
 
 class PreferenceValueField(serializers.Field):
@@ -62,8 +63,17 @@ class PreferenceSerializer(serializers.Serializer):
         return value
 
     def update(self, instance, validated_data):
+        old_value = instance.value
         instance.value = validated_data["value"]
         instance.save()
+        preference_updated.send(
+            sender=self.__class__,
+            section=instance.section,
+            name=instance.name,
+            old_value=old_value,
+            new_value=validated_data["value"],
+            instance=instance
+        )
         return instance
 
 

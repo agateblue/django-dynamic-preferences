@@ -173,6 +173,7 @@ class PreferencesManager(Mapping):
                 name=name,
                 old_value=old_value,
                 new_value=value,
+                instance=db_pref
             )
         except self.model.DoesNotExist:
             return self.create_db_pref(section, name, value)

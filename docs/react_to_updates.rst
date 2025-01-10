@@ -20,7 +20,7 @@ of the signal, which are:
 * ``name`` - the name of the changed preference
 * ``old_value`` - the value of the preference before changing
 * ``new_value`` - the value assigned to the preference after the change
-
+* ``instance`` - the preference Model instance
 An example that just prints a message that the preference was changed is
 below.
 
@@ -28,7 +28,7 @@ below.
 
     # yourapp/util.py
 
-    def notify_on_preference_update(sender, section, name, old_value, new_value, **kwargs):
+    def notify_on_preference_update(sender, section, name, old_value, new_value, instance, **kwargs):
         print("Preference {} in section {} changed from {} to {}".format(
             name, section, old, new))
 
