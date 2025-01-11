@@ -77,12 +77,16 @@ an ``apps.py`` file, as follows:
 
 Here, we use django's built-in ``AppConfig``, which is a convenient place to put this kind of logic.
 
-To ensure this config is actually used by django, you'll also have to edit your app ``__init__.py``:
+To ensure this config is actually used by django, you'll also have to add it to your ``settings.py``:
 
 .. code-block:: python
 
-    # yourapp/__init__.py
-    default_app_config = 'yourapp.apps.YourAppConfig'
+    INSTALLED_APPS = [
+        # your other apps here
+        # …
+        'yourapp.apps.YourAppConfig',
+        'dynamic_preferences',
+    ]
 
 .. warning::
 
