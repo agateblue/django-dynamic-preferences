@@ -258,8 +258,9 @@ def create_deletion_handler(preference):
     """
 
     def delete_related_preferences(sender, instance, *args, **kwargs):
+        section_name = getattr(preference.section, "name", preference.section)
         queryset = preference.registry.preference_model.objects.filter(
-            name=preference.name, section=preference.section
+            name=preference.name, section=section_name
         )
         related_preferences = queryset.filter(
             raw_value=preference.serializer.serialize(instance)
@@ -325,6 +326,7 @@ class ModelChoicePreference(BasePreferenceType):
             raise MissingModel
 
         self.serializer = self.serializer_class(self.model)
+        self.signals_handlers = {}
 
         self._setup_signals()
 

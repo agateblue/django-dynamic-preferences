@@ -229,12 +229,14 @@ class ModelSerializer(InstanciatedSerializer):
         return str(value.pk)
 
     def to_python(self, value, **kwargs):
-        if value is None:
-            return
+        if value in EMPTY_VALUES:
+            return None
         try:
             pk = self.model._meta.pk.to_python(value)
             return self.model.objects.get(pk=pk)
-        except:
+        except self.model.DoesNotExist:
+            return None
+        except Exception:
             raise self.exception("Value {0} cannot be converted to pk".format(value))
 
 
